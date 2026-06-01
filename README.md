@@ -5,13 +5,10 @@ My focus areas include:
 
 1. Data cleaning and preprocessing
 2. Exploratory data analysis (EDA)
-3. Machine learning model building
-4. Data visualization and storytelling
+3. Data visualization
+4. Machine learning model building 
 
-
-Skills & Tools:
-
-Programming & Libraries
+Programming & Libraries:
 
 1. Python
 2. Pandas
@@ -19,6 +16,9 @@ Programming & Libraries
 4. Scikit-learn
 5. Matplotlib
 6. Seaborn
+7. Tensorflow
+8. Keras
+9. Pytorch
 
 Other Tools:
 
@@ -37,18 +37,4 @@ What You’ll Find in Each Project:
 
 Goals:
 
-I am continuously improving my skills by working on real world datasets and building projects that reflect practical business problems.
-
-Contact:
-
-If you would like to collaborate or have opportunities, feel free to reach out:
-
-GitHub: github.com/codewithraphael
-
-LinkedIn: linkedin.com/in/codewithraphael
-
-Email: raphaeldaniel223@gmail.com
-
-⭐ Final Note:
-
-This repository is part of my journey to becoming a professional data scientist. More projects and improvements will be added over time.
+continuously improving my skills by working on real world datasets and building projects that reflect practical business problems.
