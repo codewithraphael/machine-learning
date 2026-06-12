@@ -93,3 +93,29 @@ figure = px.box(insurance.select_dtypes(include=['number']),
 figure.show()
 
 # %%
+# ===== Pie Chart of the Target Variable =====
+claim_status_counts = insurance['claim_status'].value_counts()
+labels = claim_status_counts.index
+values = claim_status_counts.values
+
+fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=0.3)])
+fig.update_layout(title_text='Distribution of Claim Status')
+fig.update_traces(textinfo='percent+label')
+fig.show()
+
+# %%
+# ===== Correlation Heatmap =====
+numeric_cols = insurance.select_dtypes(include=['number']).corr()
+
+plt.figure(figsize=(10, 8))
+sns.heatmap(numeric_cols, annot=True, cmap='viridis', linewidths=0.5)
+plt.title('Numerical Features Heatmap Correlation')
+plt.xticks(rotation=45)
+plt.show()
+
+# %%
+# ===== Pair Plot =====
+plt.figure(figsize=())
+sns.pairplot(insurance.select_dtypes(include=['number']))
+plt.suptitle('Numerical Features Pair Plot', y=1.02)   
+plt.show()
