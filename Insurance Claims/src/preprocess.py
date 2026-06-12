@@ -58,7 +58,7 @@ lower_bound, upper_bound = handle_outliers(insurance)
 # ===== Checking Outliers Counts, Bounds, Actual Min and Max Values
 def check_outlier(data, lower_bound, upper_bound):
     for col in data.select_dtypes(include=['number']):
-        mask = (lower_bound[col] < data[col]) | (upper_bound[col] > data[col]) 
+        mask = (data[col] < lower_bound[col]) | (data[col] > upper_bound[col])
         counts = mask.sum()
         print(f' {col}: {counts} outliers |'
               f'bounds = [{lower_bound.min():.3f} {upper_bound.max():.3f}] |'
