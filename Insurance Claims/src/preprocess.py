@@ -10,9 +10,18 @@ import seaborn as sns; sns.set_theme()
 import plotly.express as px
 import plotly.graph_objects as go
 
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+
+import joblib
+
 
 import warnings
 warnings.filterwarnings('ignore')
+
+
+
 
 # %%
 
@@ -20,6 +29,9 @@ warnings.filterwarnings('ignore')
 
 insurance = pd.read_csv('../dataset/Insurance claims data.csv')
 insurance.head()
+
+
+
 
 # %%
 
@@ -34,6 +46,9 @@ def summary_stat(data):
     print(f"\n ===== Summary Statistics ===== \n {statistics}")
 
 summary_stat(insurance)
+
+
+
 
 # %%
 
@@ -54,6 +69,9 @@ def handle_outliers(data):
 
 lower_bound, upper_bound = handle_outliers(insurance)
 
+
+
+
 # %%
 # ===== Checking Outliers Counts, Bounds, Actual Min and Max Values
 def check_outlier(data, lower_bound, upper_bound):
@@ -67,6 +85,9 @@ def check_outlier(data, lower_bound, upper_bound):
 
 check_outlier(insurance, lower_bound=lower_bound, upper_bound=upper_bound)
 
+
+
+
 # %%
 # ===== Checking For Missing Values
 def missing_values(data):
@@ -75,6 +96,9 @@ def missing_values(data):
     print(f'\n ===== Missning Values ===== \n {values}') 
 
 missing_values(insurance)
+
+
+
 
 # %%
 # ===== Visualizing the Outliers =====
@@ -94,6 +118,9 @@ fig.update_layout(title_text='Distribution of Claim Status')
 fig.update_traces(textinfo='percent+label')
 fig.show()
 
+
+
+
 # %%
 # ===== Correlation Heatmap =====
 numeric_cols = insurance.select_dtypes(include=['number']).corr()
@@ -104,9 +131,75 @@ plt.title('Numerical Features Heatmap Correlation')
 plt.xticks(rotation=45)
 plt.show()
 
+
+
+
 # %%
 # ===== Pair Plot =====
-plt.figure(figsize=())
 sns.pairplot(insurance.select_dtypes(include=['number']))
-plt.suptitle('Numerical Features Pair Plot', y=1.02)   
+plt.suptitle('Numerical Features Pair Plot')   
 plt.show()
+
+
+
+
+# %%
+# ===== Dropping Irrelevant Feature =====
+def drop_column(data):
+    data = data.drop(columns=['policy_id'], axis=1)
+    print(data.head(5))
+
+    return data
+data = drop_column(insurance)
+
+
+
+
+# %%
+# ===== Train Test Split =====
+def split_data(data):
+    X = data.drop(columns=['claim_status'], axis=1)
+    y = data['claim_status']
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    return X_train, X_test, y_train, y_test
+
+X_train, X_test, y_train, y_test = split_data(data)
+
+
+
+
+# %%
+# ===== Feature Splitting =====
+def feature_splitting(data):
+    num_col = data.select_dtypes(include=['number'])
+    cat_col = data.select_dtypes(include=['object'])
+    
+    return num_col, cat_col
+
+num_col, cat_col = feature_splitting(data)
+
+
+
+
+# %%
+# ===== Data Preprocessing =====
+
+def preprocess_data(num_col, cat_col):
+    preprocessor = ColumnTransformer(
+        transformers = [
+            ('num', StandardScaler(), num_col),
+            ('cat', OneHotEncoder(), cat_col)
+        ]
+    )
+
+    return preprocessor
+
+preprocessor = preprocess_data(num_col, cat_col)
+
+
+
+
+# %%
+# ===== Saving Preprocessed Data For Training =====
+preprocessor = joblib.dump(preprocessor, 'preprocessor.joblib')
