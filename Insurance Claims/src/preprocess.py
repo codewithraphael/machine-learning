@@ -10,15 +10,6 @@ import seaborn as sns; sns.set_theme()
 import plotly.express as px
 import plotly.graph_objects as go
 
-from sklearn.model_selection import train_test_split, cross_val_score, RandomizedSearchCV
-from sklearn.linear_model import  LogisticRegression
-from sklearn.ensemble import  RandomForestClassifier
-from sklearn.tree import DecisionTreeClassifier
-
-
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, ConfusionMatrixDisplay, auc, roc_auc_score, roc_curve, RocCurveDisplay
-
-from xgboost import XGBRegressor, XGBClassifier
 
 import warnings
 warnings.filterwarnings('ignore')
