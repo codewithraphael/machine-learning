@@ -6,11 +6,19 @@ import numpy as np
 import seaborn as sns; sns.set_theme()
 import matplotlib.pyplot as plt
 
-from sklearn.model_selection import train_test_split
+import joblib
+
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.compose import ColumnTransformer
+from sklearn.tree import DecisionTreeClassifier
+
+
+from xgboost import XGBClassifier
+
+import warnings
+warnings.filterwarnings('ignore')
 
 
 
 
+# %%
