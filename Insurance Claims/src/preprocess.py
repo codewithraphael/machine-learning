@@ -1,5 +1,4 @@
 # %%
-
 # ===== Loading Libraries =====
 
 import pandas as pd 
@@ -24,17 +23,16 @@ warnings.filterwarnings('ignore')
 
 
 # %%
-
 # ===== Loading dataset =====
 
 insurance = pd.read_csv('../dataset/Insurance claims data.csv')
+insurance = insurance.drop(['policy_id'], axis=1)
 insurance.head()
 
 
 
 
 # %%
-
 # ===== Summary Statistics =====
 def summary_stat(data):
     shape = data.shape
@@ -51,7 +49,6 @@ summary_stat(insurance)
 
 
 # %%
-
 # ===== Handling Outliers
 def handle_outliers(data):
     q1 = data.select_dtypes(include=['number']).quantile(0.25)
@@ -75,13 +72,14 @@ lower_bound, upper_bound = handle_outliers(insurance)
 # %%
 # ===== Checking Outliers Counts, Bounds, Actual Min and Max Values
 def check_outlier(data, lower_bound, upper_bound):
-    for col in data.select_dtypes(include=['number']):
-        mask = (data[col] < lower_bound[col]) | (data[col] > upper_bound[col])
+    for cols in data.select_dtypes(include=['number']).columns:
+        mask = (data[cols] < lower_bound[cols]) | (data[cols] > upper_bound[cols])
         counts = mask.sum()
-        print(f' {col}: {counts} outliers |'
-              f'bounds = [{lower_bound.min():.3f} {upper_bound.max():.3f}] |'
-              f'actual min = {lower_bound[col].min():.3f}, actual max = {upper_bound[col].max():.3f}'
-              )
+        if counts > 0:
+            print(f' {cols} : {counts} outliers |'
+                f'bounds = [{lower_bound[cols]:.3f}, {upper_bound[cols]:.3f}] |'
+                f'actual min = {data[cols].min():.3f}, actual max = {data[cols].max():.3f}'
+                )
 
 check_outlier(insurance, lower_bound=lower_bound, upper_bound=upper_bound)
 
@@ -93,7 +91,7 @@ check_outlier(insurance, lower_bound=lower_bound, upper_bound=upper_bound)
 def missing_values(data):
     values = data.isnull().sum().sort_values(ascending=False)
 
-    print(f'\n ===== Missning Values ===== \n {values}') 
+    print(f'\n ===== Missing Values ===== \n {values}') 
 
 missing_values(insurance)
 
@@ -143,48 +141,37 @@ plt.show()
 
 
 
-# %%
-# ===== Dropping Irrelevant Feature =====
-def drop_column(data):
-    data = data.drop(columns=['policy_id'], axis=1)
-    print(data.head(5))
-
-    return data
-data = drop_column(insurance)
-
-
-
 
 # %%
-# ===== Train Test Split =====
+# ===== Feature Selection and Data Splitting =====
+X = insurance.drop(columns=['claim_status'], axis=1)
+y = insurance['claim_status']
+
 def split_data(data):
-    X = data.drop(columns=['claim_status'], axis=1)
-    y = data['claim_status']
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
     return X_train, X_test, y_train, y_test
 
-X_train, X_test, y_train, y_test = split_data(data)
+X_train, X_test, y_train, y_test = split_data(insurance)
 
 
 
 
 # %%
-# ===== Feature Splitting =====
+# ===== Data Type Splitting =====
 def feature_splitting(data):
-    num_col = data.select_dtypes(include=['number'])
+    num_col = data.select_dtypes(include=['number']).drop(columns=['claim_status'])
     cat_col = data.select_dtypes(include=['object'])
     
     return num_col, cat_col
 
-num_col, cat_col = feature_splitting(data)
+num_col, cat_col = feature_splitting(insurance)
 
 
 
 
 # %%
 # ===== Data Preprocessing =====
-
 def preprocess_data(num_col, cat_col):
     preprocessor = ColumnTransformer(
         transformers = [
@@ -202,4 +189,5 @@ preprocessor = preprocess_data(num_col, cat_col)
 
 # %%
 # ===== Saving Preprocessed Data For Training =====
-preprocessor = joblib.dump(preprocessor, 'preprocessor.joblib')
+saved_file = joblib.dump(preprocessor, 'preprocessor.joblib')
+# %%
