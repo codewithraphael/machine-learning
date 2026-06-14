@@ -1,6 +1,9 @@
 import pandas as pd
 
 def load_data(filepath):
-    df = pd.read_csv(filepath)
+    insurance = pd.read_csv(filepath)
+    insurance.head()
+    
+    return insurance
 
-    return df
+insurance = load_data('../data/raw/insurance_claim.csv')
