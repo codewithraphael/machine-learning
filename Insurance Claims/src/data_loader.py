@@ -1,9 +1,16 @@
 import pandas as pd
 
 def load_data(filepath):
-    insurance = pd.read_csv(filepath)
-    insurance.head()
-    
-    return insurance
+    """Load a CSV file and return a pandas DataFrame.
 
-insurance = load_data('../data/raw/insurance_claim.csv')
+    Parameters
+    ----------
+    filepath : str
+        Path to the CSV file.
+
+    Returns
+    -------
+    pd.DataFrame
+    """
+    data = pd.read_csv(filepath)
+    return data
