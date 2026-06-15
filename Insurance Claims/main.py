@@ -4,8 +4,6 @@ from src.preprocessing import load_data, feature_selection, num_cat_split, prepr
 from src.train import train_model
 from src.evaluate import evaluate_model, predict_probabilities, validate
 
-import joblib
-
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -82,7 +80,7 @@ import src.utils as utils_mod
 def show_data_overview(df=None):
 	"""Print basic data overview: head, info, and describe."""
 	if df is None:
-		df = clean_insurance
+		raise ValueError('show_data_overview requires a dataframe `df` argument')
 	print("---- Data head ----")
 	print(df.head())
 	print("\n---- Data info ----")
@@ -94,7 +92,7 @@ def show_data_overview(df=None):
 def run_eda_summary(df=None):
 	"""Run EDA summary helpers from `src/eda.py` where available."""
 	if df is None:
-		df = clean_insurance
+		raise ValueError('run_eda_summary requires a dataframe `df` argument')
 	try:
 		eda_mod.summary_stat(df)
 	except Exception as e:
@@ -108,7 +106,7 @@ def run_eda_summary(df=None):
 def run_preprocessing_preview(df=None):
 	"""Show preprocessing column splits and a preprocessor preview."""
 	if df is None:
-		df = clean_insurance
+		raise ValueError('run_preprocessing_preview requires a dataframe `df` argument')
 	num_cols, cat_cols = preprocessing_mod.num_cat_split(df)
 	print("Numeric cols:", num_cols)
 	print("Categorical cols:", cat_cols)
@@ -119,19 +117,27 @@ def run_preprocessing_preview(df=None):
 def run_feature_engineering_preview(df=None):
 	"""Run simple feature engineering preview (placeholder)."""
 	if df is None:
-		df = clean_insurance
+		raise ValueError('run_feature_engineering_preview requires a dataframe `df` argument')
 	fe_df = fe_mod.engineer_features(df)
 	print("Feature engineering returned dataframe with shape:", fe_df.shape)
 
 
-def show_trained_models_metrics(trained_models_dict=None, X_test_prep=None, y_test_local=None):
-	"""Evaluate and print metrics for trained models available in the module scope."""
-	if trained_models_dict is None:
-		trained_models_dict = trained_models
-	if X_test_prep is None:
-		X_test_prep = X_test_prepared
-	if y_test_local is None:
-		y_test_local = y_test
+
+def show_trained_models_metrics(trained_models_dict, X_test_prep, y_test_local):
+	"""Evaluate and print metrics for trained models.
+
+	Parameters
+	----------
+	trained_models_dict : dict
+		Mapping of model name -> trained estimator
+	X_test_prep : array-like
+		test features after preprocessing
+	y_test_local : array-like
+		true test labels
+	"""
+	if trained_models_dict is None or X_test_prep is None or y_test_local is None:
+		raise ValueError('show_trained_models_metrics requires trained_models_dict, X_test_prep and y_test_local')
+
 	for name, model in trained_models_dict.items():
 		try:
 			acc, report = evaluate_model(model, X_test_prep, y_test_local)
@@ -179,10 +185,5 @@ def main(argv=None):
 		show_all_results(outputs)
 
 
-if __name__ == '__main__':
-	main()
-
-
 if __name__ == "__main__":
-	# When executed as a script, show the assembled reports.
-	show_all_results()
+	main()
