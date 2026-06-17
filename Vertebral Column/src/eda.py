@@ -11,7 +11,7 @@ import seaborn as sns; sns.set_theme()
 import plotly.express as px
 import plotly.graph_objects as go
 
-from data_loader import load_data
+from src.data_loader import load_data
 
 # %%
 # ===== Loading Dataset =====
