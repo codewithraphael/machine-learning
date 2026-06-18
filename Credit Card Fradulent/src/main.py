@@ -16,8 +16,9 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
 
-from sklearn.metrics import accuracy_score, classification_report, roc_curve, auc, roc_auc_score, confusion_matrix
+from sklearn.metrics import accuracy_score, classification_report, roc_curve, auc, roc_auc_score, confusion_matrix, ConfusionMatrixDisplay, RocCurveDisplay
 
 from xgboost import XGBClassifier
 
@@ -94,14 +95,14 @@ def feature_selection(data):
 #  DATA PREPROCESSING PIPELINE 
 # =============================
 
-def preprocess_data(data):
-    num_cols = data.select_dtypes(include = ['number']).columns.tolist()
-    cat_cols = data.select_dtypes(include = ['object']).columns.tolist()
+def preprocess_data(X):
+    num_cols = X.select_dtypes(include = ['number']).columns.tolist()
+    cat_cols = X.select_dtypes(include = ['object', 'category']).columns.tolist()
 
     preprocessor = ColumnTransformer(
         transformers= [
             ('num', StandardScaler(), num_cols),
-            ('cat', OneHotEncoder(handle_unknown='ignore', sparse=False), cat_cols)
+            ('cat', OneHotEncoder(handle_unknown='ignore'), cat_cols)
         ], remainder='drop'
     )
 
@@ -113,10 +114,10 @@ def preprocess_data(data):
 # =============================
 def build_pipeline(preprocessor, X_train, y_train):
     models = {
-        'lr_model': LogisticRegression(class_weight='balanced', random_state=42),
-        'rfc_model': RandomForestClassifier(class_weight='balanced', random_state=42),
-        'dtc_model': DecisionTreeClassifier(random_state=42),
-        'xgb_model': XGBClassifier(use_label_encoder=False, eval_metric='logloss', random_state=42)
+        'LOGISTIC REGRESSION MODEL': LogisticRegression(class_weight='balanced', random_state=42),
+        'RANDOMFOREST CLASSIFIER MODEL': RandomForestClassifier(class_weight='balanced', random_state=42),
+        'DECISION TREE CLASSIFIER MODEL': DecisionTreeClassifier(random_state=42),
+        'XGBOOST CLASSIFIER MODEL': XGBClassifier(use_label_encoder=False, eval_metric='logloss', random_state=42)
     }
 
     trained_models = {}
@@ -151,14 +152,15 @@ def evaluate_model(name, pipe, X_train, X_test, y_train, y_test):
     # Probabilities / Decision Scores
     probabilities = None
     decision_scores = None
-    roc_auc = None
+    roc_score = None
 
     try:
         if hasattr(pipe, 'predict_proba'):
                 probabilities = pipe.predict_proba(X_test)[:, 1]
-                roc_auc = roc_auc_score(y_test, probabilities)
+                roc_score = roc_auc_score(y_test, probabilities)
     except Exception:
         probabilities = None
+        roc_score = None
 
     try:
         if hasattr(pipe, 'decision_function'):
@@ -166,17 +168,96 @@ def evaluate_model(name, pipe, X_train, X_test, y_train, y_test):
     except Exception:
         decision_scores = None
 
+    print(f'='*100)
     print(f'\n{name}')
+    print(f'='*100)
     print(f'\n  ===== Training Score ===== \n {train_score}')
     print(f'\n ===== {name} Accuracy Score ===== \n  {accuracy}')
 
-    if roc_auc is not None:
+    if roc_score is not None:
+        print(f'\n ===== Roc Auc Score ===== \n {roc_score}')
+    if probabilities is not None:
         print(f'\n ===== {name} Probabilities ===== \n {probabilities}')
     if decision_scores is not None:
-        print(f'\n ===== Decision Scores ===== \n {decision_scores}')
+        print(f'\n =====  {name} Decision Scores ===== \n {decision_scores}')
 
     print(f'\n ===== {name} Classification Report ===== \n {report}')
     print(f'\n ===== {name} Confusion Matrix ===== \n {cm}')
+
+    return y_pred, probabilities
+
+# =============================
+# CONFUSION MATRICES PLOT
+# =============================
+
+def plot_confusion_matrices(trained_models, X_test, y_test):
+    '''
+    plot confusion matrices for all trained models
+    '''
+    num_models = len(trained_models)
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+    axes = axes.ravel()
+
+    for idx, (name, pipe) in enumerate(trained_models.items()):
+        y_pred = pipe.predict(X_test)
+        cm = confusion_matrix(y_test, y_pred)
+
+        sns.heatmap(
+            cm,
+            annot=True,
+            fmt='d',
+            cmap='viridis',
+            ax=axes[idx],
+            cbar=False
+        )
+        axes[idx].set_title(f'{name}\nAccuracy: {accuracy_score(y_test, y_pred):.4f}')
+        axes[idx].set_ylabel('Actual')
+        axes[idx].set_xlabel('Predicted')
+
+    plt.tight_layout()
+    plt.savefig('../plots/confusion_matrix.png', dpi=600, bbox_inches='tight')
+    plt.close()
+
+
+# =============================
+# ROC CURVES PLOTS
+# =============================
+
+def plot_roc_curves(trained_models, X_test, y_test):
+    '''
+    plot ROC Curves for all models
+    '''
+
+    plt.figure(figsize=(10, 8))
+
+    for name, pipe in trained_models.items():
+        try:
+            y_proba = pipe.predict_proba(X_test)[:, 1]
+
+            fpr, tpr, _ = roc_curve(y_test, y_proba)
+            roc_auc = auc(fpr, tpr)
+
+            plt.plot(
+                fpr,
+                tpr,
+                label=f'{name} (AUC = {roc_auc:.4f})',
+                linewidth = 2
+            )
+        except Exception as e:
+            print(f'Could not plot ROC Curve for {name}: {e}')
+
+    
+    plt.plot([0, 1], [0, 1], 'k--', label='Random Classifier', linewidth=2)
+    
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate', fontsize=12)
+    plt.ylabel('True Positive Rate', fontsize=12)
+    plt.title('ROC Curves - All Models Comparison', fontsize=14, fontweight='bold')
+    plt.legend(loc='lower right', fontsize=10)
+    plt.grid(alpha=0.3)
+    plt.savefig('../plots/roc_curves_all_models.png', dpi=600, bbox_inches='tight')
+    plt.close()
 
 
 # =============================
@@ -198,7 +279,11 @@ def main():
     
     # Evaluating on each trained pipeline
     for name, pipe in trained_models.items():
-        evaluate_model(name, pipe, X_train, X_test, y_train, y_test)
+      y_pred, probabilities = evaluate_model(name, pipe, X_train, X_test, y_train, y_test)
+
+    # Plot Confusion matrices and ROC Curves for all models
+    plot_confusion_matrices(trained_models, X_test, y_test)
+    plot_roc_curves(trained_models, X_test, y_test)
 
 
 if __name__ == "__main__":
