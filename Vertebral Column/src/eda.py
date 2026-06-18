@@ -1,7 +1,6 @@
 # %%
 # ===== Importing Libraries =====
 
-
 import pandas as pd
 import numpy as np
 
@@ -11,7 +10,7 @@ import seaborn as sns; sns.set_theme()
 import plotly.express as px
 import plotly.graph_objects as go
 
-from src.data_loader import load_data
+from data_loader import load_data
 
 # %%
 # ===== Loading Dataset =====
