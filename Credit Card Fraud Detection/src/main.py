@@ -33,6 +33,7 @@ warnings.filterwarnings('ignore')
 
 def load_data(filepath):
     data = pd.read_csv(filepath)
+    data = data.drop(columns=['transaction_id'], errors='ignore', axis=1)
 
     return data
 
@@ -96,13 +97,13 @@ def feature_selection(data):
 
 def preprocess_data(X):
     num_cols = X.select_dtypes(include = ['number']).columns.tolist()
-    cat_cols = X.select_dtypes(include = ['object', 'category']).columns.tolist()
+    cat_cols = X.select_dtypes(include = ['object']).columns.tolist()
 
     preprocessor = ColumnTransformer(
         transformers= [
             ('num', StandardScaler(), num_cols),
             ('cat', OneHotEncoder(handle_unknown='ignore'), cat_cols)
-        ], remainder='drop'
+        ]
     )
 
     return preprocessor
@@ -285,7 +286,6 @@ def save_models(trained_models):
 def main():
     filepath = '../data/credit_card_fraud.csv'
     data = load_data(filepath)
-    data = data.drop(columns=['transaction_id'], errors='ignore')
     
     eda(data)
     count_plot(data)
