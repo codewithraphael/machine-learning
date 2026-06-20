@@ -2,7 +2,10 @@ import streamlit as st
 import joblib
 import numpy as np
 import pandas as pd
+from pathlib import Path
 from datetime import datetime
+
+BASE_DIR = Path(__file__).resolve().parent
 
 # Page configuration
 st.set_page_config(
@@ -37,10 +40,10 @@ model_choice = st.sidebar.selectbox(
 
 # Load the selected model
 models_path = {
-    "Logistic Regression": "../models/logistic_regression_model.joblib",
-    "Decision Tree": "../models/decision_tree_classifier_model.joblib",
-    "Random Forest": "../models/randomforest_classifier_model.joblib",
-    "XGBoost": "../models/xgboost_classifier_model.joblib"
+    "Logistic Regression": BASE_DIR.parent / "models"/"logistic_regression_model.joblib",
+    "Decision Tree": BASE_DIR.parent / "models"/"decision_tree_classifier_model.joblib",
+    "Random Forest": BASE_DIR.parent / "models"/"randomforest_classifier_model.joblib",
+    "XGBoost": BASE_DIR.parent / "models"/"xgboost_classifier_model.joblib"
 }
 
 try:
