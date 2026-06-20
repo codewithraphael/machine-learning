@@ -259,6 +259,25 @@ def plot_roc_curves(trained_models, X_test, y_test):
     plt.close()
 
 
+# ===========================================
+# SAVING XGBOOST MODEL FOR DEPLOYMENT TESTING
+# ===========================================
+
+def save_models(trained_models):
+    print('\n' + '='*100)
+    print('SAVING MODELS')
+    print('='*100)
+
+    for name, pipe in trained_models.items():
+        model_filename = name.lower().replace(' ', '_').strip() + '.joblib'
+        filepath = f'../models/{model_filename}'
+
+        joblib.dump(pipe, filepath)
+        print(f'\n Saved {name} to {filepath}')
+
+    print('\n' + '='*100)
+
+
 # =============================
 # MAIN FUNCTION
 # =============================
@@ -283,6 +302,9 @@ def main():
     # Plot Confusion matrices and ROC Curves for all models
     plot_confusion_matrices(trained_models, X_test, y_test)
     plot_roc_curves(trained_models, X_test, y_test)
+
+    # Saving all trained models to joblib for deployment
+    save_models(trained_models)
 
 
 if __name__ == "__main__":
