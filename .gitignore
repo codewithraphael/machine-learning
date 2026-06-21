@@ -46,6 +46,7 @@ ENV/
 env/
 env.bak/
 venv.bak/
+.devcontainer/
 
 # IDEs and editors
 .vscode/
