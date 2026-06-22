@@ -10,7 +10,6 @@ BASE_DIR = Path(__file__).resolve().parent
 # Page configuration
 st.set_page_config(
     page_title="Credit Card Fraud Detection",
-    page_icon="💳",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -28,7 +27,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Title and description
-st.title("💳 Credit Card Fraud Detection System")
+st.title("Credit Card Fraud Detection System")
 
 # Sidebar for model selection
 st.sidebar.header("⚙️ Configuration")
@@ -49,11 +48,11 @@ models_path = {
 try:
     model = joblib.load(models_path[model_choice])
 except Exception as e:
-    st.error(f"⚠️ Error loading model: {e}")
+    st.error(f"Error loading model: {e}")
     st.stop()
 
 # Main interface
-tab1, tab2 = st.tabs(["🔍 Prediction", "📊 Feature Guide"])
+tab1, tab2 = st.tabs(["Prediction", "Feature Guide"])
 
 with tab1:
     st.header("Transaction Analysis")
@@ -64,7 +63,7 @@ with tab1:
     with col1:
         st.subheader("Transaction Details")
         amount = st.number_input(
-            "💰 Transaction Amount ($)",
+            "Transaction Amount ($)",
             min_value=0.0,
             max_value=100000.0,
             value=500.0,
@@ -82,12 +81,12 @@ with tab1:
             "Travel"
         ]
         merchant_category = st.selectbox(
-            "🏪 Merchant Category",
+            "Merchant Category",
             merchant_options
         )
         
         transaction_hour = st.slider(
-            "🕐 Transaction Hour",
+            "Transaction Hour",
             min_value=0,
             max_value=23,
             value=12,
@@ -97,7 +96,7 @@ with tab1:
     with col2:
         st.subheader("Customer Information")
         customer_age = st.slider(
-            "👤 Customer Age",
+            "Customer Age",
             min_value=18,
             max_value=80,
             value=40,
@@ -105,7 +104,7 @@ with tab1:
         )
         
         account_balance = st.number_input(
-            "💵 Account Balance ($)",
+            "Account Balance ($)",
             min_value=0.0,
             max_value=1000000.0,
             value=5000.0,
@@ -115,17 +114,17 @@ with tab1:
     with col3:
         st.subheader("Transaction Context")
         is_foreign = st.checkbox(
-            "🌍 International Transaction",
+            "International Transaction",
             value=False
         )
         
         is_weekend = st.checkbox(
-            "📅 Weekend Transaction",
+            "Weekend Transaction",
             value=False
         )
         
         num_transactions = st.number_input(
-            "📈 Transactions Today",
+            "Transactions Today",
             min_value=0,
             max_value=50,
             value=1,
@@ -163,12 +162,12 @@ with tab1:
             
             with col1:
                 if prediction == 0:
-                    st.success("✅ **LEGITIMATE TRANSACTION**", icon="✅")
+                    st.success("**LEGITIMATE TRANSACTION**")
                     st.markdown("""
                     This transaction appears to be genuine based on the model's analysis.
                     """)
                 else:
-                    st.error("⚠️ **FRAUDULENT TRANSACTION DETECTED**", icon="⚠️")
+                    st.error("**FRAUDULENT TRANSACTION**")
                     st.markdown("""
                     This transaction shows signs of fraud. Consider:
                     - Contacting the customer
@@ -185,7 +184,7 @@ with tab1:
             
             # Detailed breakdown
             st.markdown("---")
-            st.subheader("📋 Detailed Analysis")
+            st.subheader("Detailed Analysis")
             
             analysis_data = {
                 "Feature": [
@@ -214,40 +213,40 @@ with tab1:
             
             # Risk indicators
             st.markdown("---")
-            st.subheader("⚠️ Risk Factors")
+            st.subheader("Risk Factors")
             
             risk_factors = []
             if amount > 5000:
-                risk_factors.append("🔴 High transaction amount")
+                risk_factors.append("High transaction amount")
             if is_foreign:
-                risk_factors.append("🟡 International transaction")
+                risk_factors.append("International transaction")
             if transaction_hour < 6 or transaction_hour > 22:
-                risk_factors.append("🟡 Unusual hour (late night/early morning)")
+                risk_factors.append("Unusual hour (late night/early morning)")
             if num_transactions > 5:
-                risk_factors.append("🟡 Multiple transactions today")
+                risk_factors.append("Multiple transactions today")
             if account_balance < amount:
-                risk_factors.append("🔴 Transaction exceeds account balance")
+                risk_factors.append("Transaction exceeds account balance")
             
             if risk_factors:
                 for factor in risk_factors:
                     st.write(factor)
             else:
-                st.write("✅ No major risk factors detected")
+                st.write("No major risk factors detected")
         
         except Exception as e:
-            st.error(f"❌ Error making prediction: {e}")
+            st.error(f"Error making prediction: {e}")
 
 with tab2:
-    st.header("📊 Feature Guide")
+    st.header("Feature Guide")
     
     features_info = {
-        "💰 Amount": "The transaction amount in dollars. Higher amounts may be flagged as suspicious.",
-        "🕐 Transaction Hour": "Hour of day when transaction occurs (0-23). Late-night transactions may be flagged.",
-        "👤 Customer Age": "Age of the cardholder in years. Used to identify unusual usage patterns.",
-        "💵 Account Balance": "Current balance in the customer's account. Helps detect insufficient funds.",
-        "🌍 International": "Whether transaction is from outside the country. May indicate fraud.",
-        "📅 Weekend": "Whether transaction occurs on weekend. Some fraud patterns differ by day.",
-        "📈 Daily Transactions": "Count of transactions made by customer today. Helps detect velocity fraud."
+        "Amount": "The transaction amount in dollars. Higher amounts may be flagged as suspicious.",
+        "Transaction Hour": "Hour of day when transaction occurs (0-23). Late-night transactions may be flagged.",
+        "Customer Age": "Age of the cardholder in years. Used to identify unusual usage patterns.",
+        "Account Balance": "Current balance in the customer's account. Helps detect insufficient funds.",
+        "International": "Whether transaction is from outside the country. May indicate fraud.",
+        "Weekend": "Whether transaction occurs on weekend. Some fraud patterns differ by day.",
+        "Daily Transactions": "Count of transactions made by customer today. Helps detect velocity fraud."
     }
     
     for feature, description in features_info.items():
