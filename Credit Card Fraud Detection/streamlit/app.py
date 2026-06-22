@@ -134,7 +134,7 @@ with tab1:
     # Prediction button
     st.markdown("---")
     
-    if st.button("🔍 Analyze Transaction", use_container_width=True, type="primary"):
+    if st.button("Analyze Transaction", use_container_width=True, type="primary"):
         # Prepare features for model as a DataFrame with the same column names
         # used during training. This ensures the ColumnTransformer receives
         # the expected columns and order.
