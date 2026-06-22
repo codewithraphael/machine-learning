@@ -30,7 +30,7 @@ st.markdown("""
 st.title("Credit Card Fraud Detection System")
 
 # Sidebar for model selection
-st.sidebar.header("⚙️ Configuration")
+st.sidebar.header("Configuration")
 model_choice = st.sidebar.selectbox(
     "Select Model",
     ["Logistic Regression", "Decision Tree", "Random Forest", "XGBoost"],
