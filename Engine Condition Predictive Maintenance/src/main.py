@@ -108,6 +108,13 @@ def feature_enginneering(data):
 
 
 
+# =====================
+#  DISPLAYING NEW DATA
+# =====================
+def display_new_data(data):
+    print(f'\n ===== New Featured Data ===== \n {data}')
+
+
 # ==========================
 #  TARGET DISTRIBUTION PLOT
 # ==========================
@@ -153,6 +160,7 @@ def main():
 
     eda(data)
     data = feature_enginneering(data)
+    display_new_data(data)
 
     plot_target(data)
     plot_pairplot(data)
