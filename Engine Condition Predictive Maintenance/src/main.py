@@ -50,26 +50,6 @@ def eda(data):
     print(f'\n ===== Summary Statistics ===== \n {statistics}')
 
 
-# ==========================
-#  TARGET DISTRIBUTION PLOT
-# ==========================
-
-def plot_target(data):
-    plt.figure(figsize=(15, 5))
-    sns.histplot(data, x = data['Engine Condition'])
-    plt.savefig('../plots/engine_condition_distribution.png')
-    plt.close()
-
-
-# =======================
-#  PAIRPLOR DISTRIBUTION
-# =======================
-
-def plot_pairplot(data):
-    sns.pairplot(data)
-    plt.savefig('../plots/pairplot_distribution.png')
-    plt.close()
-
 
 
 # ====================
@@ -127,6 +107,28 @@ def feature_enginneering(data):
     return data
 
 
+
+# ==========================
+#  TARGET DISTRIBUTION PLOT
+# ==========================
+
+def plot_target(data):
+    plt.figure(figsize=(15, 5))
+    sns.histplot(data, x = data['Engine Condition'])
+    plt.savefig('../plots/engine_condition_distribution.png')
+    plt.close()
+
+
+# =======================
+#  PAIRPLOR DISTRIBUTION
+# =======================
+
+def plot_pairplot(data):
+    sns.pairplot(data)
+    plt.savefig('../plots/pairplot_distribution.png')
+    plt.close()
+
+
 # ====================
 #  CORRELATION HEATMAP  
 # ====================
@@ -150,10 +152,10 @@ def main():
     data = load_data(filepath)
 
     eda(data)
+    data = feature_enginneering(data)
+
     plot_target(data)
     plot_pairplot(data)
-
-    feature_enginneering(data)
     plot_correlation(data)
 
 
