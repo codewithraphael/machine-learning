@@ -15,7 +15,7 @@ from sklearn.model_selection import train_test_split, cross_val_score, Stratifie
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.preprocessing import StandardScaler, OneHotEncoder, OrdinalEncoder
+from sklearn.preprocessing import StandardScaler, OrdinalEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score, classification_report, roc_curve, auc, roc_auc_score, RocCurveDisplay, confusion_matrix, ConfusionMatrixDisplay
@@ -55,11 +55,46 @@ def eda(data):
     print(f'\n ===== Summary Statistics ===== \n {statistics}')
 
 
+# ==========================
+#  TARGET DISTRIBUTION PLOT
+# ==========================
+
+def plot_target(data):
+    plt.figure(figsize=(15, 5))
+    sns.histplot(data, x = data['Engine Condition'])
+    plt.savefig('../plots/engine_condition_distribution.png')
+    plt.close()
+
+
+# =======================
+#  PAIRPLOR DISTRIBUTION
+# =======================
+
+def plot_pairplot(data):
+    sns.pairplot(data)
+    plt.savefig('../plots/pairplot_distribution.png')
+    plt.close()
+
+
+# ====================
+#  CORRELATION HEATMAP  
+# ====================
+
+def plot_correlation(data):
+    corr_matrix = data.select_dtypes(include=['number']).corr()
+
+    plt.figure(figsize=(20, 20))
+    sns.heatmap(corr_matrix, annot=True, linewidths=0.5, cmap='viridis')
+    plt.title('Features Correlation Heatmap')
+    plt.savefig('../plots/features_correlation_plot.png')
+    plt.close()
+
+
 # ====================
 #  FEATURE ENGINEERING
 # ====================
 
-def feature_enginneering(data):
+def feature_engineering(data):
 
     # total pressure
     data['total_pressure'] = (
@@ -93,7 +128,7 @@ def feature_enginneering(data):
 
     data['pressure_ratio'] = (
         data['Lub oil pressure'] 
-        / data['Coolant temp']
+        / data['Coolant pressure']
     )
 
     # rpm interaction
@@ -113,11 +148,6 @@ def feature_enginneering(data):
         ['lub oil temp',
          'Coolant temp']
     ].std(axis=1)
-
-    data['thermal_stress'] = (
-        data['Coolant temp']
-        - data['lub oil temp']
-    )
 
     data['rpm_pressure'] = (
         data['Engine rpm']
@@ -162,41 +192,6 @@ def feature_enginneering(data):
 # =====================
 def display_new_data(data):
     print(f'\n ===== New Featured Data ===== \n {data}')
-
-
-# ==========================
-#  TARGET DISTRIBUTION PLOT
-# ==========================
-
-def plot_target(data):
-    plt.figure(figsize=(15, 5))
-    sns.histplot(data, x = data['Engine Condition'])
-    plt.savefig('../plots/engine_condition_distribution.png')
-    plt.close()
-
-
-# =======================
-#  PAIRPLOR DISTRIBUTION
-# =======================
-
-def plot_pairplot(data):
-    sns.pairplot(data)
-    plt.savefig('../plots/pairplot_distribution.png')
-    plt.close()
-
-
-# ====================
-#  CORRELATION HEATMAP  
-# ====================
-
-def plot_correlation(data):
-    corr_matrix = data.select_dtypes(include=['number']).corr()
-
-    plt.figure(figsize=(20, 20))
-    sns.heatmap(corr_matrix, annot=True, linewidths=0.5, cmap='viridis')
-    plt.title('Features Correlation Heatmap')
-    plt.savefig('../plots/features_correlation_plot.png')
-    plt.close()
 
 
 # =====================================
@@ -290,7 +285,7 @@ def train_pipeline(preprocessor, X_train, y_train):
 
         trained_models[name] = pipe
 
-    return name, trained_models
+    return trained_models
     
 
 # ====================
@@ -312,7 +307,7 @@ def evaluate_model(name, pipe, X_train, X_test, y_train, y_test):
     y_prob = None
     decision_func = None
     roc_score = None
-    feature_imp = None
+    feature_importance_df = None
 
     try:
         if hasattr(pipe, 'predict_proba'):
@@ -332,9 +327,16 @@ def evaluate_model(name, pipe, X_train, X_test, y_train, y_test):
     try:
         model = pipe.named_steps['model']
         if hasattr(model, 'feature_importances_'):
-            feature_imp = model.feature_importances_
+            preprocessor = pipe.named_steps['preprocessor']
+            feature_names = preprocessor.get_feature_names_out()
+            importances = model.feature_importances_
+
+            feature_importance_df = pd.DataFrame({
+                'Features': feature_names,
+                'Importance': importances
+            }).sort_values(by='Importance', ascending=False).reset_index(drop=True)
     except Exception:
-        feature_imp = None
+        feature_importance_df = None
 
     
     print(f'='*100)
@@ -346,16 +348,16 @@ def evaluate_model(name, pipe, X_train, X_test, y_train, y_test):
     print(f'\n ===== Confusion Matrix ===== \n {cm}')
 
     if y_prob is not None:
-        print(f' ===== Prediction Probabilities ===== \n {y_prob}')
+        print(f' ===== Prediction Probabilities ===== \n {y_prob[:10]}')
     
     if decision_func is not None:
-        print(f'\n ===== Decision Function ===== \n {decision_func}')
+        print(f'\n ===== Decision Function ===== \n {decision_func[:10]}')
     
     if roc_score is not None:
         print(f'\n ===== Roc Auc Score ===== \n {roc_score}')
 
-    if feature_imp is not None:
-        print(f'\n ===== Feature Importance ===== {feature_imp}')
+    if feature_importance_df is not None:
+        print(f'\n ===== Feature Importance ===== \n {feature_importance_df.to_string(index=False)}')
 
     print(f'\n ===== Cross Validation Score ===== \n {cv}')
     print(f'\n ===== CV Mean & Standard Deviation ===== \n {cv.mean():.3f} (+/-) {cv.std()*2:.3f}')
@@ -466,16 +468,17 @@ def main():
     data = load_data(filepath)
 
     eda(data)
-    data = feature_enginneering(data)
-    display_new_data(data)
-
     plot_target(data)
     plot_pairplot(data)
     plot_correlation(data)
 
+    data = feature_engineering(data)
+    display_new_data(data)
+
+
     X, y, X_train, X_test, y_train, y_test = feature_selection(data)
     preprocessor = preprocess_data(X)
-    name, trained_models = train_pipeline(preprocessor, X_train, y_train)
+    trained_models = train_pipeline(preprocessor, X_train, y_train)
     
     # Evaluating for each trained models
     for name, pipe in trained_models.items():
