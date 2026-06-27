@@ -102,7 +102,6 @@ def feature_enginneering(data):
     data['coolant_temp_per_rpm'] = data['Coolant temp'] / data['Engine rpm']
     data['oil_temp_per_rpm'] = data['lub oil temp'] / data['Engine rpm']
 
-    # Additional Features
 
     data['pressure_std'] = data[
         ['Lub oil pressure',
@@ -130,7 +129,7 @@ def feature_enginneering(data):
     )
 
     
-    # Engine Load Score
+    # Engine Stress Index
     data['engine_stress_index'] = ( 
         data['Engine rpm'] *
         data['Fuel pressure'] * 
@@ -237,7 +236,8 @@ def preprocess_data(X):
 
 def train_pipeline(preprocessor, X_train, y_train):
     models = {
-         'Logistic Regression': LogisticRegression(
+
+    'Logistic Regression': LogisticRegression(
         C=0.1,
         penalty='l2',
         solver='liblinear',
@@ -246,36 +246,35 @@ def train_pipeline(preprocessor, X_train, y_train):
         random_state=42
     ),
 
-    'Random Forest Classifier': RandomForestClassifier(
-        n_estimators=200,
-        max_depth=10,
-        min_samples_split=10,
-        min_samples_leaf=5,
-        max_features='sqrt',
-        class_weight='balanced',
-        random_state=42
-        n_jobs= 1
-    ),
-
-    'Decision Tree Classifier': DecisionTreeClassifier(
-        max_depth=10,
-        min_samples_split=10,
+    'Random Forest': RandomForestClassifier(
+        n_estimators=100,
+        max_depth=5,
+        min_samples_split=5,
         min_samples_leaf=5,
         class_weight='balanced',
+        random_state=42,
+        n_jobs=1
+    ),
+
+    'Decision Tree': DecisionTreeClassifier(
+        max_depth=10,
+        min_samples_split=5,
+        min_samples_leaf=5,
+        class_weight='balanced',
         random_state=42
     ),
 
-    'Xgboost Classifier': XGBClassifier(
-        n_estimators=200,
+    'XGBoost': XGBClassifier(
+        n_estimators=100,
         learning_rate=0.05,
         max_depth=4,
         subsample=0.8,
         colsample_bytree=0.8,
         eval_metric='logloss',
-        random_state=42
-        n_jobs= 1
+        random_state=42,
+        n_jobs=1
     )
-    }
+}
 
     trained_models = {}
 
@@ -365,7 +364,97 @@ def evaluate_model(name, pipe, X_train, X_test, y_train, y_test):
     return y_pred, y_prob
 
 
+# =========================
+#  CONFUSION MATRICES PLOT
+# =========================
 
+def plot_confusion_matrices(trained_models, X_test, y_test):
+    '''
+    plot confusion matrices for all trained models
+    '''
+    num_models = len(trained_models)
+    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+    axes = axes.ravel()
+
+    for idx, (name, pipe) in enumerate(trained_models.items()):
+        y_pred = pipe.predict(X_test)
+        cm = confusion_matrix(y_test, y_pred)
+
+        sns.heatmap(
+            cm,
+            annot=True,
+            fmt='d',
+            cmap='viridis',
+            ax=axes[idx],
+            cbar=False
+        )
+        axes[idx].set_title(f'{name}\nAccuracy: {accuracy_score(y_test, y_pred):.4f}')
+        axes[idx].set_ylabel('Actual')
+        axes[idx].set_xlabel('Predicted')
+
+    plt.tight_layout()
+    plt.savefig('../plots/confusion_matrix.png', dpi=600, bbox_inches='tight')
+    plt.close()
+
+
+# ====================
+#  ROC CURVES PLOTS
+# ====================
+
+def plot_roc_curves(trained_models, X_test, y_test):
+    '''
+    plot ROC Curves for all models
+    '''
+
+    plt.figure(figsize=(10, 8))
+
+    for name, pipe in trained_models.items():
+        try:
+            y_prob = pipe.predict_proba(X_test)[:, 1]
+
+            fpr, tpr, _ = roc_curve(y_test, y_prob)
+            roc_auc = auc(fpr, tpr)
+
+            plt.plot(
+                fpr,
+                tpr,
+                label=f'{name} (AUC = {roc_auc:.4f})',
+                linewidth = 2
+            )
+        except Exception as e:
+            print(f'Could not plot ROC Curve for {name}: {e}')
+
+    
+    plt.plot([0, 1], [0, 1], 'k--', label='Random Classifier', linewidth=2)
+    
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate', fontsize=12)
+    plt.ylabel('True Positive Rate', fontsize=12)
+    plt.title('ROC Curves - All Models Comparison', fontsize=14, fontweight='bold')
+    plt.legend(loc='lower right', fontsize=10)
+    plt.grid(alpha=0.3)
+    plt.savefig('../plots/roc_curves_all_models.png', dpi=600, bbox_inches='tight')
+    plt.close()
+
+
+# ================================================
+# SAVING ALL TRAINED MODELS FOR DEPLOYMENT TESTING
+# ================================================
+
+def save_models(trained_models):
+    print('\n' + '='*100)
+    print('SAVING MODELS')
+    print('='*100)
+
+    for name, pipe in trained_models.items():
+        model_filename = name.lower().replace(' ', '_').strip() + '.joblib'
+        filepath = f'../models/{model_filename}'
+
+        joblib.dump(pipe, filepath)
+        print(f'\n Saved {name} to {filepath}')
+
+    print('\n' + '='*100)
 
 
 # ====================
@@ -391,6 +480,13 @@ def main():
     # Evaluating for each trained models
     for name, pipe in trained_models.items():
         y_pred, y_prob = evaluate_model(name, pipe, X_train, X_test, y_train, y_test)
+
+    # Plot Confusion matrices and ROC Curves for all models
+    plot_confusion_matrices(trained_models, X_test, y_test)
+    plot_roc_curves(trained_models, X_test, y_test)
+
+    # Saving all trained models to joblib for deployment testing
+    save_models(trained_models)
 
 
 if __name__ == "__main__":
