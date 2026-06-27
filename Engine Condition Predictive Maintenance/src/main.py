@@ -62,24 +62,86 @@ def eda(data):
 def feature_enginneering(data):
 
     # total pressure
-    data['total_pressure'] = data['Lub oil pressure'] + data['Fuel pressure'] + data['Coolant pressure']
+    data['total_pressure'] = (
+        data['Lub oil pressure'] 
+        + data['Fuel pressure'] 
+        + data['Coolant pressure']
+    )
 
     # total temperature
-    data['total_temp'] = data['lub oil temp'] + data['Coolant temp']
+    data['total_temp'] = (
+        data['lub oil temp'] 
+        + data['Coolant temp']
+    )
 
-    # temperature difference
-    data['temp_difference'] = data['lub oil temp'] - data['Coolant temp']
-    data['pressure_difference'] = data['Lub oil pressure'] - data['Coolant pressure']
-    
-    # pressure difference
-    data['temp_ratio'] = data['lub oil temp'] / data['Coolant temp']
-    data['pressure_ratio'] = data['Lub oil pressure'] / data['Coolant temp']
-    
+    # differences
+    data['temp_difference'] = (
+        data['lub oil temp'] 
+        - data['Coolant temp']
+    )
+
+    data['pressure_difference'] = (
+        data['Lub oil pressure'] 
+        - data['Coolant pressure']
+    )
+
+    # ratios
+    data['temp_ratio'] = (
+        data['lub oil temp'] 
+        / data['Coolant temp']
+    )
+
+    data['pressure_ratio'] = (
+        data['Lub oil pressure'] 
+        / data['Coolant temp']
+    )
+
     # rpm interaction
     data['rpm_oil_temp'] = data['Engine rpm'] * data['lub oil temp']
     data['rpm_coolant_temp'] = data['Coolant temp'] * data['Engine rpm']
     data['coolant_temp_per_rpm'] = data['Coolant temp'] / data['Engine rpm']
     data['oil_temp_per_rpm'] = data['lub oil temp'] / data['Engine rpm']
+
+    # Additional Features
+
+    data['pressure_std'] = data[
+        ['Lub oil pressure',
+         'Fuel pressure',
+         'Coolant pressure']
+    ].std(axis=1)
+
+    data['temp_std'] = data[
+        ['lub oil temp',
+         'Coolant temp']
+    ].std(axis=1)
+
+    data['thermal_stress'] = (
+        data['Coolant temp']
+        - data['lub oil temp']
+    )
+
+    data['rpm_pressure'] = (
+        data['Engine rpm']
+        * data['Fuel pressure']
+    )
+
+    data['rpm_squared'] = (
+        data['Engine rpm'] ** 2
+    )
+
+    
+    # Engine Load Score
+    data['engine_stress_index'] = ( 
+        data['Engine rpm'] *
+        data['Fuel pressure'] * 
+        data['Coolant temp']
+        ) / data['Lub oil pressure'].replace(0, np.nan)
+
+    # load categories
+    data["load_level"] = pd.cut(
+    data["engine_stress_index"],
+    bins=3,
+    labels=["Low", "Normal", "High"])
 
     # temperature categories
     data["oil_temp_category"] = pd.cut(
@@ -92,20 +154,6 @@ def feature_enginneering(data):
     data["Lub oil pressure"],
     bins=3,
     labels=["Low", "Normal", "High"])
-
-    # Engine Load Score
-    data['engine_load'] = ( 
-        data['Engine rpm'] *
-        data['Fuel pressure'] * 
-        data['Coolant temp']
-        ) / data['Lub oil pressure'].replace(0, np.nan)
-
-    # load categories
-    data["load_level"] = pd.cut(
-    data["engine_load"],
-    bins=3,
-    labels=["Low", "Normal", "High"])
-
 
     return data
 
@@ -160,7 +208,7 @@ def feature_selection(data):
     X = data.drop(columns=['Engine Condition'], axis =1)
     y = data['Engine Condition']
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
     return X, y, X_train, X_test, y_train, y_test
 
@@ -171,7 +219,7 @@ def feature_selection(data):
 
 def preprocess_data(X):
     num_cols = X.select_dtypes(include=['number']).columns.tolist()
-    cat_cols = X.select_dtypes(include=['object']).columns.tolist()
+    cat_cols = X.select_dtypes(include=['object', 'category']).columns.tolist()
 
     preprocessor = ColumnTransformer(
         transformers=[
@@ -189,10 +237,44 @@ def preprocess_data(X):
 
 def train_pipeline(preprocessor, X_train, y_train):
     models = {
-        'Logistic Regression': LogisticRegression(class_weight='balanced', random_state=42),
-        'Random Forest Classifier': RandomForestClassifier(class_weight='balanced', random_state=42),
-        'Decision Tree Classifier': DecisionTreeClassifier(max_depth=3, min_samples_split=5, min_samples_leaf=2),
-        'Xgboost Classifier': XGBClassifier()
+         'Logistic Regression': LogisticRegression(
+        C=0.1,
+        penalty='l2',
+        solver='liblinear',
+        class_weight='balanced',
+        max_iter=1000,
+        random_state=42
+    ),
+
+    'Random Forest Classifier': RandomForestClassifier(
+        n_estimators=200,
+        max_depth=10,
+        min_samples_split=10,
+        min_samples_leaf=5,
+        max_features='sqrt',
+        class_weight='balanced',
+        random_state=42
+        n_jobs= 1
+    ),
+
+    'Decision Tree Classifier': DecisionTreeClassifier(
+        max_depth=10,
+        min_samples_split=10,
+        min_samples_leaf=5,
+        class_weight='balanced',
+        random_state=42
+    ),
+
+    'Xgboost Classifier': XGBClassifier(
+        n_estimators=200,
+        learning_rate=0.05,
+        max_depth=4,
+        subsample=0.8,
+        colsample_bytree=0.8,
+        eval_metric='logloss',
+        random_state=42
+        n_jobs= 1
+    )
     }
 
     trained_models = {}
@@ -222,7 +304,7 @@ def evaluate_model(name, pipe, X_train, X_test, y_train, y_test):
     accuracy = accuracy_score(y_test, y_pred)
     report = classification_report(y_test, y_pred)
     cm = confusion_matrix(y_test, y_pred)
-    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    skf = StratifiedKFold(n_splits=10, shuffle=True, random_state=42)
     cv = cross_val_score(pipe, X_train, y_train, cv = skf, scoring='roc_auc')
     
     
@@ -242,14 +324,16 @@ def evaluate_model(name, pipe, X_train, X_test, y_train, y_test):
         roc_score = None
 
     try:
-        if hasattr(pipe, 'decision_function'):
-            decision_func = pipe.decision_function(X_test)
+        model = pipe.named_steps['model']
+        if hasattr(model, 'decision_function'):
+            decision_func = model.decision_function(X_test)
     except Exception:
         decision_func = None
 
     try:
-        if hasattr(pipe, 'feature_importance_'):
-            feature_imp = pipe.feature_importance_
+        model = pipe.named_steps['model']
+        if hasattr(model, 'feature_importances_'):
+            feature_imp = model.feature_importances_
     except Exception:
         feature_imp = None
 
