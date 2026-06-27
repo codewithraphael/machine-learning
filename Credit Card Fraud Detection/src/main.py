@@ -260,9 +260,9 @@ def plot_roc_curves(trained_models, X_test, y_test):
     plt.close()
 
 
-# ===========================================
-# SAVING XGBOOST MODEL FOR DEPLOYMENT TESTING
-# ===========================================
+# ================================================
+# SAVING ALL TRAINED MODELS FOR DEPLOYMENT TESTING
+# ================================================
 
 def save_models(trained_models):
     print('\n' + '='*100)
