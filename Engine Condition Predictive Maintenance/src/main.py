@@ -5,6 +5,8 @@
 import pandas as pd
 import numpy as np
 
+import re
+
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set_theme()
 
@@ -15,6 +17,7 @@ from sklearn.model_selection import train_test_split, cross_val_score, Stratifie
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler, OrdinalEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
@@ -34,6 +37,9 @@ warnings.filterwarnings('ignore')
 
 def load_data(filepath):
     data = pd.read_csv(filepath)
+    data.columns = (
+        data.columns.str.strip().str.lower().str.replace(r"\s+", "_", regex=True)
+    )
 
     return data
 
@@ -61,7 +67,7 @@ def eda(data):
 
 def plot_target(data):
     plt.figure(figsize=(15, 5))
-    sns.histplot(data, x = data['Engine Condition'])
+    sns.histplot(data, x = data['engine_condition'], bins=30, kde=True, color='blue')
     plt.savefig('../plots/engine_condition_distribution.png')
     plt.close()
 
@@ -98,73 +104,73 @@ def feature_engineering(data):
 
     # total pressure
     data['total_pressure'] = (
-        data['Lub oil pressure'] 
-        + data['Fuel pressure'] 
-        + data['Coolant pressure']
+        data['lub_oil_pressure'] 
+        + data['fuel_pressure'] 
+        + data['coolant_pressure']
     )
 
     # total temperature
     data['total_temp'] = (
-        data['lub oil temp'] 
-        + data['Coolant temp']
+        data['lub_oil_temp'] 
+        + data['coolant_temp']
     )
 
     # differences
     data['temp_difference'] = (
-        data['lub oil temp'] 
-        - data['Coolant temp']
+        data['lub_oil_temp'] 
+        - data['coolant_temp']
     )
 
     data['pressure_difference'] = (
-        data['Lub oil pressure'] 
-        - data['Coolant pressure']
+        data['lub_oil_pressure'] 
+        - data['coolant_pressure']
     )
 
     # ratios
     data['temp_ratio'] = (
-        data['lub oil temp'] 
-        / data['Coolant temp']
+        data['lub_oil_temp'] 
+        / data['coolant_temp']
     )
 
     data['pressure_ratio'] = (
-        data['Lub oil pressure'] 
-        / data['Coolant pressure']
+        data['lub_oil_pressure'] 
+        / data['coolant_pressure']
     )
 
     # rpm interaction
-    data['rpm_oil_temp'] = data['Engine rpm'] * data['lub oil temp']
-    data['rpm_coolant_temp'] = data['Coolant temp'] * data['Engine rpm']
-    data['coolant_temp_per_rpm'] = data['Coolant temp'] / data['Engine rpm']
-    data['oil_temp_per_rpm'] = data['lub oil temp'] / data['Engine rpm']
+    data['rpm_oil_temp'] = data['engine_rpm'] * data['lub_oil_temp']
+    data['rpm_coolant_temp'] = data['coolant_temp'] * data['engine_rpm']
+    data['coolant_temp_per_rpm'] = data['coolant_temp'] / data['engine_rpm']
+    data['oil_temp_per_rpm'] = data['lub_oil_temp'] / data['engine_rpm']
 
 
     data['pressure_std'] = data[
-        ['Lub oil pressure',
-         'Fuel pressure',
-         'Coolant pressure']
+        ['lub_oil_pressure',
+         'fuel_pressure',
+         'coolant_pressure']
     ].std(axis=1)
 
     data['temp_std'] = data[
-        ['lub oil temp',
-         'Coolant temp']
+        ['lub_oil_temp',
+         'coolant_temp']
     ].std(axis=1)
 
     data['rpm_pressure'] = (
-        data['Engine rpm']
-        * data['Fuel pressure']
+        data['engine_rpm']
+        * data['fuel_pressure']
     )
 
     data['rpm_squared'] = (
-        data['Engine rpm'] ** 2
+        data['engine_rpm'] ** 2
     )
 
     
     # Engine Stress Index
     data['engine_stress_index'] = ( 
-        data['Engine rpm'] *
-        data['Fuel pressure'] * 
-        data['Coolant temp']
-        ) / data['Lub oil pressure'].replace(0, np.nan)
+        data['engine_rpm'] *
+        data['fuel_pressure'] * 
+        data['coolant_temp']
+        ) / data['lub_oil_pressure'].replace(0, np.nan)
 
     # load categories
     data["load_level"] = pd.cut(
@@ -174,13 +180,13 @@ def feature_engineering(data):
 
     # temperature categories
     data["oil_temp_category"] = pd.cut(
-    data["lub oil temp"],
+    data["lub_oil_temp"],
     bins=3,
     labels=["Low", "Normal", "High"])
 
     # pressure categories
     data["oil_pressure_status"] = pd.cut(
-    data["Lub oil pressure"],
+    data["lub_oil_pressure"],
     bins=3,
     labels=["Low", "Normal", "High"])
 
@@ -199,8 +205,8 @@ def display_new_data(data):
 # =====================================
 
 def feature_selection(data):
-    X = data.drop(columns=['Engine Condition'], axis =1)
-    y = data['Engine Condition']
+    X = data.drop(columns=['engine_condition'], axis =1)
+    y = data['engine_condition']
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
@@ -268,6 +274,15 @@ def train_pipeline(preprocessor, X_train, y_train):
         eval_metric='logloss',
         random_state=42,
         n_jobs=1
+    ),
+
+    'MLPClassifier': MLPClassifier(
+        hidden_layer_sizes=10,
+        activation='logistic',
+        solver='adam',
+        max_iter=1000,
+        learning_rate='adaptive',
+        random_state=42
     )
 }
 
@@ -375,7 +390,7 @@ def plot_confusion_matrices(trained_models, X_test, y_test):
     plot confusion matrices for all trained models
     '''
     num_models = len(trained_models)
-    fig, axes = plt.subplots(2, 2, figsize=(12, 10))
+    fig, axes = plt.subplots(1, 5, figsize=(12, 10))
     axes = axes.ravel()
 
     for idx, (name, pipe) in enumerate(trained_models.items()):
