@@ -4,7 +4,6 @@ import numpy as np
 import seaborn as sns; sns.set_theme()
 import matplotlib.pyplot as plt
 
-from src.config import numeric_features
 
 
 def eda(data):
@@ -47,21 +46,23 @@ def plot_outliers(data):
         plt.figure(figsize=(22, 6))
         plt.boxplot(data.select_dtypes(include=['number']), orientation='horizontal')
         plt.title('Outlier Visualization')
-        plt.savefig('plots/outlier_visualization.png')
+        plt.savefig('../plots/outlier_visualization.png')
         plt.close()
     
 
 
 def plot_pairplot(data):
     sns.pairplot(data.select_dtypes(include=['number']))
-    plt.savefig('plots/pairplot_distribution.png')
+    plt.savefig('../plots/pairplot_distribution.png')
     plt.close()
 
 
 def plot_correlation_matrix(data):
+    
     corr_matrix = data.select_dtypes(include=['number']).corr()
 
+    plt.figure(figsize=(16, 16))
     sns.heatmap(corr_matrix, linewidths=0.5, annot=True, cmap='viridis')
-    plt.savefig('plots/correlation_matrix_plot.png')
+    plt.savefig('../plots/correlation_matrix_plot.png')
     plt.close()
 
