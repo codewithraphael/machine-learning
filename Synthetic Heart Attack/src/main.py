@@ -4,6 +4,7 @@ from eda import eda, outlier_detection, outlier_check, plot_outliers, plot_pairp
 from preprocessing import feature_selection, preprocess_data
 from train import train_models
 from eval import evaluate, plot_confusion_matrices, plot_roc_curves
+from eval import save_best_model
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -32,6 +33,8 @@ def main():
     
     plot_confusion_matrices(trained_models, X_test, y_test)
     plot_roc_curves(trained_models, X_test, y_test)
+
+    save_best_model(trained_models)
 
 
 
