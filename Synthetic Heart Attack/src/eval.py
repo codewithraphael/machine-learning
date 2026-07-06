@@ -6,6 +6,8 @@ import seaborn as sns; sns.set_theme()
 from sklearn.model_selection import StratifiedKFold, cross_val_score
 from sklearn.metrics import accuracy_score, classification_report, auc,  roc_auc_score, roc_curve, RocCurveDisplay, confusion_matrix, ConfusionMatrixDisplay
 
+import joblib
+
 def evaluate(name, pipe, X_train, X_test, y_train, y_test):
     y_pred = pipe.predict(X_test)
     train_score = pipe.score(X_train, y_train)
@@ -140,3 +142,8 @@ def plot_roc_curves(trained_models, X_test, y_test):
     plt.grid(alpha=0.3)
     plt.savefig('../plots/roc_curves_plot.png', dpi=600, bbox_inches='tight')
     plt.close()
+
+
+def save_best_model(trained_models):
+    for (name, pipe) in (trained_models.items()):
+        joblib.dump(trained_models['Gradient Boosting'], '../models/gradient_boosting_classifier.joblib')
