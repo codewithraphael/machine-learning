@@ -221,9 +221,9 @@ def evaluate(X, y, X_train, X_test, y_train, y_test, trained_models):
         print(f'\n ===== CROSS VALIDATION MEAN & STD. ===== \n {cv.mean():.3f} (+/-) {cv.std()*2:.3f}')
 
 
-# ==============================
-#  SAVING XGBOOST MODEL TESTING
-# ==============================
+# ============================================
+#  SAVING XGBOOST MODEL FOR DEPLOYMENT TESTING
+# ============================================
 
 def save_model(trained_models):
     for name, model in trained_models.items():
@@ -237,7 +237,7 @@ def save_model(trained_models):
 
 def main():
 
-    filepath = '../data/concrete_data.xls'
+    filepath = '../data/concrete_data.xlsx'
     data = load_data(filepath)
 
     eda(data)
