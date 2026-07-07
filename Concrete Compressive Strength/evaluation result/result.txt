@@ -1,0 +1,129 @@
+RangeIndex: 1030 entries, 0 to 1029
+Data columns (total 9 columns):
+ #   Column                         Non-Null Count  Dtype  
+---  ------                         --------------  -----  
+ 0   cement                         1030 non-null   float64
+ 1   blast_furnace_slag             1030 non-null   float64
+ 2   fly_ash                        1030 non-null   float64
+ 3   water                          1030 non-null   float64
+ 4   superplasticizer               1030 non-null   float64
+ 5   coarse_aggregate               1030 non-null   float64
+ 6   fine_aggregrate                1030 non-null   float64
+ 7   age                            1030 non-null   int64  
+ 8   concrete_compressive_strength  1030 non-null   float64
+dtypes: float64(8), int64(1)
+memory usage: 72.6 KB
+None
+
+ ===== Shape of Dataset ===== 
+ (1030, 9)
+
+ ===== Summary Statistics ===== 
+             cement  blast_furnace_slag      fly_ash        water  superplasticizer  coarse_aggregate  fine_aggregrate          age  concrete_compressive_strength
+count  1030.000000         1030.000000  1030.000000  1030.000000       1030.000000       1030.000000      1030.000000  1030.000000                    1030.000000
+mean    281.165631           73.895485    54.187136   181.566359          6.203112        972.918592       773.578883    45.662136                      35.817836
+std     104.507142           86.279104    63.996469    21.355567          5.973492         77.753818        80.175427    63.169912                      16.705679
+min     102.000000            0.000000     0.000000   121.750000          0.000000        801.000000       594.000000     1.000000                       2.331808
+25%     192.375000            0.000000     0.000000   164.900000          0.000000        932.000000       730.950000     7.000000                      23.707115
+50%     272.900000           22.000000     0.000000   185.000000          6.350000        968.000000       779.510000    28.000000                      34.442774
+75%     350.000000          142.950000   118.270000   192.000000         10.160000       1029.400000       824.000000    56.000000                      46.136287
+max     540.000000          359.400000   200.100000   247.000000         32.200000       1145.000000       992.600000   365.000000                      82.599225
+
+===== TRAINED MODELS =====
+['LINEAR REGRESSION', 'RANDOMFOREST REGRESSOR', 'GRADIENT BOOSTING REGRESSOR', 'XGBOOST REGRESSOR']
+====================================================================================================
+LINEAR REGRESSION
+====================================================================================================
+
+ ===== TRAINING SCORE ===== 
+ 0.610
+
+ ===== TEST SCORE ===== 
+ 0.628
+
+ ===== MEAN ABSOLUTE ERROR ===== 
+ 7.745
+
+ ===== MEAN SQUARED ERROR ===== 
+ 95.975
+
+ ===== ROOT MEAN SQUARED ERROR ===== 
+ 9.797
+
+ ===== CROSS VALIDATION SCORES ===== 
+ [0.62754161 0.59389859 0.55730705 0.67746363 0.54696725]
+
+ ===== CROSS VALIDATION MEAN & STD. ===== 
+ 0.601 (+/-) 0.096
+====================================================================================================
+RANDOMFOREST REGRESSOR
+====================================================================================================
+
+ ===== TRAINING SCORE ===== 
+ 0.986
+
+ ===== TEST SCORE ===== 
+ 0.882
+
+ ===== MEAN ABSOLUTE ERROR ===== 
+ 3.813
+
+ ===== MEAN SQUARED ERROR ===== 
+ 30.317
+
+ ===== ROOT MEAN SQUARED ERROR ===== 
+ 5.506
+
+ ===== CROSS VALIDATION SCORES ===== 
+ [0.8776416  0.90136512 0.91119322 0.91486357 0.91833252]
+
+ ===== CROSS VALIDATION MEAN & STD. ===== 
+ 0.905 (+/-) 0.029
+====================================================================================================
+GRADIENT BOOSTING REGRESSOR
+====================================================================================================
+
+ ===== TRAINING SCORE ===== 
+ 0.950
+
+ ===== TEST SCORE ===== 
+ 0.882
+
+ ===== MEAN ABSOLUTE ERROR ===== 
+ 4.091
+
+ ===== MEAN SQUARED ERROR ===== 
+ 30.418
+
+ ===== ROOT MEAN SQUARED ERROR ===== 
+ 5.515
+
+ ===== CROSS VALIDATION SCORES ===== 
+ [0.88206992 0.88925209 0.91713384 0.90995048 0.91265938]
+
+ ===== CROSS VALIDATION MEAN & STD. ===== 
+ 0.902 (+/-) 0.028
+====================================================================================================
+XGBOOST REGRESSOR
+====================================================================================================
+
+ ===== TRAINING SCORE ===== 
+ 0.997
+
+ ===== TEST SCORE ===== 
+ 0.923
+
+ ===== MEAN ABSOLUTE ERROR ===== 
+ 2.907
+
+ ===== MEAN SQUARED ERROR ===== 
+ 19.822
+
+ ===== ROOT MEAN SQUARED ERROR ===== 
+ 4.452
+
+ ===== CROSS VALIDATION SCORES ===== 
+ [0.92307519 0.91504029 0.92331552 0.9284561  0.9186718 ]
+
+ ===== CROSS VALIDATION MEAN & STD. ===== 
+ 0.922 (+/-) 0.009
