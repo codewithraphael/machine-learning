@@ -41,11 +41,11 @@ class EngineCondition(BaseModel):
     oil_temp_category: str
     oil_pressure_status: str
 
-'''
+
 @app.get("/") # retrieve information from the server
 def root():
     return{'message': 'api is running'}
-'''
+
 
 @app.post("/predict") # send data or payload to the server
 def predict(data: EngineCondition):
