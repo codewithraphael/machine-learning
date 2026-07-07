@@ -1,14 +1,14 @@
+from pathlib import Path
+
 import pandas as pd
-
 import joblib
-import  uvicorn
-
 from fastapi import FastAPI
 from pydantic import BaseModel
 
 app = FastAPI()
 
-model = joblib.load('../models/xgboost_model.joblib')
+MODEL_PATH = Path(__file__).resolve().parent.parent / 'models' / 'xgboost_model.joblib'
+model = joblib.load(MODEL_PATH)
 
 class ConcreteStrength(BaseModel):
     cement: float
@@ -31,5 +31,7 @@ def predict(data: ConcreteStrength):
     input_dict = data.model_dump()
     input_data = pd.DataFrame([input_dict])
     prediction = model.predict(input_data)
+
+    predicted_strength = float(prediction[0])
     
-    return {'predicted_strength': prediction[0]}
+    return {'predicted_strength': predicted_strength}
