@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns; sns.set_theme()
 from pathlib import Path
 
-from sklearn.model_selection import train_test_split, cross_val_score, StratifiedKFold
+from sklearn.model_selection import train_test_split, cross_val_score, KFold
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 
@@ -18,9 +18,10 @@ from sklearn.decomposition import PCA
 
 from xgboost import XGBRegressor
 
-
 import warnings
 warnings.filterwarnings("ignore")
+
+import joblib
 
 PLOTS_DIR = Path(__file__).resolve().parent.parent / 'plots'
 PLOTS_DIR.mkdir(exist_ok=True)
@@ -194,7 +195,7 @@ def train(X_train, y_train):
 #  MODEL EVALUATION
 # =========================
 
-def evaluate(X_train, X_test, y_train, y_test, trained_models):
+def evaluate(X, y, X_train, X_test, y_train, y_test, trained_models):
    for (name, model) in (trained_models.items()):
         y_pred = model.predict(X_test)
         train_score = model.score(X_train, y_train)
@@ -202,8 +203,8 @@ def evaluate(X_train, X_test, y_train, y_test, trained_models):
         mae = mean_absolute_error(y_test, y_pred)
         mse = mean_squared_error(y_test, y_pred)
         rmse = root_mean_squared_error(y_test, y_pred)    
-        '''skf = StratifiedKFold(n_splits=5)
-            cv = cross_val_score(model, X, y, cv=skf, scoring='r2')'''
+        skf = KFold(n_splits=5, shuffle=True, random_state=42)
+        cv = cross_val_score(model, X, y, cv=skf, scoring='r2')
             
 
 
@@ -216,17 +217,18 @@ def evaluate(X_train, X_test, y_train, y_test, trained_models):
         print(f'\n ===== MEAN ABSOLUTE ERROR ===== \n {mae:.3f}')
         print(f'\n ===== MEAN SQUARED ERROR ===== \n {mse:.3f}')
         print(f'\n ===== ROOT MEAN SQUARED ERROR ===== \n {rmse:.3f}')
-
-        save_regression_plots(name, y_test, y_pred)
-        print(f'\n ===== PLOTS SAVED TO ===== \n {os.path.join(os.path.dirname(__file__), "..", "plots")}')
-        '''print(f'\n ===== CROSS VALIDATION SCORES ===== \n {cv}')
-            print(f'\n ===== CROSS VALIDATION MEAN & STD. ===== \n {cv.mean():.3f} (+/-) {cv.std()*2:.3f}')'''
-
-        plot_regression_diagnostics(name, y_test, y_pred)
-        print(f'\nSaved regression plots for {name} in {PLOTS_DIR}')
+        print(f'\n ===== CROSS VALIDATION SCORES ===== \n {cv}')
+        print(f'\n ===== CROSS VALIDATION MEAN & STD. ===== \n {cv.mean():.3f} (+/-) {cv.std()*2:.3f}')
 
 
+# ==============================
+#  SAVING XGBOOST MODEL TESTING
+# ==============================
 
+def save_model(trained_models):
+    for name, model in trained_models.items():
+        if name == 'XGBOOST REGRESSOR':
+            joblib.dump(model, '../models/xgboost_model.joblib')
 
 
 # =========================
@@ -249,8 +251,8 @@ def main():
     print('\n===== TRAINED MODELS =====')
     print(list(trained_models.keys()))
 
-    evaluate(X_train, X_test, y_train, y_test, trained_models)
-    
+    evaluate(X, y, X_train, X_test, y_train, y_test, trained_models)
+    save_model(trained_models)
 
 if __name__ == "__main__":
     main()
