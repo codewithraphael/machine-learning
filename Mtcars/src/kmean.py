@@ -248,7 +248,7 @@ def plot_profile_heatmap(profile):
 
 def save_outputs(data, profile):
     clustered_data_path = PROJECT_ROOT / 'data' / 'mtcars_with_clusters.csv'
-    profile_path = PLOTS_DIR / 'cluster_profile.csv'
+    profile_path = PROJECT_ROOT / 'data' / 'cluster_profile.csv'
 
     data.to_csv(clustered_data_path, index=False)
     profile.to_csv(profile_path)
