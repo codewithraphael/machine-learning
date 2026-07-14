@@ -237,7 +237,7 @@ def save_model(trained_models):
 
 def main():
 
-    filepath = '../data/concrete_data.xlsx'
+    filepath = '../data/concrete_data.xls'
     data = load_data(filepath)
 
     eda(data)
