@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import joblib
 
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set_theme()
@@ -18,6 +19,9 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 PLOTS_DIR = PROJECT_ROOT / 'plots'
+MODELS_DIR = PROJECT_ROOT / 'models'
+
+MODELS_DIR.mkdir(parents=True, exist_ok=True)
 PLOTS_DIR.mkdir(parents=True, exist_ok=True)
 
 # =========================
@@ -68,7 +72,7 @@ def scale_features(cancer_df):
 
     print(f'\n ===== SCALED DATASET ===== \n {scaled_cancer}')
 
-    return scaled_cancer
+    return scaler, scaled_cancer
 
 
 # =========================
@@ -133,7 +137,8 @@ def add_cluster_labels(cancer_df, labels):
     cluster_cancer_df = cancer_df.copy()
     cluster_cancer_df['cluster'] = labels
 
-    print(cluster_cancer_df)
+
+    print(f'\n ===== DATASET WITH CLUSTER LABELS ===== \n{cluster_cancer_df}')
 
     return cluster_cancer_df
 
@@ -182,7 +187,17 @@ def plot_pca(reduced_pca, labels, model, best_k, pca_model):
     plt.legend()
     plt.savefig(PLOTS_DIR/ 'pca_plot.png')
     plt.close()
+
+
+# =========================
+#  SAVING MODEL AND SCALER
+# =========================
     
+def save_model(model, scaler):
+
+    joblib.dump(model, MODELS_DIR/ 'model.joblib')
+    joblib.dump(scaler, MODELS_DIR/ 'scaler.joblib')
+
 
 
 
@@ -194,14 +209,15 @@ def main():
     cancer = load_data()
     eda(cancer)
     cancer_df = dataframe(cancer)
-    scaled_cancer = scale_features(cancer_df)
+    scaler, scaled_cancer = scale_features(cancer_df)
     best_k, scores = optimal_k(scaled_cancer)
     model, labels = train_model(scaled_cancer, best_k)
     cluster_cancer_df = add_cluster_labels(cancer_df, labels)
     pca_model, reduced_pca = pca(scaled_cancer)
     plot_pca(reduced_pca, labels, model, best_k, pca_model)
+    save_model(model, scaler)
 
 
-    
+
 if __name__ == '__main__':
     main()
