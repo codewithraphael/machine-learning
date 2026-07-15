@@ -58,15 +58,6 @@ def dataframe(cancer):
 
 
 # =========================
-#  PAIRPLOT DISTRIBUTION
-# =========================
-
-def plot_pairplot(cancer_df):
-    sns.pairplot(cancer_df)
-    plt.savefig(PLOTS_DIR / 'pairplot_distribution.png')
-    plt.close()
-
-# =========================
 #  FEATURES SCALING
 # =========================
 
@@ -78,33 +69,6 @@ def scale_features(cancer_df):
     print(f'\n ===== SCALED DATASET ===== \n {scaled_cancer}')
 
     return scaled_cancer
-
-
-# =============================
-#  PRINCIPAL COMPONENT ANALYSIS
-# =============================
-
-def pca(scaled_cancer):
-    pca = PCA(n_components=2, random_state=42)
-    reduced_pca = pca.fit_transform(scaled_cancer)
-
-    print( f'\n ===== REDUCED DATASET DIMENSION ===== \n {reduced_pca}')
-
-    return reduced_pca
-
-# =========================
-#  PLOTTING PCA 
-# =========================
-
-def plot_pca(reduced_pca, cancer):
-    plt.figure(figsize=(8, 6))
-
-    plt.scatter(reduced_pca[:, 0], reduced_pca[:, 1], c=cancer['target'])
-    plt.xlabel('cluster 1')
-    plt.ylabel('cluster 2')
-    plt.savefig(PLOTS_DIR/ 'pca_plot.png')
-    plt.close()
-
 
 
 # =========================
@@ -120,8 +84,105 @@ def optimal_k(scaled_cancer):
         model = KMeans(n_clusters=k, random_state=42, init='k-means++', n_init=10)
         labels = model.fit_predict(scaled_cancer)
         inertias.append(model.inertia_)
-        sil_score.append(silhouette_score(scaled_cancer, labels))
+        scores = silhouette_score(scaled_cancer, labels)
+        sil_score.append(scores)
 
+        best_k = k_range[np.argmax(scores)]
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 4))
+
+    ax1.plot(k_range, inertias, marker='o', color='steelblue')
+    ax1.set_title('Elbow Method')
+    ax1.set_xlabel('Number of clusters')
+    ax1.set_ylabel('Inertias')
+
+    ax2.plot(k_range, sil_score, marker='o', color='coral')
+    ax2.set_title('Silhouette Score')
+    ax2.set_xlabel('Number of clusters')
+    ax2.set_ylabel('Score')
+
+    plt.tight_layout()
+    plt.savefig(PLOTS_DIR / 'optimal_k.png')
+    plt.close()
+
+    print(f'\n ===== BEST K BASED ON SILHOUETTE SCORE ===== \n {best_k}')
+
+    return best_k, scores
+
+
+
+# =========================
+#  TRAINING MODEL
+# =========================
+
+def train_model(scaled_cancer, best_k):
+
+    model = KMeans(n_clusters=best_k, random_state=42, init='k-means++', n_init=10)
+    labels = model.fit_predict(scaled_cancer)
+
+    return model, labels
+
+
+
+# ===============================
+#  ADD CLUSTER LABELS TO DATASET
+# ===============================
+
+def add_cluster_labels(cancer_df, labels):
+
+    cluster_cancer_df = cancer_df.copy()
+    cluster_cancer_df['cluster'] = labels
+
+    print(cluster_cancer_df)
+
+    return cluster_cancer_df
+
+
+# =============================
+#  PCA TRANSFORMATION
+# =============================
+
+def pca(scaled_cancer):
+
+    pca_model = PCA(n_components=2, random_state=42)
+    reduced_pca = pca_model.fit_transform(scaled_cancer)
+
+    print( f'\n ===== REDUCED DATASET DIMENSION ===== \n {reduced_pca}')
+
+    return pca_model, reduced_pca
+
+
+# =================================
+#  PCA VISUALIZATION WITH CENTROIDS
+# =================================
+
+def plot_pca(reduced_pca, labels, model, best_k, pca_model):
+
+    plt.figure(figsize=(8, 6))
+
+    sns.scatterplot(
+        x=reduced_pca[:, 0], 
+        y=reduced_pca[:, 1], 
+        hue=labels, 
+        palette='tab10', 
+        s=80
+    )
+    centroids_pca = pca_model.transform(model.cluster_centers_)
+
+    plt.scatter(centroids_pca[:, 0],
+                centroids_pca[:, 1 ],
+                marker='x',
+                s=200,
+                linewidths=3,
+                label='centroids')
+    
+    plt.title(f'PCA Projection (k = {best_k})')
+    plt.xlabel('PC1')
+    plt.ylabel('PC2')
+    plt.legend()
+    plt.savefig(PLOTS_DIR/ 'pca_plot.png')
+    plt.close()
+    
 
 
 
@@ -133,11 +194,14 @@ def main():
     cancer = load_data()
     eda(cancer)
     cancer_df = dataframe(cancer)
-    plot_pairplot(cancer_df)
     scaled_cancer = scale_features(cancer_df)
-    reduced_pca = pca(scaled_cancer)
-    plot_pca(reduced_pca, cancer)
+    best_k, scores = optimal_k(scaled_cancer)
+    model, labels = train_model(scaled_cancer, best_k)
+    cluster_cancer_df = add_cluster_labels(cancer_df, labels)
+    pca_model, reduced_pca = pca(scaled_cancer)
+    plot_pca(reduced_pca, labels, model, best_k, pca_model)
 
 
+    
 if __name__ == '__main__':
     main()
