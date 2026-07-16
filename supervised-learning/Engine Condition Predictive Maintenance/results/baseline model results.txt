@@ -1,0 +1,174 @@
+RangeIndex: 19535 entries, 0 to 19534
+Data columns (total 7 columns):
+ #   Column            Non-Null Count  Dtype
+---  ------            --------------  -----
+ 0   Engine rpm        19535 non-null  int64
+ 1   Lub oil pressure  19535 non-null  float64
+ 2   Fuel pressure     19535 non-null  float64
+ 3   Coolant pressure  19535 non-null  float64
+ 4   lub oil temp      19535 non-null  float64
+ 5   Coolant temp      19535 non-null  float64
+ 6   Engine Condition  19535 non-null  int64
+dtypes: float64(5), int64(2)
+memory usage: 1.0 MB
+
+ ===== Shape of the data =====
+ (19535, 7)
+None
+
+ ===== Missing Values =====
+ Engine rpm          0
+Lub oil pressure    0
+Fuel pressure       0
+Coolant pressure    0
+lub oil temp        0
+Coolant temp        0
+Engine Condition    0
+dtype: int64
+
+ ===== Summary Statistics =====
+          Engine rpm  Lub oil pressure  Fuel pressure  Coolant pressure  lub oil temp  Coolant temp  Engine Condition
+count  19535.000000      19535.000000   19535.000000      19535.000000  19535.000000  19535.000000      19535.000000
+mean     791.239263          3.303775       6.655615          2.335369     77.643420     78.427433          0.630509
+std      267.611193          1.021643       2.761021          1.036382      3.110984      6.206749          0.482679
+min       61.000000          0.003384       0.003187          0.002483     71.321974     61.673325          0.000000
+25%      593.000000          2.518815       4.916886          1.600466     75.725990     73.895421          0.000000
+50%      746.000000          3.162035       6.201720          2.166883     76.817350     78.346662          1.000000
+75%      934.000000          4.055272       7.744973          2.848840     78.071691     82.915411          1.000000
+max     2239.000000          7.265566      21.138326          7.478505     89.580796    195.527912          1.000000
+
+ ===== New Featured Data =====
+        Engine rpm  Lub oil pressure  Fuel pressure  ...  oil_pressure_status    engine_load  load_level
+0             700          2.493592      11.790927  ...               Normal  270197.961972         Low
+1             876          2.941606      16.193866  ...               Normal  397592.589982         Low
+2             520          2.961746       6.553147  ...               Normal   91636.448826         Low
+3             473          3.707835      19.510172  ...               Normal  178637.575669         Low
+4             619          5.672919      15.738871  ...                 High  149409.448633         Low
+...           ...               ...            ...  ...                  ...            ...         ...
+19530         902          4.117296       4.981360  ...               Normal   95952.265044         Low
+19531         694          4.817720      10.866701  ...               Normal  117290.377241         Low
+19532         684          2.673344       4.927376  ...               Normal  108846.772257         Low
+19533         696          3.094163       8.291816  ...               Normal  137321.131570         Low
+19534         504          3.775246       3.962480  ...               Normal   42542.612825         Low
+
+[19535 rows x 21 columns]
+====================================================================================================
+
+Logistic Regression
+====================================================================================================
+
+ ===== Training Score =====
+ 0.6358051777095217
+
+ ===== Accuracy =====
+ 0.634874594779048
+===== Classification Report =====
+               precision    recall  f1-score   support
+
+           0       0.51      0.67      0.58      2214
+           1       0.75      0.62      0.68      3647
+
+    accuracy                           0.63      5861
+   macro avg       0.63      0.64      0.63      5861
+weighted avg       0.66      0.63      0.64      5861
+
+
+ ===== Confusion Matrix =====
+ [[1478  736]
+ [1404 2243]]
+ ===== Prediction Probabilities =====
+ [0.49400429 0.67758895 0.36479209 ... 0.25080019 0.35232481 0.38529621]
+
+ ===== Decision Function =====
+ [-0.023984    0.74271356 -0.55462481 ... -1.09434916 -0.60883581
+ -0.4671281 ]
+
+ ===== Roc Auc Score =====
+ 0.6916635147523214
+====================================================================================================
+
+Random Forest Classifier
+====================================================================================================
+
+ ===== Training Score =====
+ 0.9999268685095802
+
+ ===== Accuracy =====
+ 0.6445998976283911
+===== Classification Report =====
+               precision    recall  f1-score   support
+
+           0       0.54      0.36      0.44      2214
+           1       0.68      0.82      0.74      3647
+
+    accuracy                           0.64      5861
+   macro avg       0.61      0.59      0.59      5861
+weighted avg       0.63      0.64      0.63      5861
+
+
+ ===== Confusion Matrix =====
+ [[ 805 1409]
+ [ 674 2973]]
+ ===== Prediction Probabilities =====
+ [0.67 0.86 0.54 ... 0.42 0.39 0.52]
+
+ ===== Roc Auc Score =====
+ 0.6684792960716373
+====================================================================================================
+
+Decision Tree Classifier
+====================================================================================================
+
+ ===== Training Score =====
+ 1.0
+
+ ===== Accuracy =====
+ 0.5787408292100324
+===== Classification Report =====
+               precision    recall  f1-score   support
+
+           0       0.44      0.43      0.44      2214
+           1       0.66      0.67      0.66      3647
+
+    accuracy                           0.58      5861
+   macro avg       0.55      0.55      0.55      5861
+weighted avg       0.58      0.58      0.58      5861
+
+
+ ===== Confusion Matrix =====
+ [[ 963 1251]
+ [1218 2429]]
+ ===== Prediction Probabilities =====
+ [1. 1. 1. ... 1. 0. 1.]
+
+ ===== Roc Auc Score =====
+ 0.5504931104973237
+====================================================================================================
+
+Xgboost Classifier
+====================================================================================================
+
+ ===== Training Score =====
+ 0.887962556676905
+
+ ===== Accuracy =====
+ 0.6405050332707729
+===== Classification Report =====
+               precision    recall  f1-score   support
+
+           0       0.54      0.37      0.44      2214
+           1       0.68      0.81      0.74      3647
+
+    accuracy                           0.64      5861
+   macro avg       0.61      0.59      0.59      5861
+weighted avg       0.62      0.64      0.62      5861
+
+
+ ===== Confusion Matrix =====
+ [[ 815 1399]
+ [ 708 2939]]
+ ===== Prediction Probabilities =====
+ [0.69077563 0.9444663  0.27282223 ... 0.4769627  0.31809545 0.6515087 ]
+
+ ===== Roc Auc Score =====
+ 0.6591857311041807
