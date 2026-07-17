@@ -1,0 +1,320 @@
+RangeIndex: 19535 entries, 0 to 19534
+Data columns (total 7 columns):
+ #   Column            Non-Null Count  Dtype  
+---  ------            --------------  -----  
+ 0   Engine rpm        19535 non-null  int64  
+ 1   Lub oil pressure  19535 non-null  float64
+ 2   Fuel pressure     19535 non-null  float64
+ 3   Coolant pressure  19535 non-null  float64
+ 4   lub oil temp      19535 non-null  float64
+ 5   Coolant temp      19535 non-null  float64
+ 6   Engine Condition  19535 non-null  int64  
+dtypes: float64(5), int64(2)
+memory usage: 1.0 MB
+
+ ===== Shape of the data ===== 
+ (19535, 7)
+None
+
+ ===== Missing Values ===== 
+ Engine rpm          0
+Lub oil pressure    0
+Fuel pressure       0
+Coolant pressure    0
+lub oil temp        0
+Coolant temp        0
+Engine Condition    0
+dtype: int64
+
+ ===== Summary Statistics ===== 
+          Engine rpm  Lub oil pressure  Fuel pressure  Coolant pressure  lub oil temp  Coolant temp  Engine Condition
+count  19535.000000      19535.000000   19535.000000      19535.000000  19535.000000  19535.000000      19535.000000
+mean     791.239263          3.303775       6.655615          2.335369     77.643420     78.427433          0.630509
+std      267.611193          1.021643       2.761021          1.036382      3.110984      6.206749          0.482679
+min       61.000000          0.003384       0.003187          0.002483     71.321974     61.673325          0.000000
+25%      593.000000          2.518815       4.916886          1.600466     75.725990     73.895421          0.000000
+50%      746.000000          3.162035       6.201720          2.166883     76.817350     78.346662          1.000000
+75%      934.000000          4.055272       7.744973          2.848840     78.071691     82.915411          1.000000
+max     2239.000000          7.265566      21.138326          7.478505     89.580796    195.527912          1.000000
+
+ ===== New Featured Data ===== 
+        Engine rpm  Lub oil pressure  Fuel pressure  Coolant pressure  lub oil temp  Coolant temp  ...  rpm_pressure  rpm_squared  engine_stress_index  load_level  oil_temp_category  oil_pressure_status
+0             700          2.493592      11.790927          3.178981     84.144163     81.632187  ...   8253.649166       490000        270197.961972         Low               High               Normal
+1             876          2.941606      16.193866          2.464504     77.640934     82.445724  ...  14185.826231       767376        397592.589982         Low             Normal               Normal
+2             520          2.961746       6.553147          1.064347     77.752266     79.645777  ...   3407.636394       270400         91636.448826         Low             Normal               Normal
+3             473          3.707835      19.510172          3.727455     74.129907     71.774629  ...   9228.311195       223729        178637.575669         Low                Low               Normal
+4             619          5.672919      15.738871          2.052251     78.396989     87.000225  ...   9742.361403       383161        149409.448633         Low             Normal                 High
+...           ...               ...            ...               ...           ...           ...  ...           ...          ...                  ...         ...                ...                  ...
+19530         902          4.117296       4.981360          4.346564     75.951627     87.925087  ...   4493.187038       813604         95952.265044         Low                Low               Normal
+19531         694          4.817720      10.866701          6.186689     75.281430     74.928459  ...   7541.490223       481636        117290.377241         Low                Low               Normal
+19532         684          2.673344       4.927376          1.903572     76.844940     86.337345  ...   3370.325042       467856        108846.772257         Low                Low               Normal
+19533         696          3.094163       8.291816          1.221729     77.179693     73.624396  ...   5771.103620       484416        137321.131570         Low                Low               Normal
+19534         504          3.775246       3.962480          2.038647     75.564313     80.421421  ...   1997.090142       254016         42542.612825         Low                Low               Normal
+
+[19535 rows x 25 columns]
+====================================================================================================
+
+Logistic Regression
+====================================================================================================
+
+ ===== Training Score ===== 
+ 0.6322626055797287
+
+ ===== Accuracy ===== 
+ 0.6424366521627848
+===== Classification Report ===== 
+               precision    recall  f1-score   support
+
+           0       0.51      0.68      0.59      1444
+           1       0.77      0.62      0.69      2463
+
+    accuracy                           0.64      3907
+   macro avg       0.64      0.65      0.64      3907
+weighted avg       0.67      0.64      0.65      3907
+
+
+ ===== Confusion Matrix ===== 
+ [[ 989  455]
+ [ 942 1521]]
+ ===== Prediction Probabilities ===== 
+ [0.67036818 0.52516331 0.3729756  0.86232263 0.36701186 0.67478471
+ 0.62362364 0.63268248 0.3656605  0.30222454]
+
+ ===== Roc Auc Score ===== 
+ 0.7003370099072928
+
+ ===== Cross Validation Score ===== 
+ [0.69926756 0.68450635 0.70947956 0.6701983  0.65143728 0.709621
+ 0.72773596 0.71715103 0.68362702 0.70464419]
+
+ ===== CV Mean & Standard Deviation ===== 
+ 0.696 (+/-) 0.044
+====================================================================================================
+
+Random Forest
+====================================================================================================
+
+ ===== Training Score ===== 
+ 0.6401970821602252
+
+ ===== Accuracy ===== 
+ 0.6304069618633222
+===== Classification Report ===== 
+               precision    recall  f1-score   support
+
+           0       0.50      0.69      0.58      1444
+           1       0.76      0.60      0.67      2463
+
+    accuracy                           0.63      3907
+   macro avg       0.63      0.64      0.62      3907
+weighted avg       0.67      0.63      0.64      3907
+
+
+ ===== Confusion Matrix ===== 
+ [[ 992  452]
+ [ 992 1471]]
+ ===== Prediction Probabilities ===== 
+ [0.63219111 0.46221659 0.43637547 0.788794   0.40424937 0.66186518
+ 0.6976583  0.64492903 0.37414117 0.3017463 ]
+
+ ===== Roc Auc Score ===== 
+ 0.6941928913571832
+
+ ===== Feature Importance ===== 
+                  Features  Importance
+        num__rpm_oil_temp    0.185000
+         num__rpm_squared    0.163146
+    num__rpm_coolant_temp    0.133411
+          num__Engine rpm    0.118091
+    num__oil_temp_per_rpm    0.064380
+       num__Fuel pressure    0.053423
+num__coolant_temp_per_rpm    0.047566
+      num__total_pressure    0.040375
+        num__lub oil temp    0.038166
+        num__pressure_std    0.035339
+        num__rpm_pressure    0.022708
+    num__Lub oil pressure    0.018133
+ num__engine_stress_index    0.014352
+          num__total_temp    0.012785
+      num__pressure_ratio    0.011198
+ num__pressure_difference    0.009132
+        num__Coolant temp    0.007600
+          num__temp_ratio    0.006519
+    num__Coolant pressure    0.005657
+     num__temp_difference    0.005397
+            num__temp_std    0.003640
+   cat__oil_temp_category    0.003112
+ cat__oil_pressure_status    0.000871
+          cat__load_level    0.000000
+
+ ===== Cross Validation Score ===== 
+ [0.69585126 0.6868881  0.70674126 0.67006306 0.664824   0.71623878
+ 0.71852205 0.7155146  0.69240866 0.70051993]
+
+ ===== CV Mean & Standard Deviation ===== 
+ 0.697 (+/-) 0.036
+====================================================================================================
+
+Decision Tree
+====================================================================================================
+
+ ===== Training Score ===== 
+ 0.7012413616585615
+
+ ===== Accuracy ===== 
+ 0.591758382390581
+===== Classification Report ===== 
+               precision    recall  f1-score   support
+
+           0       0.46      0.65      0.54      1444
+           1       0.73      0.56      0.63      2463
+
+    accuracy                           0.59      3907
+   macro avg       0.60      0.60      0.59      3907
+weighted avg       0.63      0.59      0.60      3907
+
+
+ ===== Confusion Matrix ===== 
+ [[ 936  508]
+ [1087 1376]]
+ ===== Prediction Probabilities ===== 
+ [1.         0.72090311 0.27160444 0.97441609 0.72300419 0.41031529
+ 0.74553249 0.67839845 0.3213915  0.        ]
+
+ ===== Roc Auc Score ===== 
+ 0.6260318925077294
+
+ ===== Feature Importance ===== 
+                  Features  Importance
+        num__rpm_oil_temp    0.334459
+       num__Fuel pressure    0.097073
+        num__lub oil temp    0.069798
+    num__Lub oil pressure    0.056015
+        num__pressure_std    0.040961
+            num__temp_std    0.038735
+    num__rpm_coolant_temp    0.035522
+ num__engine_stress_index    0.034299
+    num__oil_temp_per_rpm    0.033240
+num__coolant_temp_per_rpm    0.030661
+          num__total_temp    0.028766
+      num__total_pressure    0.027902
+      num__pressure_ratio    0.027821
+    num__Coolant pressure    0.027492
+          num__temp_ratio    0.021065
+ num__pressure_difference    0.020732
+        num__rpm_pressure    0.019498
+        num__Coolant temp    0.018846
+         num__rpm_squared    0.017522
+     num__temp_difference    0.014603
+          num__Engine rpm    0.003346
+   cat__oil_temp_category    0.001644
+          cat__load_level    0.000000
+ cat__oil_pressure_status    0.000000
+
+ ===== Cross Validation Score ===== 
+ [0.63045861 0.631213   0.65720057 0.62955931 0.62002085 0.64007544
+ 0.64025385 0.63514946 0.633148   0.64460759]
+
+ ===== CV Mean & Standard Deviation ===== 
+ 0.636 (+/-) 0.019
+====================================================================================================
+
+XGBoost
+====================================================================================================
+
+ ===== Training Score ===== 
+ 0.69413872536473
+
+ ===== Accuracy ===== 
+ 0.6606091630406962
+===== Classification Report ===== 
+               precision    recall  f1-score   support
+
+           0       0.56      0.36      0.44      1444
+           1       0.69      0.84      0.76      2463
+
+    accuracy                           0.66      3907
+   macro avg       0.63      0.60      0.60      3907
+weighted avg       0.64      0.66      0.64      3907
+
+
+ ===== Confusion Matrix ===== 
+ [[ 515  929]
+ [ 397 2066]]
+ ===== Prediction Probabilities ===== 
+ [0.76934475 0.69691694 0.56662166 0.89127415 0.5536575  0.7215081
+ 0.77090794 0.7313123  0.4603175  0.36245093]
+
+ ===== Roc Auc Score ===== 
+ 0.6992906371641007
+
+ ===== Feature Importance ===== 
+                  Features  Importance
+        num__rpm_oil_temp    0.258358
+         num__rpm_squared    0.093352
+    num__rpm_coolant_temp    0.078116
+          num__Engine rpm    0.053400
+       num__Fuel pressure    0.051728
+        num__rpm_pressure    0.043135
+      num__total_pressure    0.040175
+        num__lub oil temp    0.032266
+        num__pressure_std    0.031702
+    num__Lub oil pressure    0.027758
+   cat__oil_temp_category    0.027494
+num__coolant_temp_per_rpm    0.027439
+ num__pressure_difference    0.027250
+      num__pressure_ratio    0.026530
+    num__oil_temp_per_rpm    0.024647
+          num__total_temp    0.022808
+ cat__oil_pressure_status    0.020138
+        num__Coolant temp    0.019962
+ num__engine_stress_index    0.019671
+    num__Coolant pressure    0.019613
+     num__temp_difference    0.019242
+            num__temp_std    0.018300
+          num__temp_ratio    0.016917
+          cat__load_level    0.000000
+
+ ===== Cross Validation Score ===== 
+ [0.70374651 0.68724114 0.71219328 0.6751796  0.66951533 0.7160384
+ 0.72077719 0.72289171 0.69522561 0.7025627 ]
+
+ ===== CV Mean & Standard Deviation ===== 
+ 0.701 (+/-) 0.035
+====================================================================================================
+
+MLPClassifier
+====================================================================================================
+
+ ===== Training Score ===== 
+ 0.6737906321986179
+
+ ===== Accuracy ===== 
+ 0.6634246224724852
+===== Classification Report ===== 
+               precision    recall  f1-score   support
+
+           0       0.57      0.38      0.46      1444
+           1       0.70      0.83      0.76      2463
+
+    accuracy                           0.66      3907
+   macro avg       0.63      0.61      0.61      3907
+weighted avg       0.65      0.66      0.65      3907
+
+
+ ===== Confusion Matrix ===== 
+ [[ 554  890]
+ [ 425 2038]]
+ ===== Prediction Probabilities ===== 
+ [0.76468561 0.66990036 0.49816708 0.87859993 0.46355354 0.75855505
+ 0.78591614 0.74859471 0.48905672 0.40517   ]
+
+ ===== Roc Auc Score ===== 
+ 0.701977072304455
+
+ ===== Cross Validation Score ===== 
+ [0.70222191 0.69051517 0.71355629 0.67119245 0.65775801 0.71305381
+ 0.72189334 0.72090374 0.69177172 0.71071268]
+
+ ===== CV Mean & Standard Deviation ===== 
+ 0.699 (+/-) 0.041
