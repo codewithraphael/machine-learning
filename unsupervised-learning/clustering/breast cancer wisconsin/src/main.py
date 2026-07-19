@@ -102,7 +102,7 @@ def optimal_k(scaled_cancer):
         scores = silhouette_score(scaled_cancer, labels)
         sil_score.append(scores)
 
-        best_k = k_range[np.argmax(scores)]
+        best_k = k_range[np.argmax(sil_score)]
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 4))
 
