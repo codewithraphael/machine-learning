@@ -11,7 +11,6 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 
 from sklearn.metrics import silhouette_score
-from sklearn.manifold import TSNE
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -60,6 +59,17 @@ def dataframe(cancer):
     print(f'\n ===== WINCONSIN BREAST CANCER DATASET ===== \n{cancer_df.head(5)}')
 
     return cancer_df
+
+
+# =========================
+#  PAIRPLOT DISTRIBUTION
+# =========================
+
+def plot_pairplot(cancer_df):
+    
+    sns.pairplot(cancer_df)
+    plt.savefig(PLOTS_DIR / 'pairplot_distribution.png')
+    plt.close()
 
 
 # =========================
@@ -210,6 +220,7 @@ def main():
     cancer = load_data()
     eda(cancer)
     cancer_df = dataframe(cancer)
+    plot_pairplot(cancer_df)
     scaler, scaled_cancer = scale_features(cancer_df)
     best_k, scores = optimal_k(scaled_cancer)
     model, labels = train_model(scaled_cancer, best_k)
