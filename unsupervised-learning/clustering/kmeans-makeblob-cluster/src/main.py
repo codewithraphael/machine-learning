@@ -18,8 +18,10 @@ warnings.filterwarnings('ignore')
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 PLOTS_DIR = PROJECT_ROOT / 'plots'
+MODELS_DIR = PROJECT_ROOT / 'models'
 
 PLOTS_DIR.mkdir(parents=True, exist_ok=True)
+MODELS_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # ===================================
@@ -125,6 +127,15 @@ def plot_scatterplot(scaled_X, y, model, labels):
     plt.close()
 
 
+# =========================
+#  SAVING MODEL AND SCALER
+# =========================
+
+def save_model(model, scaler):
+
+    joblib.dump(model, MODELS_DIR / 'model.joblib')
+    joblib.dump(scaler, MODELS_DIR / 'scaler.joblib')
+    
 
 
 
@@ -137,6 +148,7 @@ def main():
     best_k = optimal_k(scaled_X)
     model, labels = fit_model(scaled_X, best_k)
     plot_scatterplot(scaled_X, y, model, labels)
+    save_model(model, scaler)
 
 
 
