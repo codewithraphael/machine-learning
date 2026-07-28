@@ -135,28 +135,31 @@ def rfm(data):
 
     # Grouping by CustomerID to calculate RFM Metrics
 
-    rfm = data.groupby('CustomerID').agg({
+    rfm_df = data.groupby('CustomerID').agg({
         'InvoiceDate': lambda x: (reference_date - x.max()).days, # Recency
         'InvoiceNo': 'nunique', # Frequency
         'TotalPrice': 'sum' # Monetary value
     }).reset_index()
 
-    print(rfm)
+    print(rfm_df)
 
 
     # Renaming Columns
-    rfm.columns = ['CustomerID', 'Recency', 'Frequency', 'Monetary']
+    rfm_df.columns = ['CustomerID', 'Recency', 'Frequency', 'Monetary']
 
     # Handling Monetary values of 0
-    rfm['Monetary'].replace(0, 1)
+    rfm_df['Monetary'].replace(0, 1)
 
-    print(f'\n ===== RFM SUMMARY STATISTICS ===== \n {rfm.describe()}')
+    print(f'\n ===== RFM SUMMARY STATISTICS ===== \n {rfm_df.describe()}')
+
+
+    return rfm_df
 
 
 # =========================
 #  HANDLING SKEWNESS
 # =========================
-def handle_skewness(rfm):
+def handle_skewness(rfm_df):
 
     '''
     Handling skewed distribution in RFM data using log transformation.
@@ -169,16 +172,16 @@ def handle_skewness(rfm):
     # Calculating skewness before transformation
 
     print(f'\n ===== SKEWNESS BEFORE TRANSFORMATION ===== \n')
-    for col in ['Recency', 'Frequency', 'Monetary']:
-        skew = rfm[col].skew()
+    for col in rfm_df:
+        skew = rfm_df[col].skew()
         print(f'{col}: {skew:.3f}')
 
 
     # Applying Log transformation
 
-    rfm_transformed = rfm.copy()
+    rfm_transformed = rfm_df.copy()
     for col in ['Recency', 'Frequency', 'Monetary']:
-        rfm_transformed[f'{col}_log'] = np.log1p(rfm[col])
+        rfm_transformed[f'{col}_log'] = np.log1p(rfm_df[col])
 
     print(f'\n ===== SKEWNESS AFTER TRANSFORMATION ===== \n')
     for col in rfm_transformed:
@@ -188,7 +191,39 @@ def handle_skewness(rfm):
     return rfm_transformed
 
 
+# =============================
+#  VISUALIZING RFM DISTRIBUTION
+# =============================
 
+def visualize_rfm_distributions(rfm_df):
+    """
+    Visualize RFM distributions before and after log transformation.
+    
+    Parameters:
+    -----------
+    rfm_df : pandas.DataFrame
+        RFM dataframe with original and log-transformed columns
+    """
+    fig, axes = plt.subplots(2, 3, figsize=(15, 8))
+    
+    metrics = ['Recency', 'Frequency', 'Monetary']
+    
+    for i, metric in enumerate(metrics):
+        # Original distribution
+        axes[0, i].hist(rfm_df[metric], bins=50, edgecolor='black', alpha=0.7)
+        axes[0, i].set_title(f'{metric} (Original)')
+        axes[0, i].set_xlabel('Value')
+        axes[0, i].set_ylabel('Frequency')
+        
+        # Log-transformed distribution
+        axes[1, i].hist(rfm_df[f'{metric}_log'], bins=50, edgecolor='black', alpha=0.7, color='orange')
+        axes[1, i].set_title(f'{metric} (Log Transformed)')
+        axes[1, i].set_xlabel('Log Value')
+        axes[1, i].set_ylabel('Frequency')
+    
+    plt.tight_layout()
+    plt.savefig(PLOTS_DIR /  'rfm_distributions.png', dpi=100, bbox_inches='tight')
+    plt.close()
 
 
 
@@ -204,8 +239,9 @@ def main():
     eda(data)
     data = preprocess_data(data)
     handle_outliers(data)
-    rfm(data)
-    handle_skewness(rfm)
+    rfm_df = rfm(data)
+    handle_skewness(rfm_df)
+    visualize_rfm_distributions(rfm_df)
 
 
 
