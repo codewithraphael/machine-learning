@@ -93,9 +93,9 @@ def preprocess_data(data):
 
 
 # =========================
-#  CHECKING FOR OUTLIERS
+#  HANDLING OUTLIERS
 # =========================
-def check_outliers(data):
+def handle_outliers(data):
 
     for col in ['Quantity', 'UnitPrice']:
 
@@ -107,8 +107,8 @@ def check_outliers(data):
         lower_bound = q1 - 1.5 * iqr
         upper_bound = q3 + 1.5 * iqr
 
-        print(f'\n ===== Lower Bound ===== \n {lower_bound[col]}')
-        print(f'\n ===== Upper Bound ===== \n {upper_bound[col]}')
+        print(f'\n ===== Lower Bound ===== \n {lower_bound}')
+        print(f'\n ===== Upper Bound ===== \n {upper_bound}')
 
         data = data[(data[col] >= lower_bound) & (data[col] <= upper_bound)]
 
@@ -119,58 +119,38 @@ def check_outliers(data):
 # =========================
 def rfm(data):
 
-    recency_data = data.copy()
-
     '''
     Recency: The value of how recently a customer purchased at the establishment,
     Frequency: How frequent the customer’s transactions are at the establishment,
     Monetary value: The dollar (or pounds in our case) value of all the transactions that the customer made at the establishment
     '''
-
-    # RECENCY
     
     '''
     For our use case, we will define the reference date as one day after the last transaction in our dataset.
     '''
 
-    reference_date = recency_data.InvoiceDate.max()
+    reference_date = data.InvoiceDate.max()
     reference_date = reference_date + datetime.timedelta(days=1)
     print(f' Reference Date: {reference_date}')
 
-    
-    We will construct the recency variable as the number of days before the reference date when a customer
-    last made a purchase. The following snippet of code will create this variable for us.
-    
-    recency_data['days_since_last_purchase'] = reference_date - recency_data.InvoiceDate
-    recency_data['days_since_last_purchase_num'] = recency_data['days_since_last_purchase'].astype('timedelta64[ns]')
+    # Grouping by CustomerID to calculate RFM Metrics
+
+    rfm = data.groupby('CustomerID').agg({
+        'InvoiceDate': lambda x: (reference_date - x.max()).days, # Recency
+        'InvoiceNo': 'nunique', # Frequency
+        'TotalPrice': 'sum' # Monetary value
+    }).reset_index()
+
+    print(rfm)
 
 
-    customer_history_df = recency_data.groupby("CustomerID").min().reset_index()[['CustomerID', 'days_since_last_purchase_num']]
-    customer_history_df.rename(columns={'days_since_last_purchase_num':'recency'},inplace=True)
+    # Renaming Columns
+    rfm.columns = ['CustomerID', 'Recency', 'Frequency', 'Monetary']
 
-    return recency_data, customer_history_df
+    # Handling Monetary values of 0
+    rfm['Monetary'].replace(0, 1)
 
-
-
-def plot_recency(recency_data, customer_history_df):
-    # Convert timedelta to numeric (days)
-    x = customer_history_df.recency.dt.total_seconds() / (24 * 3600)
-    mu = np.mean(x)
-    sigma = math.sqrt(np.var(x))
-    n, bins, patches = plt.hist(x, 1000, facecolor='green', alpha=0.75)
-
-    # add a 'best fit' line
-    
-    y = mlab.normpdf(bins, mu, sigma)
-    l = plt.plot(bins, y, 'r--', linewidth=2)
-    plt.xlabel('Recency in days')
-    plt.ylabel('Number of transactions')
-    plt.title(r'$\mathrm{Histogram\ of\ sales\ recency}\ $')
-    plt.grid(True)
-    plt.savefig(PLOTS_DIR / 'recency_distribution.png')
-    plt.close()
-    
-
+    print(f'\n ===== RFM SUMMARY STATISTICS ===== \n {rfm.describe()}')
 
 
 
@@ -183,7 +163,8 @@ def main():
     data = load_data(filepath)
     eda(data)
     data = preprocess_data(data)
-    check_outliers(data)
+    handle_outliers(data)
+    rfm(data)
 
 
 
