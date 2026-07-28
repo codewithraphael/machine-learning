@@ -59,63 +59,122 @@ def eda(data):
     print(f'\n ===== Percentage Of Orders ===== \n {percentage_of_orders}')
 
 
-# =========================
-#  FEATURE ENGINEERING
-# =========================
-def feat_eng(data):
-    
-    data['Amount'] = data['Quantity']*data['UnitPrice']
-    print(data)
-
-    return data
 
 # ===========================
-#  DATA CLEANING & SELECTION
+#  DATA PREPROCESSING
 # ===========================
-def select_data(data):
+def preprocess_data(data):
 
     '''
-    Selecting UK Customers, which are notably the largest segment(based on country)
-    &
-    Removing negative amount or return transactions
+    Converting InvoiceDate to datetime,
+    Removing rows with missing CustomerID,
+    Removing Cancelled Orders (Invoice starting with 'c'),
+    Removing negative quantites and prices,
+    Feature Engineering: Calculating total price for each transaction,
+    Removing outliers using IQR
+
     '''
-    data = data[data.Country == 'United Kingdom']
 
-    data = data[~(data.Amount<0)]
+    data['InvoiceDate'] = pd.to_datetime(data['InvoiceDate'])
 
-    print(data.head(5))
+
+    initial_rows = len(data)
+    data.dropna(subset=['CustomerID'], inplace=True)
+    print(f'Removed {initial_rows - len(data)} rows with missing CustomerID')
+
+    data = data[data['Quantity'] > 0]
+    data = data[data['UnitPrice'] > 0]
+
+
+    data['TotalPrice'] = data['Quantity']*data['UnitPrice']
+
+
     return data
 
 
 # =========================
-#  REMOVING NULL VALUES
+#  CHECKING FOR OUTLIERS
 # =========================
-def remove_null(data):
+def check_outliers(data):
 
-    data = data[~(data.CustomerID.isnull())]
-    print(data.shape)
+    for col in ['Quantity', 'UnitPrice']:
 
-    return data
+        q1 = data[col].quantile(0.01)
+        q3 = data[col].quantile(0.99)
+
+        iqr = q3 - q1
+
+        lower_bound = q1 - 1.5 * iqr
+        upper_bound = q3 + 1.5 * iqr
+
+        print(f'\n ===== Lower Bound ===== \n {lower_bound}')
+        print(f'\n ===== Upper Bound ===== \n {upper_bound}')
+
+        data = data[(data[col] >= lower_bound) & (data[col] <= upper_bound)]
 
 
 
+
+
+
+'''
 # =========================
 #  RFM MODEL
 # =========================
 def rfm(data):
 
-    '''
+    recency_data = data.copy()
+
+    
     Recency: The value of how recently a customer purchased at the establishment,
     Frequency: How frequent the customer’s transactions are at the establishment,
     Monetary value: The dollar (or pounds in our case) value of all the transactions that the customer made at the establishment
-    '''
+    
 
     # RECENCY
-    reference_date = data.InvoiceDate.max()
+    
+    For our use case, we will define the reference date as one day after the last transaction in our dataset.
+    
+    reference_date = recency_data.InvoiceDate.max()
     reference_date = reference_date + datetime.timedelta(days=1)
-    print()
+    print(reference_date)
 
-    pass
+    
+    We will construct the recency variable as the number of days before the reference date when a customer
+    last made a purchase. The following snippet of code will create this variable for us.
+    
+    recency_data['days_since_last_purchase'] = reference_date - recency_data.InvoiceDate
+    recency_data['days_since_last_purchase_num'] = recency_data['days_since_last_purchase'].astype('timedelta64[ns]')
+
+
+    customer_history_df = recency_data.groupby("CustomerID").min().reset_index()[['CustomerID', 'days_since_last_purchase_num']]
+    customer_history_df.rename(columns={'days_since_last_purchase_num':'recency'},inplace=True)
+
+    return recency_data, customer_history_df
+
+
+
+def plot_recency(recency_data, customer_history_df):
+    # Convert timedelta to numeric (days)
+    x = customer_history_df.recency.dt.total_seconds() / (24 * 3600)
+    mu = np.mean(x)
+    sigma = math.sqrt(np.var(x))
+    n, bins, patches = plt.hist(x, 1000, facecolor='green', alpha=0.75)
+
+    # add a 'best fit' line
+    
+    y = mlab.normpdf(bins, mu, sigma)
+    l = plt.plot(bins, y, 'r--', linewidth=2)
+    plt.xlabel('Recency in days')
+    plt.ylabel('Number of transactions')
+    plt.title(r'$\mathrm{Histogram\ of\ sales\ recency}\ $')
+    plt.grid(True)
+    plt.savefig(PLOTS_DIR / 'recency_distribution.png')
+    plt.close()
+    
+
+'''
+
 
 
 
@@ -128,9 +187,9 @@ def main():
     filepath = DATA_PATH
     data = load_data(filepath)
     eda(data)
-    data = feat_eng(data)
-    data = select_data(data)
-    data = remove_null(data)
+    data = preprocess_data(data)
+    check_outliers(data)
+
 
 
 
