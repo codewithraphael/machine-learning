@@ -205,6 +205,7 @@ def main():
     data = preprocess_data(data)
     handle_outliers(data)
     rfm(data)
+    handle_skewness(rfm)
 
 
 
