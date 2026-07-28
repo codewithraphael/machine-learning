@@ -107,17 +107,13 @@ def check_outliers(data):
         lower_bound = q1 - 1.5 * iqr
         upper_bound = q3 + 1.5 * iqr
 
-        print(f'\n ===== Lower Bound ===== \n {lower_bound}')
-        print(f'\n ===== Upper Bound ===== \n {upper_bound}')
+        print(f'\n ===== Lower Bound ===== \n {lower_bound[col]}')
+        print(f'\n ===== Upper Bound ===== \n {upper_bound[col]}')
 
         data = data[(data[col] >= lower_bound) & (data[col] <= upper_bound)]
 
 
 
-
-
-
-'''
 # =========================
 #  RFM MODEL
 # =========================
@@ -125,19 +121,21 @@ def rfm(data):
 
     recency_data = data.copy()
 
-    
+    '''
     Recency: The value of how recently a customer purchased at the establishment,
     Frequency: How frequent the customer’s transactions are at the establishment,
     Monetary value: The dollar (or pounds in our case) value of all the transactions that the customer made at the establishment
-    
+    '''
 
     # RECENCY
     
+    '''
     For our use case, we will define the reference date as one day after the last transaction in our dataset.
-    
+    '''
+
     reference_date = recency_data.InvoiceDate.max()
     reference_date = reference_date + datetime.timedelta(days=1)
-    print(reference_date)
+    print(f' Reference Date: {reference_date}')
 
     
     We will construct the recency variable as the number of days before the reference date when a customer
@@ -172,9 +170,6 @@ def plot_recency(recency_data, customer_history_df):
     plt.savefig(PLOTS_DIR / 'recency_distribution.png')
     plt.close()
     
-
-'''
-
 
 
 
