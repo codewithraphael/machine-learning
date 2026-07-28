@@ -107,8 +107,8 @@ def handle_outliers(data):
         lower_bound = q1 - 1.5 * iqr
         upper_bound = q3 + 1.5 * iqr
 
-        print(f'\n ===== Lower Bound ===== \n {lower_bound}')
-        print(f'\n ===== Upper Bound ===== \n {upper_bound}')
+        print(f'\n ===== Lower Bound ===== \n {col} : {lower_bound}')
+        print(f'\n ===== Upper Bound ===== \n {col} : {upper_bound}')
 
         data = data[(data[col] >= lower_bound) & (data[col] <= upper_bound)]
 
@@ -151,6 +151,46 @@ def rfm(data):
     rfm['Monetary'].replace(0, 1)
 
     print(f'\n ===== RFM SUMMARY STATISTICS ===== \n {rfm.describe()}')
+
+
+# =========================
+#  HANDLING SKEWNESS
+# =========================
+def handle_skewness(rfm):
+
+    '''
+    Handling skewed distribution in RFM data using log transformation.
+    '''
+    print('='*60)
+    print('HANDLING SKEWNESS')
+    print('='*60)
+
+
+    # Calculating skewness before transformation
+
+    print(f'\n ===== SKEWNESS BEFORE TRANSFORMATION ===== \n')
+    for col in ['Recency', 'Frequency', 'Monetary']:
+        skew = rfm[col].skew()
+        print(f'{col}: {skew:.3f}')
+
+
+    # Applying Log transformation
+
+    rfm_transformed = rfm.copy()
+    for col in ['Recency', 'Frequency', 'Monetary']:
+        rfm_transformed[f'{col}_log'] = np.log1p(rfm[col])
+
+    print(f'\n ===== SKEWNESS AFTER TRANSFORMATION ===== \n')
+    for col in rfm_transformed:
+        skew = rfm_transformed[col].skew()
+        print(f' {col}: {skew:.3f}')
+
+    return rfm_transformed
+
+
+
+
+
 
 
 
