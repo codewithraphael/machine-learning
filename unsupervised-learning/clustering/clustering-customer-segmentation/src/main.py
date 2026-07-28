@@ -112,6 +112,7 @@ def handle_outliers(data):
 
         data = data[(data[col] >= lower_bound) & (data[col] <= upper_bound)]
 
+    return data
 
 
 # =========================
@@ -148,7 +149,7 @@ def rfm(data):
     rfm_df.columns = ['CustomerID', 'Recency', 'Frequency', 'Monetary']
 
     # Handling Monetary values of 0
-    rfm_df['Monetary'].replace(0, 1)
+    rfm_df['Monetary'] = rfm_df['Monetary'].replace(0, 1)
 
     print(f'\n ===== RFM SUMMARY STATISTICS ===== \n {rfm_df.describe()}')
 
@@ -195,7 +196,7 @@ def handle_skewness(rfm_df):
 #  VISUALIZING RFM DISTRIBUTION
 # =============================
 
-def visualize_rfm_distributions(rfm_df):
+def visualize_rfm_distributions(rfm_df, rfm_transformed):
     """
     Visualize RFM distributions before and after log transformation.
     
@@ -214,9 +215,10 @@ def visualize_rfm_distributions(rfm_df):
         axes[0, i].set_title(f'{metric} (Original)')
         axes[0, i].set_xlabel('Value')
         axes[0, i].set_ylabel('Frequency')
-        
+
+    for i, metric in enumerate(metrics):
         # Log-transformed distribution
-        axes[1, i].hist(rfm_df[f'{metric}_log'], bins=50, edgecolor='black', alpha=0.7, color='orange')
+        axes[1, i].hist(rfm_transformed[f'{metric}_log'], bins=50, edgecolor='black', alpha=0.7, color='orange')
         axes[1, i].set_title(f'{metric} (Log Transformed)')
         axes[1, i].set_xlabel('Log Value')
         axes[1, i].set_ylabel('Frequency')
@@ -238,10 +240,10 @@ def main():
     data = load_data(filepath)
     eda(data)
     data = preprocess_data(data)
-    handle_outliers(data)
+    data = handle_outliers(data)
     rfm_df = rfm(data)
-    handle_skewness(rfm_df)
-    visualize_rfm_distributions(rfm_df)
+    rfm_transformed = handle_skewness(rfm_df)
+    visualize_rfm_distributions(rfm_df, rfm_transformed)
 
 
 
