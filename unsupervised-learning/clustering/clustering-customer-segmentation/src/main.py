@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 import datetime
-import math
 import joblib
 
 import matplotlib.pyplot as plt
@@ -12,6 +11,7 @@ from sklearn.cluster import KMeans, AgglomerativeClustering
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import silhouette_score
+from scipy.cluster.hierarchy import dendrogram, linkage
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -321,6 +321,7 @@ def visualize_pca(kmeans, x_scaled, k_labels):
     sns.scatterplot(x = reduced_pca[:, 0],
                     y = reduced_pca[:, 1],
                     hue=k_labels,
+                    palette='Set2',
                     legend='auto'
     )
 
@@ -330,23 +331,83 @@ def visualize_pca(kmeans, x_scaled, k_labels):
                 pca_centroids[:, 1],
                 c = 'red',
                 marker = 'x',
-                s=200,
-                linewidths=2
+                s=200
     )
     
     plt.title('PCA Visualization of Clusters')
     plt.xlabel('PCA 1')
     plt.ylabel('PCA 2')
     plt.legend()
-    plt.savefig(PLOTS_DIR / 'optimal_cluster.png')
-    plt.close
+    plt.savefig(PLOTS_DIR / 'cluster_plot.png')
+    plt.close()
 
-def visualize_hierarchical(x_scaled, hierarchical, h_labels):
+def visualize_hierarchical(x_scaled):
+    """
+    Visualize hierarchical clustering using a dendrogram.
+    """
+    linkage_matrix = linkage(x_scaled, method='ward')
 
-    pass
+    plt.figure(figsize=(12, 6))
+    dendrogram(
+        linkage_matrix,
+        truncate_mode='lastp',
+        p=30,
+        leaf_rotation=90.,
+        leaf_font_size=8.
+    )
+    plt.title('Hierarchical Clustering Dendrogram')
+    plt.xlabel('Samples')
+    plt.ylabel('Distance')
+    plt.tight_layout()
+    plt.savefig(PLOTS_DIR / 'hierarchical_clustering.png', dpi=100, bbox_inches='tight')
+    plt.close()
 
 
-    
+# ================================
+#  PROFILE CLUSTERING AND PLOTTING
+# ================================
+
+def profile_clusters(rfm_df, labels):
+    """
+    Create a summary profile for each cluster using the RFM features.
+    """
+    cluster_df = rfm_df.copy()
+    cluster_df['Cluster'] = labels
+
+    cluster_summary = (
+        cluster_df.groupby('Cluster')
+        .agg(
+            Customers=('CustomerID', 'count'),
+            Avg_Recency=('Recency', 'mean'),
+            Avg_Frequency=('Frequency', 'mean'),
+            Avg_Monetary=('Monetary', 'mean'),
+            Min_Recency=('Recency', 'min'),
+            Max_Recency=('Recency', 'max'),
+            Min_Frequency=('Frequency', 'min'),
+            Max_Frequency=('Frequency', 'max'),
+            Min_Monetary=('Monetary', 'min'),
+            Max_Monetary=('Monetary', 'max'),
+        )
+        .reset_index()
+    )
+
+    print('\n ===== CLUSTER PROFILES =====')
+    print(cluster_summary)
+
+    cluster_summary.to_csv(DATA_PATH / 'cluster_profiles.csv', index=False)
+    return cluster_summary
+
+
+
+# =========================
+#  SAVING MODELS
+# =========================
+
+
+def save_model(model, filename):
+
+    model_path = MODELS_DIR / filename
+    joblib.dump(model, model_path)
 
 # =========================
 #  MAIN
@@ -365,10 +426,10 @@ def main():
     kmeans, k_labels = kmeans_clustering(x_scaled)
     hierarchical, h_labels = hierarchical_clustering(x_scaled)
     visualize_pca(kmeans, x_scaled, k_labels)
-   # visualize_hierarchical(hierarchical, h_labels)
-
-
-
+    visualize_hierarchical(x_scaled)
+    profile_clusters(rfm_df, k_labels)
+    save_model(kmeans, 'kmeans_model.joblib')
+    save_model(hierarchical, 'hierarchical_model.joblib')
 
 
 if __name__ == '__main__':

@@ -1,0 +1,138 @@
+ ===== Shape of the dataset ===== 
+ (541909, 8)
+
+ =====Dataset Information ===== 
+
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 541909 entries, 0 to 541908
+Data columns (total 8 columns):
+ #   Column       Non-Null Count   Dtype         
+---  ------       --------------   -----         
+ 0   InvoiceNo    541909 non-null  object        
+ 1   StockCode    541909 non-null  object        
+ 2   Description  540455 non-null  object        
+ 3   Quantity     541909 non-null  int64         
+ 4   InvoiceDate  541909 non-null  datetime64[ns]
+ 5   UnitPrice    541909 non-null  float64       
+ 6   CustomerID   406829 non-null  float64       
+ 7   Country      541909 non-null  object        
+dtypes: datetime64[ns](1), float64(2), int64(1), object(4)
+memory usage: 33.1+ MB
+None
+
+ ===== Checking Missing Values ===== 
+ CustomerID     135080
+Description      1454
+StockCode           0
+InvoiceNo           0
+Quantity            0
+InvoiceDate         0
+UnitPrice           0
+Country             0
+dtype: int64
+
+ ===== Summary Statistics ===== 
+             Quantity                    InvoiceDate      UnitPrice     CustomerID
+count  541909.000000                         541909  541909.000000  406829.000000
+mean        9.552250  2011-07-04 13:34:57.156386048       4.611114   15287.690570
+min    -80995.000000            2010-12-01 08:26:00  -11062.060000   12346.000000
+25%         1.000000            2011-03-28 11:34:00       1.250000   13953.000000
+50%         3.000000            2011-07-19 17:17:00       2.080000   15152.000000
+75%        10.000000            2011-10-19 11:27:00       4.130000   16791.000000
+max     80995.000000            2011-12-09 12:50:00   38970.000000   18287.000000
+std       218.081158                            NaN      96.759853    1713.600303
+
+ ===== Index by country ===== 
+           Country   count
+0  United Kingdom  495478
+1         Germany    9495
+2          France    8557
+3            EIRE    8196
+4           Spain    2533
+
+ ===== Amount of Unique Customers ===== 
+ (4373,)
+
+ ===== Percentage Of Orders ===== 
+ CustomerID
+17841.0    1.962249
+14911.0    3.413228
+14096.0    4.673708
+12748.0    5.814728
+14606.0    6.498553
+15311.0    7.110850
+14646.0    7.623350
+13089.0    8.079807
+13263.0    8.492020
+14298.0    8.895138
+15039.0    9.265809
+14156.0    9.614850
+18118.0    9.930462
+Name: count, dtype: float64
+Removed 135080 rows with missing CustomerID
+
+ ===== Lower Bound ===== 
+ Quantity : -177.5
+
+ ===== Upper Bound ===== 
+ Quantity : 298.5
+
+ ===== Lower Bound ===== 
+ UnitPrice : -21.9
+
+ ===== Upper Bound ===== 
+ UnitPrice : 37.06
+ Reference Date: 2011-12-10 12:50:00
+      CustomerID  InvoiceDate  InvoiceNo  TotalPrice
+0        12347.0            2          7     4310.00
+1        12348.0           75          4     1437.24
+2        12349.0           19          1     1417.60
+3        12350.0          310          1      294.40
+4        12352.0           36          7     1385.74
+...          ...          ...        ...         ...
+4308     18280.0          278          1      180.60
+4309     18281.0          181          1       80.82
+4310     18282.0            8          2      178.05
+4311     18283.0            4         16     2094.88
+4312     18287.0           43          3     1837.28
+
+[4313 rows x 4 columns]
+
+ ===== RFM SUMMARY STATISTICS ===== 
+          CustomerID      Recency    Frequency       Monetary
+count   4313.000000  4313.000000  4313.000000    4313.000000
+mean   15295.987712    92.594482     4.234176    1798.925410
+std     1720.758317   100.017714     7.586751    6627.390532
+min    12347.000000     1.000000     1.000000       2.900000
+25%    13811.000000    18.000000     1.000000     301.030000
+50%    15291.000000    51.000000     2.000000     659.440000
+75%    16776.000000   143.000000     5.000000    1607.060000
+max    18287.000000   374.000000   206.000000  250146.060000
+============================================================
+HANDLING SKEWNESS
+============================================================
+
+ ===== SKEWNESS BEFORE TRANSFORMATION ===== 
+
+CustomerID: 0.004
+Recency: 1.244
+Frequency: 12.130
+Monetary: 20.300
+
+ ===== SKEWNESS AFTER TRANSFORMATION ===== 
+
+ CustomerID: 0.004
+ Recency: 1.244
+ Frequency: 12.130
+ Monetary: 20.300
+ CustomerID_log: -0.133
+ Recency_log: -0.378
+ Frequency_log: 1.202
+ Monetary_log: 0.283
+
+ ===== CLUSTER PROFILES =====
+   Cluster  Customers  Avg_Recency  Avg_Frequency  Avg_Monetary  Min_Recency  Max_Recency  Min_Frequency  Max_Frequency  Min_Monetary  Max_Monetary
+0        0       3024    43.792328       3.631944   1292.198473            1          163              1             14          6.20      13375.87
+1        1         12     5.000000      86.083333  96534.864167            1           24             20            206      31911.03     250146.06
+2        2       1066   247.884615       1.544090    456.849513          143          374              1             12          2.90       8951.26
+3        3        211    12.450237      21.800948  10453.730616            1          372              6             93       1171.44      53299.22
