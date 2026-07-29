@@ -315,17 +315,19 @@ def hierarchical_clustering(x_scaled):
 def visualize_pca(kmeans, x_scaled, k_labels):
 
     pca = PCA(n_components=2)
-    pca_transformed = pca.fit_transform(x_scaled)
+    reduced_pca = pca.fit_transform(x_scaled)
 
     plt.figure(figsize=(10, 6))
-    sns.scatterplot(x = pca_transformed[:, 0],
-                    y = pca_transformed[:, 1],
+    sns.scatterplot(x = reduced_pca[:, 0],
+                    y = reduced_pca[:, 1],
                     hue=k_labels,
                     legend='auto'
     )
 
-    plt.scatter(kmeans.cluster_centers_[:, 0],
-                kmeans.cluster_centers_[:, 1],
+    pca_centroids = pca.transform(kmeans.cluster_centers_)
+
+    plt.scatter(pca_centroids[:, 0],
+                pca_centroids[:, 1],
                 c = 'red',
                 marker = 'x',
                 s=200,
@@ -363,7 +365,7 @@ def main():
     kmeans, k_labels = kmeans_clustering(x_scaled)
     hierarchical, h_labels = hierarchical_clustering(x_scaled)
     visualize_pca(kmeans, x_scaled, k_labels)
-    visualize_hierarchical(hierarchical, h_labels)
+   # visualize_hierarchical(hierarchical, h_labels)
 
 
 
