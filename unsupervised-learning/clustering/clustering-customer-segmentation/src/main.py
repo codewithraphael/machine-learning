@@ -261,8 +261,6 @@ def optimal_k(x_scaled):
         scores = silhouette_score(x_scaled, labels)
         sil_scores.append(scores)
 
-        best_k = k_range[np.argmax(scores)]
-
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 4))
 
@@ -280,43 +278,77 @@ def optimal_k(x_scaled):
     plt.savefig(PLOTS_DIR / 'optimal_k.png')
     plt.close()
 
-    print(f'\n ===== OPTIMAL K VALUE ===== \n {best_k}')
 
-    return best_k
+
 
 
 # =========================
 # FITTING MODEL 
 # =========================
-def kmeans_clustering(x_scaled, best_k):
+def kmeans_clustering(x_scaled):
 
     '''
     Performing Kmeans clustering on scaled data
     '''
 
-    kmeans = KMeans(n_clusters=best_k, init='k-means++', n_init=10, random_state=42)
+    kmeans = KMeans(n_clusters=4, init='k-means++', n_init=10, random_state=42)
     k_labels = kmeans.fit_predict(x_scaled)
 
     return kmeans, k_labels
 
 
-def hierarchical_clustering(x_scaled, best_k):
+def hierarchical_clustering(x_scaled):
 
     '''
     Performing Hierarchical clustering
     '''
 
-    hierarchical = AgglomerativeClustering(n_clusters=best_k, metric='euclidean', linkage='ward')
+    hierarchical = AgglomerativeClustering(n_clusters=4, metric='euclidean', linkage='ward')
     h_labels = hierarchical.fit_predict(x_scaled)
 
     return hierarchical, h_labels
 
 
+# =========================
+#  VISUALIZE CLUSTERS
+# =========================
+def visualize_pca(kmeans, x_scaled, k_labels):
+
+    pca = PCA(n_components=2)
+    pca_transformed = pca.fit_transform(x_scaled)
+
+    plt.figure(figsize=(10, 6))
+    sns.scatterplot(x = pca_transformed[:, 0],
+                    y = pca_transformed[:, 1],
+                    hue=k_labels,
+                    legend='auto'
+    )
+
+    plt.scatter(kmeans.cluster_centers_[:, 0],
+                kmeans.cluster_centers_[:, 1],
+                c = 'red',
+                marker = 'x',
+                s=200,
+                linewidths=2
+    )
+    
+    plt.title('PCA Visualization of Clusters')
+    plt.xlabel('PCA 1')
+    plt.ylabel('PCA 2')
+    plt.legend()
+    plt.savefig(PLOTS_DIR / 'optimal_cluster.png')
+    plt.close
+
+def visualize_hierarchical(x_scaled, hierarchical, h_labels):
+
+    pass
+
+
+    
 
 # =========================
 #  MAIN
 # =========================
-
 def main():
     filepath = DATA_PATH
     data = load_data(filepath)
@@ -327,10 +359,14 @@ def main():
     rfm_transformed = handle_skewness(rfm_df)
     visualize_rfm_distributions(rfm_df, rfm_transformed)
     x_scaled, scaler = scale_feature(rfm_df)
-    best_k = optimal_k(x_scaled)
-    kmeans, k_labels = kmeans_clustering(x_scaled, best_k)
-    hierarchical, h_labels = hierarchical_clustering(x_scaled, best_k)
-    
+    optimal_k(x_scaled)
+    kmeans, k_labels = kmeans_clustering(x_scaled)
+    hierarchical, h_labels = hierarchical_clustering(x_scaled)
+    visualize_pca(kmeans, x_scaled, k_labels)
+    visualize_hierarchical(hierarchical, h_labels)
+
+
+
 
 
 if __name__ == '__main__':
