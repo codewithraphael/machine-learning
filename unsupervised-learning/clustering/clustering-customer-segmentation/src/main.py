@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
 import seaborn as sns; sns.set_theme()
 
-from sklearn.cluster import KMeans
+from sklearn.cluster import KMeans, AgglomerativeClustering
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import silhouette_score
@@ -181,7 +181,7 @@ def handle_skewness(rfm_df):
     # Applying Log transformation
 
     rfm_transformed = rfm_df.copy()
-    for col in ['Recency', 'Frequency', 'Monetary']:
+    for col in rfm_transformed:
         rfm_transformed[f'{col}_log'] = np.log1p(rfm_df[col])
 
     print(f'\n ===== SKEWNESS AFTER TRANSFORMATION ===== \n')
@@ -229,6 +229,88 @@ def visualize_rfm_distributions(rfm_df, rfm_transformed):
 
 
 
+# =========================
+#  FEATURE SCALING
+# =========================
+def scale_feature(rfm_df):
+
+    scaler = StandardScaler()
+    x_scaled = scaler.fit_transform(rfm_df[['Recency', 'Frequency', 'Monetary']])
+
+    return x_scaled, scaler
+
+
+# =========================
+#  OPTIMAL K
+# =========================
+def optimal_k(x_scaled):
+
+    '''
+    Determinig optimal number of clusters
+    '''
+
+    inertia = []
+    sil_scores = []
+    k_range = range(2, 11)
+
+    for k in k_range:
+        model = KMeans(n_clusters=k, n_init=10, init='k-means++', max_iter= 300, random_state=42)
+        labels = model.fit_predict(x_scaled)
+
+        inertia.append(model.inertia_)
+        scores = silhouette_score(x_scaled, labels)
+        sil_scores.append(scores)
+
+        best_k = k_range[np.argmax(scores)]
+
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 4))
+
+    ax1.plot(k_range, inertia, marker='o', color='steelblue')
+    ax1.set_title('Elbow Method')
+    ax1.set_xlabel('Number of clusters')
+    ax1.set_ylabel('Inertia')
+
+    ax2.plot(k_range, sil_scores, marker='o', color='coral')
+    ax2.set_title('Silhouette Score')
+    ax2.set_xlabel('Number of clusters')
+    ax2.set_ylabel('Scores')
+
+    plt.tight_layout()
+    plt.savefig(PLOTS_DIR / 'optimal_k.png')
+    plt.close()
+
+    print(f'\n ===== OPTIMAL K VALUE ===== \n {best_k}')
+
+    return best_k
+
+
+# =========================
+# FITTING MODEL 
+# =========================
+def kmeans_clustering(x_scaled, best_k):
+
+    '''
+    Performing Kmeans clustering on scaled data
+    '''
+
+    kmeans = KMeans(n_clusters=best_k, init='k-means++', n_init=10, random_state=42)
+    k_labels = kmeans.fit_predict(x_scaled)
+
+    return kmeans, k_labels
+
+
+def hierarchical_clustering(x_scaled, best_k):
+
+    '''
+    Performing Hierarchical clustering
+    '''
+
+    hierarchical = AgglomerativeClustering(n_clusters=best_k, metric='euclidean', linkage='ward')
+    h_labels = hierarchical.fit_predict(x_scaled)
+
+    return hierarchical, h_labels
+
 
 
 # =========================
@@ -244,19 +326,11 @@ def main():
     rfm_df = rfm(data)
     rfm_transformed = handle_skewness(rfm_df)
     visualize_rfm_distributions(rfm_df, rfm_transformed)
-
-
-
-
-
-
-
-
-
-
-
-
-
+    x_scaled, scaler = scale_feature(rfm_df)
+    best_k = optimal_k(x_scaled)
+    kmeans, k_labels = kmeans_clustering(x_scaled, best_k)
+    hierarchical, h_labels = hierarchical_clustering(x_scaled, best_k)
+    
 
 
 if __name__ == '__main__':
