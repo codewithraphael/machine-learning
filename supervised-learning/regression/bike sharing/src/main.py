@@ -46,7 +46,7 @@ def eda(hourly_data):
     print(hourly_data.info())
     print(f'\n ===== SUMMARY STATISTICS ===== \n {hourly_data.describe()}')
     print(f'\n ===== MISSING VALUE ===== \n {hourly_data.isnull().sum().sort_values(ascending=False)}')
-    print(f'\n ===== DUPLICATE DATA ===== \n {hourly_data.duplicated().sort_values(ascending=False)}')
+    print(f'\n ===== DUPLICATE DATA ===== \n {hourly_data.duplicated().sum()}')
 
 
 # =========================
@@ -64,7 +64,7 @@ def preprocess_data(hourly_data):
         'instant': 'rec_id',
         'dteday': 'date',
         'holiday': 'is_holiday',
-        'workingday': ' is_workingday',
+        'workingday': 'is_workingday',
         'weathersit': 'weather_condition',
         'hum': 'humidity',
         'mnth': 'month',
@@ -74,7 +74,7 @@ def preprocess_data(hourly_data):
     }, inplace=True)
 
 
-    hourly_data['date'] = pd.to_datetime(hourly_data['date'])
+    hourly_data['date'] = pd.to_datetime(hourly_data['date'], format='%Y-%m-%d')
 
     cat_columns = ['season',
                    'is_holiday',
@@ -83,20 +83,39 @@ def preprocess_data(hourly_data):
                    'is_workingday',
                    'month',
                    'year',
-                   'hour'
     ]
 
     for column in cat_columns:
         hourly_data[column] = hourly_data[column].astype('category')
 
-        print(f'\n ===== CHECKING DTYPES ===== \n {hourly_data.dtypes}')
+    print(f'\n ===== CHECKING DTYPES ===== \n {hourly_data.dtypes}')
     
     return hourly_data
 
 
 
+# =========================
+#  DATA VISUALIZATION
+# =========================
+def plot_pointplot(hourly_data):
+
+    '''
+    distribution & trends visualization for season, weekdays and monthly bike sharing data
+    '''
+
+    fig, ax = plt.subplots(figsize=(22, 10))
+    sns.pointplot(data=hourly_data[['hour', 'total_count', 'season']],
+                  x='hour',
+                  y='total_count',
+                  hue='season',
+                  ax=ax
+    )
+    ax.set_title('season wise hourly distribution of counts')
+    plt.savefig(PLOTS_DIR / 'plots')
+    plt.close()
 
 
+def 
 
 
 # =========================
@@ -108,7 +127,8 @@ def main():
     filepath = DATA_PATH / 'hour.csv'
     hourly_data = load_data(filepath)
     eda(hourly_data)
-    preprocess_data(hourly_data)
+    hourly_data = preprocess_data(hourly_data)
+    plot_pointplot(hourly_data)
 
 
 
