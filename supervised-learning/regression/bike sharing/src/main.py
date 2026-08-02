@@ -103,6 +103,7 @@ def plot_pointplot(hourly_data):
     distribution & trends visualization for season, weekdays and monthly bike sharing data
     '''
 
+    # hourly distribution of counts
     fig, ax = plt.subplots(figsize=(22, 10))
     sns.pointplot(data=hourly_data[['hour', 'total_count', 'season']],
                   x='hour',
@@ -111,12 +112,19 @@ def plot_pointplot(hourly_data):
                   ax=ax
     )
     ax.set_title('season wise hourly distribution of counts')
-    plt.savefig(PLOTS_DIR / 'plots')
+    plt.savefig(PLOTS_DIR / 'hourly_distribution_of_counts.png')
+
+
+    # monthly distribution of counts
+    fig, ax = plt.subplots(figsize=(22, 10))
+    sns.barplot(data=hourly_data[['month', 'total_count']],
+                    x='month',
+                    y='total_count',
+                    ax=ax
+    )
+    ax.set_title('monthly distribution of counts')
+    plt.savefig(PLOTS_DIR / 'monthly_distribution_of_counts.png')
     plt.close()
-
-
-def 
-
 
 # =========================
 #  MAIN
