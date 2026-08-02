@@ -97,7 +97,7 @@ def preprocess_data(hourly_data):
 # =========================
 #  DATA VISUALIZATION
 # =========================
-def plot_pointplot(hourly_data):
+def visualize_data(hourly_data):
 
     '''
     distribution & trends visualization for season, weekdays and monthly bike sharing data
@@ -138,6 +138,30 @@ def plot_pointplot(hourly_data):
     plt.close()
 
 
+
+# ==============================
+#  CORRELATION HEATMAP ANALYSIS
+# ==============================
+def plot_heatmap(hourly_data):
+
+    '''
+    correlation heatmap visualization for numerical features
+    '''
+
+    fig, ax = plt.subplots(figsize=(22, 10))
+    sns.heatmap(hourly_data.corr(), annot=True, linewidths=0.5, cmap='coolwarm', ax=ax)
+    ax.set_title('correlation heatmap')
+    plt.savefig(PLOTS_DIR / 'correlation_heatmap.png')
+    plt.close()
+
+
+# =========================
+#  
+# =========================
+
+
+
+
 # =========================
 #  MAIN
 # =========================
@@ -148,7 +172,8 @@ def main():
     hourly_data = load_data(filepath)
     eda(hourly_data)
     hourly_data = preprocess_data(hourly_data)
-    plot_pointplot(hourly_data)
+    visualize_data(hourly_data)
+    plot_heatmap(hourly_data)
 
 
 
