@@ -116,6 +116,7 @@ def visualize_data(hourly_data):
     )
     ax.set_title('season wise hourly distribution of counts')
     plt.savefig(PLOTS_DIR / 'hourly_distribution_of_counts.png')
+    plt.close()
 
 
     # monthly distribution of counts
@@ -127,6 +128,7 @@ def visualize_data(hourly_data):
     )
     ax.set_title('monthly distribution of counts')
     plt.savefig(PLOTS_DIR / 'monthly_distribution_of_counts.png')
+    plt.close()
 
 
     # yearly distribution of counts
@@ -141,6 +143,31 @@ def visualize_data(hourly_data):
     plt.close()
 
 
+    # target column distribution analysis
+    fig, ax = plt.subplots(figsize=(22, 10))
+    sns.histplot(data=hourly_data,
+                 x='total_count',
+                 kde=True,
+                 ax=ax
+    )
+    ax.set_title('distribution of total bike rentals')
+    ax.set_xlabel('total bike rentals')
+    ax.set_ylabel('frequency')
+    plt.savefig(PLOTS_DIR / 'target_distribution')
+    plt.close()
+
+    # exterme values / outliers visualization on target column
+    fig, ax = plt.subplots(figsize=(22, 10))
+    sns.boxplot(data=hourly_data,
+                x='total_count',
+                ax=ax
+    )
+    ax.set_title('boxplot of total bike rentals')
+    plt.tight_layout()
+    plt.savefig(PLOTS_DIR / 'target_boxplot.png')
+    plt.close()
+
+
 
 # ==============================
 #  CORRELATION HEATMAP ANALYSIS
@@ -150,9 +177,10 @@ def plot_heatmap(hourly_data):
     '''
     correlation heatmap visualization for numerical features
     '''
+    corr_matrix = hourly_data.select_dtypes(include=[np.number]).corr()
 
     fig, ax = plt.subplots(figsize=(22, 10))
-    sns.heatmap(hourly_data.corr(), annot=True, linewidths=0.5, cmap='coolwarm', ax=ax)
+    sns.heatmap(corr_matrix, annot=True, linewidths=0.5, cmap='viridis', ax=ax)
     ax.set_title('correlation heatmap')
     plt.savefig(PLOTS_DIR / 'correlation_heatmap.png')
     plt.close()
@@ -199,7 +227,7 @@ def model_pipeline(X):
 def train_model(preprocessor, X_train, y_train):
 
     models = {
-        'LINEAR REGRESSION MODEL': LinearRegression(),
+        'LINEAR REGRESSION': LinearRegression(),
         'RANDOMFOREST REGRESSOR': RandomForestRegressor(),
         'XGBOOST REGRESSOR': XGBRegressor()
     }
@@ -218,7 +246,7 @@ def train_model(preprocessor, X_train, y_train):
 
         trained_models[name] = pipe
 
-    return trained_models, pipe, name
+    return trained_models
 
 
 
@@ -228,9 +256,10 @@ def train_model(preprocessor, X_train, y_train):
 def evaluate_model(name, pipe, X_train, X_test, y_train, y_test):
 
     y_pred = pipe.predict(X_test)
-    accuracy = accuracy_score(X_test, y_pred)
+  
     train_score = pipe.score(X_train, y_train)
     test_score = pipe.score(X_test, y_test)
+    r2 = r2_score(y_test, y_pred)
     mae = mean_absolute_error(y_test, y_pred)
     mse = mean_squared_error(y_test, y_pred)
     rmse = root_mean_squared_error(y_test, y_pred)
@@ -238,12 +267,12 @@ def evaluate_model(name, pipe, X_train, X_test, y_train, y_test):
     print(f'='*60)
     print(f'\n{name}')
     print(f'='*60)
-    print(f'\n ===== {name} ACCURACY SCORE ===== \n {accuracy:3f}')
-    print(f'\n ===== {name} TRAINING SCORE ===== \n {train_score:.3f}')
-    print(f'\n ===== {name} TEST SCORE ===== \n {test_score:.3f}')
-    print(f'\n ===== {name} MEAN ABSOLUTE ERROR ===== \n {mae:.3f}')
-    print(f'\n ===== {name} MEAN SQUARED ERROR ===== \n {mse:.3f}')
-    print(f'\n ===== {name} ROOT MEAN SQUARED ERROR ===== \n {rmse:.3f}')
+    print(f'\n ===== TRAINING SCORE ===== \n {train_score:.3f}')
+    print(f'\n ===== TEST SCORE ===== \n {test_score:.3f}')
+    print(f'\n ===== R2 SCORE ===== \n {r2:3f}')
+    print(f'\n ===== MEAN ABSOLUTE ERROR ===== \n {mae:.3f}')
+    print(f'\n ===== MEAN SQUARED ERROR ===== \n {mse:.3f}')
+    print(f'\n ===== ROOT MEAN SQUARED ERROR ===== \n {rmse:.3f}')
 
     return y_pred
 
@@ -263,8 +292,13 @@ def main():
     plot_heatmap(hourly_data)
     X, y, X_train, X_test, y_train, y_test = select_features(hourly_data)
     preprocessor = model_pipeline(X)
-    trained_models, pipe, name = train_model(preprocessor, X_train, y_train)
-    y_pred = evaluate_model(name, pipe, X_train, X_test, y_train, y_test)
+    trained_models = train_model(preprocessor, X_train, y_train)
+
+    # evaluation on each trained models
+    for name, pipe in trained_models.items():
+        y_pred = evaluate_model(name, pipe, X_train, X_test, y_train, y_test)
+
+    
 
 
 
