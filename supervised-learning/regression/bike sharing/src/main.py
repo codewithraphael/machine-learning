@@ -238,7 +238,7 @@ def evaluate_model(name, pipe, X_train, X_test, y_train, y_test):
     print(f'='*60)
     print(f'\n{name}')
     print(f'='*60)
-    print(f'\n ===== {name} Accuracy Score ===== \n {accuracy:3f}')
+    print(f'\n ===== {name} ACCURACY SCORE ===== \n {accuracy:3f}')
     print(f'\n ===== {name} TRAINING SCORE ===== \n {train_score:.3f}')
     print(f'\n ===== {name} TEST SCORE ===== \n {test_score:.3f}')
     print(f'\n ===== {name} MEAN ABSOLUTE ERROR ===== \n {mae:.3f}')
