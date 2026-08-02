@@ -1,0 +1,162 @@
+============================================================
+EXPLANATORY DATA ANALYSIS
+============================================================
+
+ ===== SHAPE OF DATASET ===== 
+ (17379, 17)
+===== DATASET INFORMATION ===== 
+
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 17379 entries, 0 to 17378
+Data columns (total 17 columns):
+ #   Column      Non-Null Count  Dtype  
+---  ------      --------------  -----  
+ 0   instant     17379 non-null  int64  
+ 1   dteday      17379 non-null  object 
+ 2   season      17379 non-null  int64  
+ 3   yr          17379 non-null  int64  
+ 4   mnth        17379 non-null  int64  
+ 5   hr          17379 non-null  int64  
+ 6   holiday     17379 non-null  int64  
+ 7   weekday     17379 non-null  int64  
+ 8   workingday  17379 non-null  int64  
+ 9   weathersit  17379 non-null  int64  
+ 10  temp        17379 non-null  float64
+ 11  atemp       17379 non-null  float64
+ 12  hum         17379 non-null  float64
+ 13  windspeed   17379 non-null  float64
+ 14  casual      17379 non-null  int64  
+ 15  registered  17379 non-null  int64  
+ 16  cnt         17379 non-null  int64  
+dtypes: float64(4), int64(12), object(1)
+memory usage: 2.3+ MB
+None
+
+ ===== SUMMARY STATISTICS ===== 
+           instant        season            yr          mnth            hr       holiday       weekday    workingday    weathersit          temp         atemp           hum     windspeed        casual    registered           cnt
+count  17379.0000  17379.000000  17379.000000  17379.000000  17379.000000  17379.000000  17379.000000  17379.000000  17379.000000  17379.000000  17379.000000  17379.000000  17379.000000  17379.000000  17379.000000  17379.000000
+mean    8690.0000      2.501640      0.502561      6.537775     11.546752      0.028770      3.003683      0.682721      1.425283      0.496987      0.475775      0.627229      0.190098     35.676218    153.786869    189.463088
+std     5017.0295      1.106918      0.500008      3.438776      6.914405      0.167165      2.005771      0.465431      0.639357      0.192556      0.171850      0.192930      0.122340     49.305030    151.357286    181.387599
+min        1.0000      1.000000      0.000000      1.000000      0.000000      0.000000      0.000000      0.000000      1.000000      0.020000      0.000000      0.000000      0.000000      0.000000      0.000000      1.000000
+25%     4345.5000      2.000000      0.000000      4.000000      6.000000      0.000000      1.000000      0.000000      1.000000      0.340000      0.333300      0.480000      0.104500      4.000000     34.000000     40.000000
+50%     8690.0000      3.000000      1.000000      7.000000     12.000000      0.000000      3.000000      1.000000      1.000000      0.500000      0.484800      0.630000      0.194000     17.000000    115.000000    142.000000
+75%    13034.5000      3.000000      1.000000     10.000000     18.000000      0.000000      5.000000      1.000000      2.000000      0.660000      0.621200      0.780000      0.253700     48.000000    220.000000    281.000000
+max    17379.0000      4.000000      1.000000     12.000000     23.000000      1.000000      6.000000      1.000000      4.000000      1.000000      1.000000      1.000000      0.850700    367.000000    886.000000    977.000000
+
+ ===== MISSING VALUE ===== 
+ instant       0
+dteday        0
+season        0
+yr            0
+mnth          0
+hr            0
+holiday       0
+weekday       0
+workingday    0
+weathersit    0
+temp          0
+atemp         0
+hum           0
+windspeed     0
+casual        0
+registered    0
+cnt           0
+dtype: int64
+
+ ===== DUPLICATE DATA ===== 
+ 0
+
+ ===== DATA TYPES ===== 
+ rec_id                        int64
+date                 datetime64[ns]
+season                     category
+year                       category
+month                      category
+hour                          int64
+is_holiday                 category
+weekday                    category
+is_workingday              category
+weather_condition          category
+temp                        float64
+atemp                       float64
+humidity                    float64
+windspeed                   float64
+casual                        int64
+registered                    int64
+total_count                   int64
+dtype: object
+============================================================
+
+LINEAR REGRESSION
+============================================================
+
+ ===== TRAINING SCORE ===== 
+ 0.406
+
+ ===== TEST SCORE ===== 
+ 0.409
+
+ ===== R2 SCORE ===== 
+ 0.408718
+
+ ===== MEAN ABSOLUTE ERROR ===== 
+ 103.130
+
+ ===== MEAN SQUARED ERROR ===== 
+ 18723.180
+
+ ===== ROOT MEAN SQUARED ERROR ===== 
+ 136.833
+
+ ===== CROSS-VALIDATION SCORE ===== 
+ mean: 0.403 standard deviation: (+/- 0.024)
+============================================================
+
+RANDOMFOREST REGRESSOR
+============================================================
+
+ ===== TRAINING SCORE ===== 
+ 0.993
+
+ ===== TEST SCORE ===== 
+ 0.948
+
+ ===== R2 SCORE ===== 
+ 0.947718
+
+ ===== MEAN ABSOLUTE ERROR ===== 
+ 24.009
+
+ ===== MEAN SQUARED ERROR ===== 
+ 1655.516
+
+ ===== ROOT MEAN SQUARED ERROR ===== 
+ 40.688
+
+ ===== CROSS-VALIDATION SCORE ===== 
+ mean: 0.945 standard deviation: (+/- 0.010)
+============================================================
+
+XGBOOST REGRESSOR
+============================================================
+
+ ===== TRAINING SCORE ===== 
+ 0.981
+
+ ===== TEST SCORE ===== 
+ 0.953
+
+ ===== R2 SCORE ===== 
+ 0.952846
+
+ ===== MEAN ABSOLUTE ERROR ===== 
+ 24.132
+
+ ===== MEAN SQUARED ERROR ===== 
+ 1493.163
+
+ ===== ROOT MEAN SQUARED ERROR ===== 
+ 38.641
+
+ ===== CROSS-VALIDATION SCORE ===== 
+ mean: 0.950 standard deviation: (+/- 0.007)
