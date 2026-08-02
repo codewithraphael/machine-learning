@@ -461,6 +461,16 @@ def plot_model_metrics(metrics):
 
 
 # =========================
+#  SAVING BEST MODEL
+# =========================
+def save_model(trained_models):
+
+    for name, pipe in trained_models.items():
+        if name == 'XGBOOST REGRESSOR':
+            joblib.dump(pipe, MODELS_DIR / 'xgboost_model.joblib')
+
+
+# =========================
 #  MAIN
 # =========================
 
@@ -489,6 +499,7 @@ def main():
 
     evaluation_plots(predictions, y_test)
     plot_model_metrics(metrics_results)
+    save_model(trained_models)
 
    
 if __name__ == '__main__':
