@@ -124,7 +124,19 @@ def plot_pointplot(hourly_data):
     )
     ax.set_title('monthly distribution of counts')
     plt.savefig(PLOTS_DIR / 'monthly_distribution_of_counts.png')
+
+
+    # yearly distribution of counts
+    fig, ax = plt.subplots(figsize=(22, 10))
+    sns.violinplot(data=hourly_data[['year', 'total_count']],
+                    x='year',
+                    y='total_count',
+                    ax=ax
+    )
+    ax.set_title('yearly distribution of counts')
+    plt.savefig(PLOTS_DIR / 'yearly_distribution_of_counts.png')
     plt.close()
+
 
 # =========================
 #  MAIN
