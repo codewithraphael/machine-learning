@@ -8,12 +8,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set_theme()
 
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score, KFold
 from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import accuracy_score, classification_report, roc_auc_score, roc_curve, RocCurveDisplay, confusion_matrix, ConfusionMatrixDisplay
+from sklearn.metrics import accuracy_score, root_mean_squared_error, mean_absolute_error, mean_squared_error, r2_score
 
+from xgboost import XGBRegressor
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 DATA_PATH = PROJECT_ROOT / 'data'
@@ -88,7 +91,7 @@ def preprocess_data(hourly_data):
     for column in cat_columns:
         hourly_data[column] = hourly_data[column].astype('category')
 
-    print(f'\n ===== CHECKING DTYPES ===== \n {hourly_data.dtypes}')
+    print(f'\n ===== DATA TYPES ===== \n {hourly_data.dtypes}')
     
     return hourly_data
 
@@ -156,9 +159,93 @@ def plot_heatmap(hourly_data):
 
 
 # =========================
-#  
+#   FEATURE SELECTION
 # =========================
+def select_features(hourly_data):
 
+    '''
+    selecting features for regression model
+    '''
+
+    X = hourly_data.drop(columns=['total_count', 'casual', 'registered', 'date'])
+    y = hourly_data['total_count']
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    return X, y, X_train, X_test, y_train, y_test
+
+
+# ===================================
+#  FEATURES ENCODING PIPELINE
+# ===================================
+def model_pipeline(X):
+
+    num_cols = X.select_dtypes(include=[np.number]).columns.tolist()
+    cat_cols = X.select_dtypes(include=['object', 'category']).columns.tolist()
+
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ('num', StandardScaler(), num_cols),
+            ('cat', OneHotEncoder(handle_unknown='ignore'), cat_cols)
+        ]
+    )
+
+    return preprocessor
+
+
+# =========================
+#  MODEL TRAINING PIPELINE
+# =========================
+def train_model(preprocessor, X_train, y_train):
+
+    models = {
+        'LINEAR REGRESSION MODEL': LinearRegression(),
+        'RANDOMFOREST REGRESSOR': RandomForestRegressor(),
+        'XGBOOST REGRESSOR': XGBRegressor()
+    }
+
+    trained_models = {}
+
+    for name, model in models.items():
+        pipe = Pipeline(
+            steps=[
+                ('preprocessor', preprocessor),
+                ('model', model)
+            ]
+        )
+
+        pipe.fit(X_train, y_train)
+
+        trained_models[name] = pipe
+
+    return trained_models, pipe, name
+
+
+
+# =========================
+#  MODEL EVALUATION
+# =========================
+def evaluate_model(name, pipe, X_train, X_test, y_train, y_test):
+
+    y_pred = pipe.predict(X_test)
+    accuracy = accuracy_score(X_test, y_pred)
+    train_score = pipe.score(X_train, y_train)
+    test_score = pipe.score(X_test, y_test)
+    mae = mean_absolute_error(y_test, y_pred)
+    mse = mean_squared_error(y_test, y_pred)
+    rmse = root_mean_squared_error(y_test, y_pred)
+
+    print(f'='*60)
+    print(f'\n{name}')
+    print(f'='*60)
+    print(f'\n ===== {name} Accuracy Score ===== \n {accuracy:3f}')
+    print(f'\n ===== {name} TRAINING SCORE ===== \n {train_score:.3f}')
+    print(f'\n ===== {name} TEST SCORE ===== \n {test_score:.3f}')
+    print(f'\n ===== {name} MEAN ABSOLUTE ERROR ===== \n {mae:.3f}')
+    print(f'\n ===== {name} MEAN SQUARED ERROR ===== \n {mse:.3f}')
+    print(f'\n ===== {name} ROOT MEAN SQUARED ERROR ===== \n {rmse:.3f}')
+
+    return y_pred
 
 
 
@@ -174,6 +261,10 @@ def main():
     hourly_data = preprocess_data(hourly_data)
     visualize_data(hourly_data)
     plot_heatmap(hourly_data)
+    X, y, X_train, X_test, y_train, y_test = select_features(hourly_data)
+    preprocessor = model_pipeline(X)
+    trained_models, pipe, name = train_model(preprocessor, X_train, y_train)
+    y_pred = evaluate_model(name, pipe, X_train, X_test, y_train, y_test)
 
 
 
