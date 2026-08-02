@@ -250,9 +250,9 @@ def train_model(preprocessor, X_train, y_train):
 
 
 
-# =========================
-#  MODEL EVALUATION
-# =========================
+# ====================================
+#  MODEL EVALUATION & CROSS VALIDATION
+# ====================================
 def evaluate_model(name, pipe, X_train, X_test, y_train, y_test):
 
     y_pred = pipe.predict(X_test)
@@ -264,6 +264,10 @@ def evaluate_model(name, pipe, X_train, X_test, y_train, y_test):
     mse = mean_squared_error(y_test, y_pred)
     rmse = root_mean_squared_error(y_test, y_pred)
 
+    kf = KFold(n_splits=5, shuffle=True, random_state=42)
+    cv = cross_val_score(pipe, X_train, y_train, cv=kf, scoring='r2')
+
+
     print(f'='*60)
     print(f'\n{name}')
     print(f'='*60)
@@ -273,9 +277,187 @@ def evaluate_model(name, pipe, X_train, X_test, y_train, y_test):
     print(f'\n ===== MEAN ABSOLUTE ERROR ===== \n {mae:.3f}')
     print(f'\n ===== MEAN SQUARED ERROR ===== \n {mse:.3f}')
     print(f'\n ===== ROOT MEAN SQUARED ERROR ===== \n {rmse:.3f}')
+    print(f'\n ===== CROSS-VALIDATION SCORE ===== \n mean: {cv.mean():.3f} standard deviation: (+/- {cv.std() * 2:.3f})')
 
-    return y_pred
+    metrics = {
+        'Train Score': train_score,
+        'Test Score': test_score,
+        'R2': r2,
+        'MAE': mae,
+        'MSE': mse,
+        'RMSE': rmse,
+        'CV Score': cv,
+        'CV Mean': cv.mean(),
+        'CV Std': cv.std()
+    }
 
+    return y_pred, metrics
+
+
+# ====================================
+# MODEL EVALUATION VISUALIZATIONS
+# ====================================
+def evaluation_plots(predictions, y_test):
+
+    """
+    Creates comparison plots for all regression models.
+
+    Parameters
+    ----------
+    predictions : dict
+        Dictionary containing model predictions.
+        Example:
+        {
+            'Linear Regression': y_pred1,
+            'RandomForest': y_pred2,
+            'XGBoost': y_pred3
+        }
+
+    y_test : Series
+        True target values.
+    """
+
+    # ----------------------------------
+    # Actual vs Predicted
+    # ----------------------------------
+    fig, axes = plt.subplots(1, len(predictions),
+                             figsize=(8 * len(predictions), 6))
+
+    if len(predictions) == 1:
+        axes = [axes]
+
+    for ax, (name, y_pred) in zip(axes, predictions.items()):
+
+        ax.scatter(y_test,
+                   y_pred,
+                   alpha=0.5)
+
+        # Perfect prediction line
+        minimum = min(y_test.min(), y_pred.min())
+        maximum = max(y_test.max(), y_pred.max())
+
+        ax.plot([minimum, maximum],
+                [minimum, maximum],
+                color='red',
+                linestyle='--')
+
+        ax.set_title(name)
+        ax.set_xlabel("Actual")
+        ax.set_ylabel("Predicted")
+
+    plt.tight_layout()
+    plt.savefig(PLOTS_DIR / "actual_vs_predicted_all_models.png")
+    plt.close()
+
+
+    # ----------------------------------
+    # Residual Plot
+    # ----------------------------------
+    fig, axes = plt.subplots(1, len(predictions),
+                             figsize=(8 * len(predictions), 6))
+
+    if len(predictions) == 1:
+        axes = [axes]
+
+    for ax, (name, y_pred) in zip(axes, predictions.items()):
+
+        residuals = y_test - y_pred
+
+        ax.scatter(y_pred,
+                   residuals,
+                   alpha=0.5)
+
+        ax.axhline(0,
+                   color='red',
+                   linestyle='--')
+
+        ax.set_title(name)
+        ax.set_xlabel("Predicted")
+        ax.set_ylabel("Residual")
+
+    plt.tight_layout()
+    plt.savefig(PLOTS_DIR / "residual_plot_all_models.png")
+    plt.close()
+
+
+    # ----------------------------------
+    # Prediction Error Distribution
+    # ----------------------------------
+    fig, axes = plt.subplots(1, len(predictions),
+                             figsize=(8 * len(predictions), 6))
+
+    if len(predictions) == 1:
+        axes = [axes]
+
+    for ax, (name, y_pred) in zip(axes, predictions.items()):
+
+        errors = y_test - y_pred
+
+        ax.hist(errors,
+                bins=30)
+
+        ax.set_title(name)
+        ax.set_xlabel("Prediction Error")
+        ax.set_ylabel("Frequency")
+
+    plt.tight_layout()
+    plt.savefig(PLOTS_DIR / "prediction_error_distribution.png")
+    plt.close()
+
+
+# =========================
+# MODEL METRICS COMPARISON
+# =========================
+
+def plot_model_metrics(metrics):
+
+    """
+    evaluation comparison bar charts for all models.
+    """
+
+    metrics_df = pd.DataFrame(metrics).T
+
+    fig, axes = plt.subplots(2, 2, figsize=(18, 12))
+
+    metrics = [
+        ("R2", axes[0,0]),
+        ("RMSE", axes[0,1]),
+        ("MAE", axes[1,0]),
+        ("CV Mean", axes[1,1])
+    ]
+
+    for metric, ax in metrics:
+
+        values = metrics_df[metric]
+
+        bars = ax.bar(metrics_df.index,
+                      values)
+
+        ax.set_title(metric)
+        ax.set_ylabel(metric)
+        ax.tick_params(axis='x', rotation=20)
+
+        for bar in bars:
+
+            height = bar.get_height()
+
+            ax.text(
+                bar.get_x() + bar.get_width()/2,
+                height,
+                f"{height:.3f}",
+                ha='center',
+                va='bottom',
+                fontsize=9
+            )
+
+    plt.tight_layout()
+
+    plt.savefig(
+        PLOTS_DIR / "model_metrics_comparison.png",
+        dpi=300
+    )
+
+    plt.close()
 
 
 # =========================
@@ -295,12 +477,19 @@ def main():
     trained_models = train_model(preprocessor, X_train, y_train)
 
     # evaluation on each trained models
+    predictions = {}
+    metrics_results ={}
+
     for name, pipe in trained_models.items():
-        y_pred = evaluate_model(name, pipe, X_train, X_test, y_train, y_test)
+        y_pred, metrics = evaluate_model(name, pipe, X_train, X_test, y_train, y_test)
 
-    
+        predictions[name] = y_pred
+        metrics_results[name] = metrics
 
 
+    evaluation_plots(predictions, y_test)
+    plot_model_metrics(metrics_results)
 
+   
 if __name__ == '__main__':
     main()
