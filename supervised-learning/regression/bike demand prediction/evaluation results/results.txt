@@ -65,98 +65,81 @@ dtype: int64
 
  ===== DUPLICATE DATA ===== 
  0
-
- ===== DATA TYPES ===== 
-rec_id                        int64
-date                 datetime64[ns]
-season                     category
-year                       category
-month                      category
-hour                          int64
-is_holiday                 category
-weekday                    category
-is_workingday              category
-weather_condition          category
-temp                        float64
-atemp                       float64
-humidity                    float64
-windspeed                   float64
-casual                        int64
-registered                    int64
-total_count                   int64
-dtype: object
 ============================================================
 
 LINEAR REGRESSION
 ============================================================
 
  ===== TRAINING SCORE ===== 
- 0.406
+ 0.411
 
  ===== TEST SCORE ===== 
- 0.409
+ 0.330
 
  ===== R2 SCORE ===== 
- 0.408718
+ 0.329746
 
  ===== MEAN ABSOLUTE ERROR ===== 
- 103.130
+ 136.945
 
  ===== MEAN SQUARED ERROR ===== 
- 18723.180
+ 32583.414
 
  ===== ROOT MEAN SQUARED ERROR ===== 
- 136.833
+ 180.509
 
  ===== CROSS-VALIDATION SCORE ===== 
- mean: 0.403 standard deviation: (+/- 0.024)
+ mean: 0.255 standard deviation: (+/- 0.087)
 ============================================================
 
 RANDOMFOREST REGRESSOR
 ============================================================
 
  ===== TRAINING SCORE ===== 
- 0.993
+ 0.992
 
  ===== TEST SCORE ===== 
- 0.948
+ 0.882
 
  ===== R2 SCORE ===== 
- 0.947718
+ 0.882106
 
  ===== MEAN ABSOLUTE ERROR ===== 
- 24.009
+ 50.087
 
  ===== MEAN SQUARED ERROR ===== 
- 1655.516
+ 5731.257
 
  ===== ROOT MEAN SQUARED ERROR ===== 
- 40.688
+ 75.705
 
  ===== CROSS-VALIDATION SCORE ===== 
- mean: 0.945 standard deviation: (+/- 0.010)
+ mean: 0.736 standard deviation: (+/- 0.222)
 ============================================================
 
 XGBOOST REGRESSOR
 ============================================================
 
  ===== TRAINING SCORE ===== 
- 0.981
+ 0.977
 
  ===== TEST SCORE ===== 
- 0.953
+ 0.901
 
  ===== R2 SCORE ===== 
- 0.952846
+ 0.900884
 
  ===== MEAN ABSOLUTE ERROR ===== 
- 24.132
+ 46.574
 
  ===== MEAN SQUARED ERROR ===== 
- 1493.163
+ 4818.359
 
  ===== ROOT MEAN SQUARED ERROR ===== 
- 38.641
+ 69.414
 
  ===== CROSS-VALIDATION SCORE ===== 
- mean: 0.950 standard deviation: (+/- 0.007)
+ mean: 0.760 standard deviation: (+/- 0.222)
+
+ ===== BEST MODEL (RMSE) ===== 
+ XGBOOST REGRESSOR
