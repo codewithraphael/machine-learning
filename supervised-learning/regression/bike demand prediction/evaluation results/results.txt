@@ -67,7 +67,7 @@ dtype: int64
  0
 
  ===== DATA TYPES ===== 
- rec_id                        int64
+rec_id                        int64
 date                 datetime64[ns]
 season                     category
 year                       category
