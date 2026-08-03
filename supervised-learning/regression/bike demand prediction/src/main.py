@@ -223,8 +223,8 @@ def train_model(preprocessor, X_train, y_train):
 
     models = {
         'LINEAR REGRESSION': LinearRegression(),
-        'RANDOMFOREST REGRESSOR': RandomForestRegressor(),
-        'XGBOOST REGRESSOR': XGBRegressor()
+        'RANDOMFOREST REGRESSOR': RandomForestRegressor(random_state=42),
+        'XGBOOST REGRESSOR': XGBRegressor(random_state=42)
     }
 
     trained_models = {}
