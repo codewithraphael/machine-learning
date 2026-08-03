@@ -1,0 +1,2 @@
+NUM_COLMNS = ['hour', 'temp', 'atemp', 'humidity', 'windspeed', 'casual', 'registered', 'total_count']
+CAT_COLUMNS = ['season', 'is_holiday', 'weekday', 'weather_condition', 'is_workingday', 'month', 'year']
