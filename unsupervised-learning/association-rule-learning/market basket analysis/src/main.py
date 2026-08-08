@@ -29,6 +29,17 @@ def load_transaction_data(file_path):
             if items:
                 transactions.append(items)    
 
+    print('='*60)
+    print(f"MARKET BASKET ANALYSIS")
+    print('='*60)
+    print(transactions[:10])
+
+    print('='*60)
+    print(f"TOTAL NUMBER OF TRANSACTIONS: {len(transactions)}")
+    print('='*60)
+
+    return transactions
+
 
 
 
