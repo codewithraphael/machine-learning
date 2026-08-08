@@ -1,0 +1,8 @@
+DATA_PATH = "../data/grocery_dataset.txt"
+
+MIN_SUPPORT = 0.02
+MIN_CONFIDENCE = 0.30
+MIN_LIFT = 1.00
+
+TOP_N_ITEMS = 15
+TOP_N_RULES = 20
