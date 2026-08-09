@@ -1,0 +1,10 @@
+============================================================
+MARKET BASKET ANALYSIS
+============================================================
+ 
+ ===== EXPLANATORY DATA ANALYSIS ===== 
+
+[['citrus fruit', 'ready soups', 'margarine', 'semi-finished bread'], ['coffee', 'tropical fruit', 'yogurt'], ['whole milk'], ['pip fruit', 'meat spreads', 'yogurt', 'cream cheese'], ['whole milk', 'other vegetables', 'condensed milk', 'long life bakery product'], ['yogurt', 'whole milk', 'abrasive cleaner', 'butter', 'rice'], ['rolls/buns'], ['other vegetables', 'uht-milk', 'rolls/buns', 'bottled beer', 'liquor (appetizer)'], ['pot plants'], ['cereals', 'whole milk']]
+
+ ===== TOTAL NUMBER OF TRANSACTIONS ===== 
+ 9835
