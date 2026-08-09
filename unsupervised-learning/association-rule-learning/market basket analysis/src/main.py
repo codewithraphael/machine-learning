@@ -6,13 +6,23 @@ import matplotlib.pyplot as plt
 from mlxtend.preprocessing import TransactionEncoder
 from mlxtend.frequent_patterns import apriori, association_rules
 
+from pathlib import Path
+
 from config import DATA_PATH, MIN_SUPPORT, MIN_CONFIDENCE, MIN_LIFT, TOP_N_ITEMS, TOP_N_RULES
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+PLOTS_DIR = PROJECT_ROOT / 'plots'
+
+PLOTS_DIR.mkdir(parents=True, exist_ok=True)
 
 # ====================================
 #  LOADING TRANSACTION DATASET
 # ====================================
 def load_transaction_data(file_path):
+
+    print('='*80)
+    print(f"MARKET BASKET ANALYSIS")
+    print('='*80)
 
     transactions = []
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -22,23 +32,104 @@ def load_transaction_data(file_path):
             if not line:
                 continue
 
-            items = [item.strip() for item in line.split(',')]
+            items = [item.strip().lower() for item in line.split(',')]
             items = [item for item in items if item]
             items = list(set(items))
 
             if items:
                 transactions.append(items)    
 
+    return transactions
+
+
+# ====================================
+#  EXPLANATORY DATA ANALYSIS
+# ====================================
+def eda(transactions):
+
+    transaction_sizes = [len(transactions) for transaction in transactions]
+    total_items = sum(transaction_sizes)
+    average_items = np.mean(transaction_sizes)
+
     print('='*60)
-    print(f"MARKET BASKET ANALYSIS")
+    print(f"EXPLANATORY DATA ANALYSIS")
     print('='*60)
     print(transactions[:10])
+    print(f"\n ===== TOTAL NUMBER OF TRANSACTIONS ===== \n {len(transactions)}")
+    print(f'\n ===== TOTAL ITEMS PURCHASED ===== \n {total_items}')
+    print(f'\n ===== AVERAGE ITEMS PER TRANSACTION ===== \n {average_items:.2f}')
+    print(f'\n ===== MINIMUM ITEMS IN TRANSACTION ===== \n {min(transaction_sizes)}')
+    print(f'\n ===== MAXIMUM ITEMS IN TRANSACTION ===== \n {max(transaction_sizes)}')
 
-    print('='*60)
-    print(f"TOTAL NUMBER OF TRANSACTIONS: {len(transactions)}")
-    print('='*60)
 
-    return transactions
+
+# ====================================
+#  COUNT INDIVIDUAL ITEMS
+# ====================================
+def get_item_frequencies(transactions):
+
+    item_counts = {}
+
+    for transaction in transactions:
+        for item in transaction:
+
+            if item not in item_counts:
+                item_counts[item] = 0
+
+            item_counts[item] += 1
+
+
+    frequency_df = pd.DataFrame(
+        list(item_counts.items()),
+        columns=['item', 'frequency']
+    )
+
+    frequency_df = frequency_df.sort_values(
+        by='frequency',
+        ascending=False
+    )
+
+    frequency_df = frequency_df.reset_index(drop=True)
+
+    return frequency_df
+
+
+
+# ====================================
+#  VISUALIZING TOP PRODUCTS
+# ====================================
+
+def plot_top_items(frequency_df, top_n=15):
+
+    top_items = frequency_df.head(top_n)
+
+    plt.figure(figsize=(12, 7))
+
+    sns.barplot(
+        data=top_items,
+        x="frequency",
+        y="item"
+    )
+
+    plt.title("Top Purchased Products")
+    plt.xlabel("Number of Transactions")
+    plt.ylabel("Product")
+    plt.tight_layout()
+    plt.savefig(PLOTS_DIR / 'top_purchased_products.png')
+    plt.close()
+
+            
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -50,15 +141,10 @@ def load_transaction_data(file_path):
 def main():
 
     file_path = DATA_PATH
-    load_transaction_data(file_path)
-
-
-
-
-
-
-
-
+    transactions = load_transaction_data(file_path)
+    eda(transactions)
+    frequency_df = get_item_frequencies(transactions)
+    plot_top_items(frequency_df, top_n=20)
 
 
 if __name__ == "__main__":
