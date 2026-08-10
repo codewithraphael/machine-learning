@@ -91,7 +91,7 @@ def get_item_frequencies(transactions):
 
     frequency_df = frequency_df.reset_index(drop=True)
 
-    print(f'\n ===== TOP {min(10, len(frequency_df))} MOST POPULAR PRODUCTS =====')
+    print(f'\n ===== TOP MOST POPULAR SELLING PRODUCTS =====')
     print(frequency_df.head(10))
 
     return frequency_df
