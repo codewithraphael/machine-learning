@@ -1,10 +1,35 @@
-============================================================
+================================================================================
 MARKET BASKET ANALYSIS
+================================================================================
 ============================================================
- 
- ===== EXPLANATORY DATA ANALYSIS ===== 
-
-[['citrus fruit', 'ready soups', 'margarine', 'semi-finished bread'], ['coffee', 'tropical fruit', 'yogurt'], ['whole milk'], ['pip fruit', 'meat spreads', 'yogurt', 'cream cheese'], ['whole milk', 'other vegetables', 'condensed milk', 'long life bakery product'], ['yogurt', 'whole milk', 'abrasive cleaner', 'butter', 'rice'], ['rolls/buns'], ['other vegetables', 'uht-milk', 'rolls/buns', 'bottled beer', 'liquor (appetizer)'], ['pot plants'], ['cereals', 'whole milk']]
+EXPLANATORY DATA ANALYSIS
+============================================================
+[['ready soups', 'citrus fruit', 'semi-finished bread', 'margarine'], ['yogurt', 'coffee', 'tropical fruit'], ['whole milk'], ['yogurt', 'cream cheese', 'meat spreads', 'pip fruit'], ['whole milk', 'long life bakery product', 'other vegetables', 'condensed milk'], ['butter', 'yogurt', 'whole milk', 'rice', 'abrasive cleaner'], ['rolls/buns'], ['rolls/buns', 'bottled beer', 'other vegetables', 'liquor (appetizer)', 'uht-milk'], ['pot plants'], ['whole milk', 'cereals']]
 
  ===== TOTAL NUMBER OF TRANSACTIONS ===== 
  9835
+
+ ===== TOTAL ITEMS PURCHASED ===== 
+ 43367
+
+ ===== AVERAGE ITEMS PER TRANSACTION ===== 
+ 4.41
+
+ ===== MINIMUM ITEMS IN TRANSACTION ===== 
+ 1
+
+ ===== MAXIMUM ITEMS IN TRANSACTION ===== 
+ 32
+
+ ===== TOP 10 MOST POPULAR PRODUCTS =====
+               item  frequency
+0        whole milk       2513
+1  other vegetables       1903
+2        rolls/buns       1809
+3              soda       1715
+4            yogurt       1372
+5     bottled water       1087
+6   root vegetables       1072
+7    tropical fruit       1032
+8     shopping bags        969
+9           sausage        924
