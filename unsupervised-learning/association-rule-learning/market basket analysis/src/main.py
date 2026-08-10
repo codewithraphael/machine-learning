@@ -47,7 +47,7 @@ def load_transaction_data(file_path):
 # ====================================
 def eda(transactions):
 
-    transaction_sizes = [len(transactions) for transaction in transactions]
+    transaction_sizes = [len(transaction) for transaction in transactions]
     total_items = sum(transaction_sizes)
     average_items = np.mean(transaction_sizes)
 
@@ -90,6 +90,9 @@ def get_item_frequencies(transactions):
     )
 
     frequency_df = frequency_df.reset_index(drop=True)
+
+    print(f'\n ===== TOP {min(10, len(frequency_df))} MOST POPULAR PRODUCTS =====')
+    print(frequency_df.head(10))
 
     return frequency_df
 
