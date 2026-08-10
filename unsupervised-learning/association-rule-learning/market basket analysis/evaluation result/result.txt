@@ -4,7 +4,7 @@ MARKET BASKET ANALYSIS
 ============================================================
 EXPLANATORY DATA ANALYSIS
 ============================================================
-[['ready soups', 'citrus fruit', 'semi-finished bread', 'margarine'], ['yogurt', 'coffee', 'tropical fruit'], ['whole milk'], ['yogurt', 'cream cheese', 'meat spreads', 'pip fruit'], ['whole milk', 'long life bakery product', 'other vegetables', 'condensed milk'], ['butter', 'yogurt', 'whole milk', 'rice', 'abrasive cleaner'], ['rolls/buns'], ['rolls/buns', 'bottled beer', 'other vegetables', 'liquor (appetizer)', 'uht-milk'], ['pot plants'], ['whole milk', 'cereals']]
+[['ready soups', 'semi-finished bread', 'margarine', 'citrus fruit'], ['coffee', 'yogurt', 'tropical fruit'], ['whole milk'], ['pip fruit', 'yogurt', 'cream cheese', 'meat spreads'], ['condensed milk', 'whole milk', 'long life bakery product', 'other vegetables'], ['yogurt', 'butter', 'whole milk', 'rice', 'abrasive cleaner'], ['rolls/buns'], ['other vegetables', 'rolls/buns', 'bottled beer', 'uht-milk', 'liquor (appetizer)'], ['pot plants'], ['cereals', 'whole milk']]
 
  ===== TOTAL NUMBER OF TRANSACTIONS ===== 
  9835
@@ -21,7 +21,7 @@ EXPLANATORY DATA ANALYSIS
  ===== MAXIMUM ITEMS IN TRANSACTION ===== 
  32
 
- ===== TOP 10 MOST POPULAR PRODUCTS =====
+ ===== TOP MOST POPULAR SELLING PRODUCTS =====
                item  frequency
 0        whole milk       2513
 1  other vegetables       1903
