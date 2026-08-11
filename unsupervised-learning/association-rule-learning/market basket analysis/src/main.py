@@ -55,11 +55,11 @@ def eda(transactions):
     print(f"EXPLANATORY DATA ANALYSIS")
     print('='*60)
     print(transactions[:10])
-    print(f"\n ===== TOTAL NUMBER OF TRANSACTIONS ===== \n {len(transactions)}")
-    print(f'\n ===== TOTAL ITEMS PURCHASED ===== \n {total_items}')
-    print(f'\n ===== AVERAGE ITEMS PER TRANSACTION ===== \n {average_items:.2f}')
-    print(f'\n ===== MINIMUM ITEMS IN TRANSACTION ===== \n {min(transaction_sizes)}')
-    print(f'\n ===== MAXIMUM ITEMS IN TRANSACTION ===== \n {max(transaction_sizes)}')
+    print(f"\n TOTAL NUMBER OF TRANSACTIONS: {len(transactions)}")
+    print(f'\n TOTAL ITEMS PURCHASED: {total_items}')
+    print(f'\n AVERAGE ITEMS PER TRANSACTION: {average_items:.2f}')
+    print(f'\n MINIMUM ITEMS IN TRANSACTION: {min(transaction_sizes)}')
+    print(f'\n MAXIMUM ITEMS IN TRANSACTION: {max(transaction_sizes)}')
 
 
 
@@ -121,8 +121,26 @@ def plot_top_items(frequency_df, top_n=15):
     plt.savefig(PLOTS_DIR / 'top_purchased_products.png')
     plt.close()
 
-            
 
+# ====================================
+#  TRANSACTION ENCODING
+# ====================================
+def encode_transactions(transactions):
+
+    te = TransactionEncoder()
+    encoded_array = te.fit(transactions).transform(transactions)
+
+    encoded_df = pd.DataFrame(encoded_array, columns=te.columns_)
+
+    return encoded_df
+
+
+# =======================================================
+#  FIND FREQUENT ITEMSETS USING APRIORI ALGORITHM
+# =======================================================
+def find_frequent_itemsets(encoded_df, min_support=MIN_SUPPORT):
+
+    
 
 
 
