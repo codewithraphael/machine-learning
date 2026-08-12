@@ -140,11 +140,62 @@ def encode_transactions(transactions):
 # =======================================================
 def find_frequent_itemsets(encoded_df, min_support=MIN_SUPPORT):
 
+    frequent_itemsets = apriori(
+        encoded_df,
+        min_support,
+        use_colnames=True
+    )
+
+    frequent_itemsets['itemset_size'] = (
+        frequent_itemsets['itemsets'].apply(len)
+    )
+
+    frequent_itemsets = frequent_itemsets.sort_values(
+        by='support',
+        ascending='False'
+    )
+
+    print('\n' + '=' * 60)
+    print('FREQUENT ITEMSETS')
+    print('=' * 60)
+
+    print(
+        frequent_itemsets.head(20).to_string(
+            index=False
+        )
+    )
+
+    print(
+        f'\n NUMBR OF FREQUENT ITEMSETS: '
+        f'{len(frequent_itemsets)}'
+    )
+
+    return frequent_itemsets
+
+
+# ====================================
+#  GENERATING ASSOCIATION RULES
+# ====================================
+def generate_rules(frequent_itemsets, min_confidence=MIN_CONFIDENCE):
+
+    if frequent_itemsets.empty:
+
+        print('\nNo frequent itemsets found.')
+        return pd.DataFrame()
+
+    rules = association_rules(
+        frequent_itemsets,
+        metrics='confidence',
+        min_threshold=min_confidence
+    )
     
+    if rules.empty:
 
+        print('\nNo association rules found.')
 
+        return rules
 
-
+    rules['antecendant_length'] = 
 
 
 
