@@ -437,11 +437,6 @@ def save_results(
             index=False
         )
 
-    print("item_frequencies.csv")
-    print("frequent_itemsets.csv")
-    print("association_rules.csv")
-
-
 # ====================================
 #  MAIN
 # ====================================
