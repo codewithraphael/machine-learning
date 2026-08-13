@@ -12,6 +12,9 @@ from config import DATA_PATH, MIN_SUPPORT, MIN_CONFIDENCE, MIN_LIFT, TOP_N_ITEMS
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 PLOTS_DIR = PROJECT_ROOT / 'plots'
+DATA_DIR = PROJECT_ROOT / 'data'
+
+DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 PLOTS_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -388,7 +391,9 @@ def plot_top_rules(
 
     plt.tight_layout()
 
-    plt.show()
+    # Save plot to project plots directory
+    plt.savefig(PLOTS_DIR / 'top_association_rules.png')
+    plt.close()
 
 # ============================================================
 # SAVE RESULTS
@@ -403,7 +408,7 @@ def save_results(
     # Save product frequencies
 
     frequency_df.to_csv(
-        "item_frequencies.csv",
+        DATA_DIR / "item_frequencies.csv",
         index=False
     )
 
@@ -417,7 +422,7 @@ def save_results(
     )
 
     frequent_export.to_csv(
-        "frequent_itemsets.csv",
+        DATA_DIR / "frequent_itemsets.csv",
         index=False
     )
 
@@ -428,7 +433,7 @@ def save_results(
         rule_export = prepare_rule_table(rules)
 
         rule_export.to_csv(
-            "association_rules.csv",
+            DATA_DIR / "association_rules.csv",
             index=False
         )
 
@@ -441,8 +446,9 @@ def save_results(
 #  MAIN
 # ====================================
 def main():
-
-    file_path = DATA_PATH
+    # Resolve dataset path relative to the `src` directory using DATA_PATH from config
+    src_dir = Path(__file__).resolve().parent
+    file_path = (src_dir / DATA_PATH).resolve()
     transactions = load_transaction_data(file_path)
     eda(transactions)
     frequency_df = get_item_frequencies(transactions)
