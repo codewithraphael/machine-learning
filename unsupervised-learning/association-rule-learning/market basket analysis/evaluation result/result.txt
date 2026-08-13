@@ -4,22 +4,17 @@ MARKET BASKET ANALYSIS
 ============================================================
 EXPLANATORY DATA ANALYSIS
 ============================================================
-[['ready soups', 'semi-finished bread', 'margarine', 'citrus fruit'], ['coffee', 'yogurt', 'tropical fruit'], ['whole milk'], ['pip fruit', 'yogurt', 'cream cheese', 'meat spreads'], ['condensed milk', 'whole milk', 'long life bakery product', 'other vegetables'], ['yogurt', 'butter', 'whole milk', 'rice', 'abrasive cleaner'], ['rolls/buns'], ['other vegetables', 'rolls/buns', 'bottled beer', 'uht-milk', 'liquor (appetizer)'], ['pot plants'], ['cereals', 'whole milk']]
+[['semi-finished bread', 'ready soups', 'citrus fruit', 'margarine'], ['coffee', 'yogurt', 'tropical fruit'], ['whole milk'], ['meat spreads', 'pip fruit', 'yogurt', 'cream cheese'], ['other vegetables', 'long life bakery product', 'condensed milk', 'whole milk'], ['rice', 'whole milk', 'abrasive cleaner', 'yogurt', 'butter'], ['rolls/buns'], ['rolls/buns', 'uht-milk', 'other vegetables', 'bottled beer', 'liquor (appetizer)'], ['pot plants'], ['cereals', 'whole milk']]
 
- ===== TOTAL NUMBER OF TRANSACTIONS ===== 
- 9835
+ TOTAL NUMBER OF TRANSACTIONS: 9835
 
- ===== TOTAL ITEMS PURCHASED ===== 
- 43367
+ TOTAL ITEMS PURCHASED: 43367
 
- ===== AVERAGE ITEMS PER TRANSACTION ===== 
- 4.41
+ AVERAGE ITEMS PER TRANSACTION: 4.41
 
- ===== MINIMUM ITEMS IN TRANSACTION ===== 
- 1
+ MINIMUM ITEMS IN TRANSACTION: 1
 
- ===== MAXIMUM ITEMS IN TRANSACTION ===== 
- 32
+ MAXIMUM ITEMS IN TRANSACTION: 32
 
  ===== TOP MOST POPULAR SELLING PRODUCTS =====
                item  frequency
@@ -33,3 +28,65 @@ EXPLANATORY DATA ANALYSIS
 7    tropical fruit       1032
 8     shopping bags        969
 9           sausage        924
+
+============================================================
+FREQUENT ITEMSETS
+============================================================
+ support                       itemsets  itemset_size
+0.255516                   (whole milk)             1
+0.193493             (other vegetables)             1
+0.183935                   (rolls/buns)             1
+0.174377                         (soda)             1
+0.139502                       (yogurt)             1
+0.110524                (bottled water)             1
+0.108998              (root vegetables)             1
+0.104931               (tropical fruit)             1
+0.098526                (shopping bags)             1
+0.093950                      (sausage)             1
+0.088968                       (pastry)             1
+0.082766                 (citrus fruit)             1
+0.080529                 (bottled beer)             1
+0.079817                   (newspapers)             1
+0.077682                  (canned beer)             1
+0.075648                    (pip fruit)             1
+0.074835 (other vegetables, whole milk)             2
+0.072293        (fruit/vegetable juice)             1
+0.071683           (whipped/sour cream)             1
+0.064870                  (brown bread)             1
+
+ NUMBER OF FREQUENT ITEMSETS: 122
+
+============================================================
+ASSOCIATION RULES
+============================================================
+Number of rules: 37
+
+============================================================
+HIGH QUALITY RULES
+============================================================
+Rules after filtering: 37
+
+============================================================
+TOP 20 ASSOCIATION RULES
+============================================================
+                       antecedent       consequent  support  confidence   lift
+     other vegetables, whole milk  root vegetables   0.0232      0.3098 2.8421
+      root vegetables, whole milk other vegetables   0.0232      0.4740 2.4498
+                  root vegetables other vegetables   0.0474      0.4347 2.2466
+               whipped/sour cream other vegetables   0.0289      0.4028 2.0819
+               whole milk, yogurt other vegetables   0.0223      0.3975 2.0541
+         other vegetables, yogurt       whole milk   0.0223      0.5129 2.0072
+                           butter       whole milk   0.0276      0.4972 1.9461
+                             pork other vegetables   0.0217      0.3757 1.9415
+                             curd       whole milk   0.0261      0.4905 1.9195
+other vegetables, root vegetables       whole milk   0.0232      0.4893 1.9148
+                           butter other vegetables   0.0200      0.3615 1.8681
+                    domestic eggs       whole milk   0.0300      0.4728 1.8502
+                    domestic eggs other vegetables   0.0223      0.3510 1.8138
+                     citrus fruit other vegetables   0.0289      0.3489 1.8031
+                        pip fruit other vegetables   0.0261      0.3454 1.7852
+                          sausage       rolls/buns   0.0306      0.3258 1.7710
+                   tropical fruit other vegetables   0.0359      0.3421 1.7678
+               whipped/sour cream       whole milk   0.0322      0.4496 1.7598
+                  root vegetables       whole milk   0.0489      0.4487 1.7560
+                frozen vegetables       whole milk   0.0204      0.4249 1.6631
