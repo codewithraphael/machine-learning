@@ -142,7 +142,7 @@ def find_frequent_itemsets(encoded_df, min_support=MIN_SUPPORT):
 
     frequent_itemsets = apriori(
         encoded_df,
-        min_support,
+        min_support=min_support,
         use_colnames=True
     )
 
@@ -152,7 +152,7 @@ def find_frequent_itemsets(encoded_df, min_support=MIN_SUPPORT):
 
     frequent_itemsets = frequent_itemsets.sort_values(
         by='support',
-        ascending='False'
+        ascending=False
     )
 
     print('\n' + '=' * 60)
@@ -166,7 +166,7 @@ def find_frequent_itemsets(encoded_df, min_support=MIN_SUPPORT):
     )
 
     print(
-        f'\n NUMBR OF FREQUENT ITEMSETS: '
+        f'\n NUMBER OF FREQUENT ITEMSETS: '
         f'{len(frequent_itemsets)}'
     )
 
@@ -185,7 +185,7 @@ def generate_rules(frequent_itemsets, min_confidence=MIN_CONFIDENCE):
 
     rules = association_rules(
         frequent_itemsets,
-        metrics='confidence',
+        metric='confidence',
         min_threshold=min_confidence
     )
     
@@ -195,16 +195,246 @@ def generate_rules(frequent_itemsets, min_confidence=MIN_CONFIDENCE):
 
         return rules
 
-    rules['antecendant_length'] = 
+    # Calculate additional useful metrics
 
+    rules["antecedent_length"] = (
+        rules["antecedents"]
+        .apply(len)
+    )
 
+    rules["consequent_length"] = (
+        rules["consequents"]
+        .apply(len)
+    )
 
+    # Sort by lift
+    rules = rules.sort_values(
+        by="lift",
+        ascending=False
+    )
 
+    print("\n" + "=" * 60)
+    print("ASSOCIATION RULES")
+    print("=" * 60)
 
+    print(
+        f"Number of rules: {len(rules)}"
+    )
 
+    return rules
 
+# ============================================================
+# FILTER HIGH QUALITY RULES
+# ============================================================
 
+def filter_rules(
+    rules,
+    min_lift=1.0,
+    min_confidence=0.30
+):
+    """
+    Filter rules using confidence and lift.
+    """
 
+    if rules.empty:
+        return rules
+
+    filtered_rules = rules[
+        (rules["lift"] >= min_lift)
+        &
+        (rules["confidence"] >= min_confidence)
+    ]
+
+    filtered_rules = filtered_rules.sort_values(
+        by=["lift", "confidence"],
+        ascending=False
+    )
+
+    print("\n" + "=" * 60)
+    print("HIGH QUALITY RULES")
+    print("=" * 60)
+
+    print(
+        f"Rules after filtering: "
+        f"{len(filtered_rules)}"
+    )
+
+    return filtered_rules
+
+# ============================================================
+# FORMAT RULES FOR DISPLAY
+# ============================================================
+
+def format_itemset(itemset):
+
+    return ", ".join(
+        sorted(list(itemset))
+    )
+
+def prepare_rule_table(rules):
+
+    if rules.empty:
+        return pd.DataFrame()
+
+    result = rules.copy()
+
+    result["antecedent"] = (
+        result["antecedents"]
+        .apply(format_itemset)
+    )
+
+    result["consequent"] = (
+        result["consequents"]
+        .apply(format_itemset)
+    )
+
+    result = result[
+        [
+            "antecedent",
+            "consequent",
+            "support",
+            "confidence",
+            "lift"
+        ]
+    ]
+
+    return result
+
+# ============================================================
+# DISPLAY TOP RULES
+# ============================================================
+
+def display_top_rules(
+    rules,
+    top_n=20
+):
+
+    if rules.empty:
+
+        print("\nNo rules available.")
+
+        return
+
+    rule_table = prepare_rule_table(rules)
+
+    print("\n" + "=" * 60)
+    print(f"TOP {top_n} ASSOCIATION RULES")
+    print("=" * 60)
+
+    display_table = rule_table.head(top_n).copy()
+
+    display_table["support"] = (
+        display_table["support"]
+        .round(4)
+    )
+
+    display_table["confidence"] = (
+        display_table["confidence"]
+        .round(4)
+    )
+
+    display_table["lift"] = (
+        display_table["lift"]
+        .round(4)
+    )
+
+    print(
+        display_table.to_string(
+            index=False
+        )
+    )
+
+# ============================================================
+# PLOT TOP ASSOCIATION RULES
+# ============================================================
+
+def plot_top_rules(
+    rules,
+    top_n=15
+):
+
+    if rules.empty:
+        return
+
+    plot_data = rules.head(top_n).copy()
+
+    plot_data["rule"] = (
+        plot_data["antecedents"]
+        .apply(format_itemset)
+        +
+        " → "
+        +
+        plot_data["consequents"]
+        .apply(format_itemset)
+    )
+
+    plot_data = plot_data.sort_values(
+        by="lift"
+    )
+
+    plt.figure(figsize=(12, 8))
+
+    sns.barplot(
+        data=plot_data,
+        x="lift",
+        y="rule"
+    )
+
+    plt.title("Top Association Rules by Lift")
+
+    plt.xlabel("Lift")
+
+    plt.ylabel("Association Rule")
+
+    plt.tight_layout()
+
+    plt.show()
+
+# ============================================================
+# SAVE RESULTS
+# ============================================================
+
+def save_results(
+    frequent_itemsets,
+    rules,
+    frequency_df
+):
+
+    # Save product frequencies
+
+    frequency_df.to_csv(
+        "item_frequencies.csv",
+        index=False
+    )
+
+    # Save frequent itemsets
+
+    frequent_export = frequent_itemsets.copy()
+
+    frequent_export["itemsets"] = (
+        frequent_export["itemsets"]
+        .apply(format_itemset)
+    )
+
+    frequent_export.to_csv(
+        "frequent_itemsets.csv",
+        index=False
+    )
+
+    # Save association rules
+
+    if not rules.empty:
+
+        rule_export = prepare_rule_table(rules)
+
+        rule_export.to_csv(
+            "association_rules.csv",
+            index=False
+        )
+
+    print("item_frequencies.csv")
+    print("frequent_itemsets.csv")
+    print("association_rules.csv")
 
 
 # ====================================
@@ -216,7 +446,42 @@ def main():
     transactions = load_transaction_data(file_path)
     eda(transactions)
     frequency_df = get_item_frequencies(transactions)
-    plot_top_items(frequency_df, top_n=20)
+    plot_top_items(frequency_df, top_n=TOP_N_ITEMS)
+    encoded_df = encode_transactions(
+        transactions
+    )
+
+    frequent_itemsets = find_frequent_itemsets(
+        encoded_df,
+        MIN_SUPPORT
+    )
+
+    rules = generate_rules(
+        frequent_itemsets,
+        MIN_CONFIDENCE
+    )
+
+    rules = filter_rules(
+        rules,
+        MIN_LIFT,
+        MIN_CONFIDENCE
+    )
+
+    display_top_rules(
+        rules,
+        TOP_N_RULES
+    )
+
+    plot_top_rules(
+        rules,
+        TOP_N_RULES
+    )
+
+    save_results(
+        frequent_itemsets,
+        rules,
+        frequency_df
+    )
 
 
 if __name__ == "__main__":
