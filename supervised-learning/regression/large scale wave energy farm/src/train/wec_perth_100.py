@@ -66,13 +66,30 @@ def eda(data):
 # ====================================
 def visualize_data(data):
 
-    plt.figure(figsize=(22, 12))
+    '''
+    Data Visualization on Reactive Power and Total Power Distribution 
+    '''
+    plt.figure(figsize=(12, 6))
     sns.histplot(data,
                  x=data['Total_Power'],
                  kde=True
     )
+    plt.title('Total Power Distribution')
+    plt.xlabel('Total Power (kW)')
     plt.tight_layout()
     plt.savefig(PLOTS_PATH / 'total_power_distribution.png')
+    plt.close()
+
+
+    sns.histplot(data,
+                x=data['qW'],
+                kde=True
+    )
+    plt.title('Reactive Power Distribution')
+    plt.xlabel('Reactive Power (kVAR)')
+    plt.tight_layout()
+    plt.savefig(PLOTS_PATH / 'reactive_power_distribution.png')
+    plt.close()
 
 
 # ====================================
