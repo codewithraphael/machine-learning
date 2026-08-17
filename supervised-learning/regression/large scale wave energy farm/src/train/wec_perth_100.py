@@ -7,9 +7,10 @@ import seaborn as sns; sns.set_theme()
 import joblib
 from pathlib import Path
 
-from sklearn.model_selection import train_test_split, KFold
+from sklearn.model_selection import train_test_split, KFold, cross_val_score
 from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
+from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error, root_mean_squared_error
 
 from xgboost import XGBRegressor
@@ -69,6 +70,7 @@ def visualize_data(data):
     '''
     Data Visualization on Reactive Power and Total Power Distribution 
     '''
+
     plt.figure(figsize=(12, 6))
     sns.histplot(data,
                  x=data['Total_Power'],
@@ -92,6 +94,83 @@ def visualize_data(data):
     plt.close()
 
 
+# ===========================================
+#  FEATURE SELECTION & PREPROCESSING PIPELINE
+# ===========================================
+def preprocess_data(data):
+
+    data = data.rename(columns={
+        'Total_Power': 'total_power',
+        'qW' : 'farm_q_factor'
+    })
+
+    scaler = StandardScaler()
+    features = data.drop(columns=['total_power'], axis=1)
+    target = data['total_power']
+
+    X = features
+    y = target
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
+
+    return X, y, X_train, X_test, y_train, y_test
+
+
+# ====================================
+#  MODEL TRAINING PIPELINE
+# ====================================
+def train_model(X_train, y_train):
+
+    models = {
+        'LINEAR REGRESSION' : LinearRegression(),
+        'RANDOMFOREST REGRESSOR' : RandomForestRegressor(),
+        'GRADIENT BOOSTING REGRESSOR' : GradientBoostingRegressor(),
+        'XGBOOST REGRESSOR' : XGBRegressor()
+    }
+
+    trained_models = {}
+
+    for name, model in models.items():
+        model.fit(X_train, y_train)
+        trained_models[name] = model
+
+    return trained_models
+
+
+# ====================================
+#  MODEL EVALUATION
+# ====================================
+def evaluate_model(X, y, X_train, X_test, y_train, y_test, name, model):
+
+    y_pred = model.predict(X_test)
+    train_score = model.score(X_train, y_train)
+    test_score = model.score(X_test, y_test)
+    r2 = r2_score(y_test, y_pred)
+    mae = mean_absolute_error(y_test, y_pred)
+    mse = mean_squared_error(y_test, y_pred)
+    rmse = root_mean_squared_error(y_test, y_pred)    
+    skf = KFold(n_splits=5, shuffle=True, random_state=42)
+    cv = cross_val_score(model, X, y, cv=skf, scoring='r2')
+
+    print('='*100)
+    print(f'{name}')
+    print('='*100)
+
+    print(f'\n ===== TRAINING SCORE ===== \n {train_score:.3f}')
+    print(f'\n ===== TEST SCORE ===== \n {test_score:.3f}')
+    print(f'\n ===== R2 SCORE ===== \n {r2:.3f}')
+    print(f'\n ===== MEAN ABSOLUTE ERROR ===== \n {mae:.3f}')
+    print(f'\n ===== MEAN SQUARED ERROR ===== \n {mse:.3f}')
+    print(f'\n ===== ROOT MEAN SQUARED ERROR ===== \n {rmse:.3f}')
+    print(f'\n ===== CROSS VALIDATION SCORES ===== \n {cv}')
+    print(f'\n ===== CROSS VALIDATION MEAN & STD. ===== \n {cv.mean():.3f} (+/-) {cv.std()*2:.3f}')
+
+
+
+
 # ====================================
 #  MAIN
 # ====================================
@@ -102,8 +181,11 @@ def main():
     data = load_data(filepath)
     eda(data)
     visualize_data(data)
+    X, y, X_train, X_test, y_train, y_test = preprocess_data(data)
+    trained_models = train_model(X_train, y_train)
 
-
+    for (name, model) in (trained_models).items():
+        evaluate_model(X, y, X_train, X_test, y_train, y_test, name, model)
 
 
 
