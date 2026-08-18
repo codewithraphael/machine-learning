@@ -5,4 +5,4 @@ DATA_DIR = PROJECT_ROOT / "data"
 MODEL_DIR = PROJECT_ROOT / "models"
 PLOTS_DIR = PROJECT_ROOT / "plots"
 
-filepath = DATA_DIR / "UR3_CobotOps.csv"
+filepath = DATA_DIR / "UR3_CobotOps.xlsx"
