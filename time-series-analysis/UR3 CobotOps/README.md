@@ -127,7 +127,7 @@ print(ur3_cobotops.variables)
 ```
 ur3-cobotops/
 ├── data/
-│   └── dataset_02052023.xlsx
+│   └── UR3_CobotOps.xlsx
 ├── notebooks/
 │   └── eda.ipynb
 ├── src/

@@ -1,14 +1,18 @@
-from config import filepath, DATA_DIR
+from config import file_path
 from load_data import load_data
-from preprocess import preprocess_data
+from preprocess import clean_data
+
+'''
 from train import train_model
 from evaluate import evaluate_model
+'''
 
 import warnings; warnings.filterwarnings('ignore')
 
 
 def main():
-    pass
+    data = load_data(file_path)
+    data = clean_data(data)
 
 
 
