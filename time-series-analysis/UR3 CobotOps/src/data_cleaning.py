@@ -1,8 +1,10 @@
 import pandas as pd
 from sklearn.impute import SimpleImputer
 
+from config import BINARY_COLUMNS
 
-def clean_data(data):
+
+def clean_data(data, BINARY_COLUMNS=BINARY_COLUMNS):
 
     '''
     fixing column names trailing space,
@@ -10,6 +12,7 @@ def clean_data(data):
     handle missing values,
     drop redundant(Num) column,
     change column names to lowercase
+    convert binary columns to integer
     '''
 
     data = data.copy()
@@ -48,6 +51,24 @@ def clean_data(data):
     if sensor_columns:
         imputer = SimpleImputer(strategy='median')
         data[sensor_columns] = imputer.fit_transform(data[sensor_columns])
+
+
+    mapping = {
+        True: 1,
+        False: 0,
+        "True": 1,
+        "False": 0,
+        "TRUE": 1,
+        "FALSE": 0,
+        "true": 1,
+        "false": 0,
+    }
+
+    for col in BINARY_COLUMNS:
+        if col in data.columns:
+            data[col] = (
+                data[col].replace(mapping).astype(int)
+            )
 
     print('='*50)
     print(f'CLEANED DATASET')

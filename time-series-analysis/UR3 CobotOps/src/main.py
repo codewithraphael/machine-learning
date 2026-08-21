@@ -1,4 +1,4 @@
-from config import file_path
+from config import file_path, BINARY_COLUMNS
 from data_loader import load_data
 from data_cleaning import clean_data, investigate_time
 
@@ -12,7 +12,7 @@ import warnings; warnings.filterwarnings('ignore')
 
 def main():
     data = load_data(file_path)
-    data = clean_data(data)
+    data = clean_data(data, BINARY_COLUMNS)
     investigate_time(data)
 
 

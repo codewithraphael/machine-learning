@@ -7,4 +7,4 @@ PLOTS_DIR = PROJECT_ROOT / "plots"
 
 file_path = DATA_DIR / "UR3_CobotOps.xlsx"
 
-BINARY
+BINARY_COLUMNS = ['protective_stop', 'grip_lost']
