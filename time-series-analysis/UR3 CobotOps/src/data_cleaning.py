@@ -1,5 +1,4 @@
 import pandas as pd
-
 from sklearn.impute import SimpleImputer
 
 
@@ -37,7 +36,7 @@ def clean_data(data):
 
     data = data.sort_values('timestamp').reset_index(drop=True)
 
-    # rename the column without using inplace=True, which returns None and breaks the pipeline
+    # renaming robot_protectivestop column name
     if 'robot_protectivestop' in data.columns:
         data = data.rename(columns={'robot_protectivestop': 'protective_stop'})
 
@@ -50,4 +49,24 @@ def clean_data(data):
         imputer = SimpleImputer(strategy='median')
         data[sensor_columns] = imputer.fit_transform(data[sensor_columns])
 
+    print('='*50)
+    print(f'CLEANED DATASET')
+    print('='*50)
+
+    print(data.head(n=10))
+
     return data
+
+
+def investigate_time(data):
+
+    '''
+    most observations are approximately one second apart, but there are some gaps.
+    '''
+    data = data.copy()
+
+    time_diff = data.index.to_series().diff()
+
+    print('='*50)
+    print(time_diff.describe())
+    print('='*50)

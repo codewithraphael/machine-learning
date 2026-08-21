@@ -13,4 +13,8 @@ def load_data(filepath):
 
     data = pd.read_excel(filepath)
 
+    print('='*100)
+    print('MULTIVARIATE TIMESERIES ANALYSIS ON UR3COBOTOPS DATASET')
+    print('='*100)
+
     return data

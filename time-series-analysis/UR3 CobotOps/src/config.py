@@ -6,3 +6,5 @@ MODEL_DIR = PROJECT_ROOT / "models"
 PLOTS_DIR = PROJECT_ROOT / "plots"
 
 file_path = DATA_DIR / "UR3_CobotOps.xlsx"
+
+BINARY
