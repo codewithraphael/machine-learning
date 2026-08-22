@@ -1,6 +1,8 @@
 from config import file_path, BINARY_COLUMNS
 from data_loader import load_data
 from data_cleaning import clean_data, investigate_time
+from feature_engineering import prepare_temporal_order, create_time_index
+from plots import plot_grip_loss_over_time
 
 '''
 from train import train_model
@@ -14,6 +16,9 @@ def main():
     data = load_data(file_path)
     data = clean_data(data, BINARY_COLUMNS)
     investigate_time(data)
+    data = prepare_temporal_order(data)
+    data = create_time_index(data)
+    plot_grip_loss_over_time(data)
 
 
 
