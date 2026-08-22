@@ -1,5 +1,5 @@
 import numpy as np
-from config import TARGET, HORIZON
+from config import TARGET, HORIZON, SENSOR_FEATURES
 
 def prepare_temporal_order(data):
 
@@ -52,5 +52,28 @@ def create_future_target(data, target=TARGET, horizon=HORIZON):
     data[future_target] = (
         data[future_target].astype(int)
     )
+
+    print(data[future_target].value_counts())
+
+    return data
+
+
+def create_lagged_features(data, feature_columns=SENSOR_FEATURES, lags=(1, 2, 3, 5, 10)):
+
+    '''
+    create lagged features for time series forecasting.
+
+    For each feature in feature_columns, create new columns representing the values of that feature
+    at previous time steps (lags). This allows the model to learn from past observations to predict future outcomes.
+    '''
+
+    data = data.copy()
+
+    for feature in feature_columns:
+        for lag in lags:
+            lagged_feature_name = f'{feature}_lag_{lag}'
+            data[lagged_feature_name] = data[feature].shift(lag)
+
+    data = data.dropna()
 
     return data
