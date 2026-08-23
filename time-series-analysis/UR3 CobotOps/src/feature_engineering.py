@@ -71,8 +71,8 @@ def create_lagged_features(data, feature_columns=SENSOR_FEATURES, lags=(1, 2, 3,
 
     for feature in feature_columns:
         for lag in lags:
-            lagged_feature_name = f'{feature}_lag_{lag}'
-            data[lagged_feature_name] = data[feature].shift(lag)
+            lagged_feature = f'{feature}_lag_{lag}'
+            data[lagged_feature] = data[feature].shift(lag)
 
     data = data.dropna()
 
