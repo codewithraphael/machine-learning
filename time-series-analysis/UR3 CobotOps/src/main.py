@@ -1,4 +1,4 @@
-from config import file_path, BINARY_COLUMNS, TARGET, HORIZON, SENSOR_FEATURES
+from config import file_path, BINARY_COLUMNS, TARGET, HORIZON, SENSOR_FEATURES, FUTURE_TARGET
 from data_loader import load_data
 from data_cleaning import clean_data, investigate_time
 from feature_engineering import prepare_temporal_order, create_time_index, create_future_target, create_lagged_features, create_rolling_features, remove_invalid_rows
@@ -24,7 +24,8 @@ def main():
     data = create_lagged_features(data, feature_columns=SENSOR_FEATURES, lags=(1, 2, 3, 5, 10))
     data = create_rolling_features(data, feature_columns=SENSOR_FEATURES, windows=(3, 5, 10))
     data = remove_invalid_rows(data)
-    
+    features = feature_selection(data, sensor_features=SENSOR_FEATURES, future_target=FUTURE_TARGET)
+
 
 if __name__ == '__main__':
     main()

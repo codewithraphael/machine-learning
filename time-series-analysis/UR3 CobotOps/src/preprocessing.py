@@ -28,10 +28,5 @@ def feature_selection(data, sensor_features=SENSOR_FEATURES, future_target=FUTUR
         if column in sensor_features or '__lag_' in column or '__rolling_' in column:
             features.append(column)
 
-        print('='*50)
-        print('SELECTED FEATURE:')
-        print('='*50)
-        print(column)
-
     return features
 
