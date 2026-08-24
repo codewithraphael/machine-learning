@@ -1,8 +1,9 @@
 from config import file_path, BINARY_COLUMNS, TARGET, HORIZON, SENSOR_FEATURES
 from data_loader import load_data
 from data_cleaning import clean_data, investigate_time
-from feature_engineering import prepare_temporal_order, create_time_index, create_future_target, create_lagged_features
+from feature_engineering import prepare_temporal_order, create_time_index, create_future_target, create_lagged_features, create_rolling_features, remove_invalid_rows
 from plots import plot_grip_loss_over_time
+from preprocessing import feature_selection
 
 '''
 from train import train_model
@@ -21,8 +22,9 @@ def main():
     plot_grip_loss_over_time(data)
     data = create_future_target(data, target=TARGET, horizon=HORIZON)
     data = create_lagged_features(data, feature_columns=SENSOR_FEATURES, lags=(1, 2, 3, 5, 10))
-
-
+    data = create_rolling_features(data, feature_columns=SENSOR_FEATURES, windows=(3, 5, 10))
+    data = remove_invalid_rows(data)
+    
 
 if __name__ == '__main__':
     main()

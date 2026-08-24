@@ -33,3 +33,4 @@ SENSOR_FEATURES = [
     'speed_j5',
     'tool_current'
 ]
+FUTURE_TARGET = f'{TARGET}_t_plus_{HORIZON}'
