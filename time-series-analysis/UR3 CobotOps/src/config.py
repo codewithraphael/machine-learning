@@ -34,3 +34,4 @@ SENSOR_FEATURES = [
     'tool_current'
 ]
 FUTURE_TARGET = f'{TARGET}_t_plus_{HORIZON}'
+TRAIN_RATIO = 0.8 
