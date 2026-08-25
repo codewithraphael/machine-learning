@@ -1,3 +1,7 @@
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler
+from sklearn.pipeline import Pipeline
+
 from config import TARGET, FUTURE_TARGET, SENSOR_FEATURES, TRAIN_RATIO
 
 def feature_selection(data, sensor_features=SENSOR_FEATURES, future_target=FUTURE_TARGET):
@@ -57,3 +61,18 @@ def split_data(data, features, target=TARGET, train_ratio=TRAIN_RATIO):
     y_test = y.iloc[split_index:]
 
     return X_train, X_test, y_train, y_test
+
+
+def preprocess_data():
+
+    '''
+    preprocessing pipeline that fills missing numerical values
+    using the training set median and standardize the predictors.
+    '''
+
+    preprocessor = Pipeline([
+        ('imputer', SimpleImputer(strategy='median')),
+        ('scaler', StandardScaler())
+    ])
+
+    return preprocessor
