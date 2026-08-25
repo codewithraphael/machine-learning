@@ -5,7 +5,7 @@ from feature_engineering import prepare_temporal_order, create_time_index, creat
 from plots import plot_grip_loss_over_time
 from preprocessing import feature_selection, split_data, preprocess_data
 from train import train_models
-from evaluation import evaluate_models
+from evaluation import evaluate_models, plot_confusion_matrices, plot_roc_curves
 
 '''
 from train import train_model
@@ -33,6 +33,9 @@ def main():
 
     for name, pipe in trained_models.items():
         y_pred, y_prob = evaluate_models(name, pipe, X_train, X_test, y_train, y_test)
+
+    plot_confusion_matrices(trained_models, X_test, y_test)
+    plot_roc_curves(trained_models, X_test, y_test)
 
 
 

@@ -9,7 +9,7 @@ def train_models(preprocessor, X_train, y_train):
 
     models = {
         'logistic_regression': LogisticRegression(
-            max_iter=1000,
+            max_iter=2000,
             class_weight='balanced',
             random_state=RANDOM_STATE
         ),
