@@ -5,7 +5,7 @@ from sklearn.pipeline import Pipeline
 from config import RANDOM_STATE
 
 
-def train_models(preprocessor, X_train, X_test):
+def train_models(preprocessor, X_train, y_train):
 
     models = {
         'logistic_regression': LogisticRegression(
@@ -34,8 +34,8 @@ def train_models(preprocessor, X_train, X_test):
             ('model', model)
         ])
 
-        pipe.fit(X_train, X_test)
+        pipe.fit(X_train, y_train)
 
         trained_models[name] = pipe
 
-    return trained_models
+    return trained_models, pipe

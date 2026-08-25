@@ -50,9 +50,21 @@ def split_data(data, features, target=TARGET, train_ratio=TRAIN_RATIO):
     - X_train, X_test, y_train, y_test: Split datasets.
     """
 
-    split_index = int(len(data) * train_ratio)
-    X = data[features].copy()
-    y = data[target].copy()
+    if 'timestamp' not in data.columns:
+        raise KeyError("'timestamp' column is required for chronological splitting")
+
+    if not 0 < train_ratio < 1:
+        raise ValueError('train_ratio must be between 0 and 1')
+
+    ordered_data = (
+        data.sort_values('timestamp', kind='stable')
+        .reset_index(drop=True)
+    )
+
+    
+    split_index = int(len(ordered_data) * train_ratio)
+    X = ordered_data[features].copy()
+    y = ordered_data[target].copy()
 
     X_train = X.iloc[:split_index]
     X_test = X.iloc[split_index:]

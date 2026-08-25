@@ -5,6 +5,7 @@ from feature_engineering import prepare_temporal_order, create_time_index, creat
 from plots import plot_grip_loss_over_time
 from preprocessing import feature_selection, split_data, preprocess_data
 from train import train_models
+from evaluation import evaluate_models
 
 '''
 from train import train_model
@@ -28,7 +29,10 @@ def main():
     features = feature_selection(data, sensor_features=SENSOR_FEATURES, future_target=FUTURE_TARGET)
     X_train, X_test, y_train, y_test = split_data(data, features, target=FUTURE_TARGET, train_ratio=TRAIN_RATIO)
     preprocessor = preprocess_data()
-    trained_models = train_models(preprocessor, X_train, X_test)
+    trained_models, pipe = train_models(preprocessor, X_train, y_train)
+
+    for name, pipe in trained_models.items():
+        y_pred, y_prob = evaluate_models(name, pipe, X_train, X_test, y_train, y_test)
 
 
 
