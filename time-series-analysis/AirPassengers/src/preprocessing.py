@@ -13,4 +13,6 @@ def set_time_index(data, date_column):
 
     print(f'\n ===== INDEXED DATE DATASET ===== \n {data.head(10)}')
 
+    data = data.asfreq('MS')
+
     return data
