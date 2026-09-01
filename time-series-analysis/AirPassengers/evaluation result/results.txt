@@ -1,0 +1,70 @@
+============================================================
+TIME SERIES FORECASTING ON AIR PASSENGERS DATASET
+============================================================
+     Month  Passengers
+0  1949-01         112
+1  1949-02         118
+2  1949-03         132
+3  1949-04         129
+4  1949-05         121
+5  1949-06         135
+6  1949-07         148
+7  1949-08         148
+8  1949-09         136
+9  1949-10         119
+
+ ===== SHAPE OF THE DATASET ===== 
+ (144, 2) 
+===== DATASET INFORMATION ===== 
+
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 144 entries, 0 to 143
+Data columns (total 2 columns):
+ #   Column      Non-Null Count  Dtype 
+---  ------      --------------  ----- 
+ 0   Month       144 non-null    object
+ 1   Passengers  144 non-null    int64 
+dtypes: int64(1), object(1)
+memory usage: 2.4+ KB
+None
+
+ ==== HANDLING MISSING VALUES ===== 
+ Month         0
+Passengers    0
+dtype: int64
+
+ ===== SUMMARY STATISTICS ===== 
+        Passengers
+count  144.000000
+mean   280.298611
+std    119.966317
+min    104.000000
+25%    180.000000
+50%    265.500000
+75%    360.500000
+max    622.000000
+
+ ===== INDEXED DATE DATASET ===== 
+                 Month  Passengers
+Month                            
+1949-01-01 1949-01-01         112
+1949-02-01 1949-02-01         118
+1949-03-01 1949-03-01         132
+1949-04-01 1949-04-01         129
+1949-05-01 1949-05-01         121
+1949-06-01 1949-06-01         135
+1949-07-01 1949-07-01         148
+1949-08-01 1949-08-01         148
+1949-09-01 1949-09-01         136
+1949-10-01 1949-10-01         119
+==================================================
+                ADF Statistics
+==================================================
+
+0.8154
+==================================================
+                 P - Value
+==================================================
+
+0.9919
+The series is likely non stationary
