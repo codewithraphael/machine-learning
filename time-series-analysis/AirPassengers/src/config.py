@@ -7,3 +7,5 @@ PLOTS_PATH = ROOT / 'plots'
 MODELS_PATH = ROOT / 'models'
 
 filepath = DATA_PATH
+target_column = 'Passengers'
+test_size = 12
