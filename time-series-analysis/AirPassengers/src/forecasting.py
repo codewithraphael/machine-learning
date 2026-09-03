@@ -1,8 +1,5 @@
 import pandas as pd
 
-from statsmodels.tsa.arima.model import ARIMA
-from statsmodels.tsa.statespace.sarimax import SARIMAX
-
 from config  import target_column, test_size
 
 def train_test_split(data, target_column, test_size):
@@ -20,7 +17,7 @@ def train_test_split(data, target_column, test_size):
 
 def naive_forecast(train, test):
 
-    forecast = pd.Series(train.iloc[-1], index=test.index)
+    baseline_predictions = pd.Series(train.iloc[-1], index=test.index)
 
 
-    return forecast
+    return baseline_predictions
