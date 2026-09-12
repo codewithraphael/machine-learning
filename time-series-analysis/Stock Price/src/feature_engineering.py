@@ -72,4 +72,4 @@ def create_rolling_features(data, column='close', windows=(7, 30, 60)):
     print(data.head(5))
     print(data.tail(5))
     
-    return datas
+    return data
