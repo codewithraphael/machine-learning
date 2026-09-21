@@ -79,7 +79,7 @@ def visualize_data(data):
     plt.title('Total Power Distribution')
     plt.xlabel('Total Power (kW)')
     plt.tight_layout()
-    plt.savefig(PLOTS_PATH / 'total_power_distribution.png')
+    plt.savefig(PLOTS_PATH / 'wec_perth_100_total_power_distribution.png')
     plt.close()
 
 
@@ -90,7 +90,7 @@ def visualize_data(data):
     plt.title('Reactive Power Distribution')
     plt.xlabel('Reactive Power (kVAR)')
     plt.tight_layout()
-    plt.savefig(PLOTS_PATH / 'reactive_power_distribution.png')
+    plt.savefig(PLOTS_PATH / 'wec_perth_100_reactive_power_distribution.png')
     plt.close()
 
 
