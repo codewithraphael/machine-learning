@@ -19,6 +19,13 @@ def evaluate_model(name, model, X_train, X_test, y_train, y_test):
     train_score = model.score(X_train, y_train)
     test_score = model.score(X_test, y_test)
     accuracy = accuracy_score(y_test, y_pred)
+    balanced_accuracy = balanced_accuracy_score(y_test, y_pred)
+    precision, recall, f1, _ = precision_recall_fscore_support(
+        y_test,
+        y_pred,
+        average='macro',
+        zero_division=0
+    )
     report = classification_report(y_test, y_pred)
     cm = confusion_matrix(y_test, y_pred)
     skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
@@ -90,6 +97,16 @@ def evaluate_model(name, model, X_train, X_test, y_train, y_test):
 
     if feature_importance_df is not None:
         print(f'\n ===== Feature Importances ===== \n {feature_importance_df.head(10).to_string(index=False)}')
+
+    return {
+        'Model': name,
+        'Accuracy': accuracy,
+        'Balanced Accuracy': balanced_accuracy,
+        'Macro Precision': precision,
+        'Macro Recall': recall,
+        'Macro F1': f1,
+        'CV ROC-AUC': cv.mean()
+    }
 
 
 def plot_model_comparison(trained_models, X_test, y_test):
