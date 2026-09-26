@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set_theme()
 
@@ -39,11 +40,11 @@ def validate_data(data):
 
     print(data.head(5))
     print(f'\n ===== SHAPE OF THE DATASET ===== \n {data.shape}')
-    print('DATASET INFORMATION')
+    print(f'\n ===== DATASET INFORMATION ===== \n')
     print(data.info())
-    print(f' ===== MISSING VALUES ===== \n{data.isnull().sum().sort_values(ascending=False)}')
-    print(f' ===== DUPLICATE COLUMNS ===== \n {data.duplicated().sum()}')
-    print(f' ===== SUMMARY STATISTICS ===== \n {data.describe()}')
+    print(f'\n ===== MISSING VALUES ===== \n{data.isnull().sum().sort_values(ascending=False)}')
+    print(f'\n ===== DUPLICATE COLUMNS ===== \n {data.duplicated().sum()}')
+    print(f'\n ===== SUMMARY STATISTICS ===== \n {data.describe()}')
 
 
 def clean_data(data):
@@ -61,7 +62,8 @@ def visualize_data(data):
     plt.savefig(PLOTS_PATH / 'pairplot_distribution.png')
     plt.close()
 
-
+    plt.figure(figsize=(20, 20))
+    sns.heatmap(data.corr(), annot=True, cmap='viridis', linewidths=0.5)
     corr_matrix = data.corr()
     sns.heatmap(corr_matrix, linewidth=0.5, cmap='viridis')
     plt.title('Heatmap Correlation Matrix')
@@ -156,6 +158,15 @@ def evaluate_models(X_train, X_test, y_train, y_test, pipe, name):
                 'Feature': feature_names,
                 'Importance': importance
             }).sort_values(by='Importance', ascending=False)
+        elif hasattr(model, 'coef_'):
+            feature_names = pipe.named_steps['preprocessor'].get_feature_names_out()
+            importance = np.abs(model.coef_).mean(axis=0)
+            feature_importances = pd.DataFrame({
+                'Feature': feature_names,
+                'Importance': importance
+            }).sort_values(by='Importance', ascending=False)
+        else:
+            feature_importances = 'Feature importance not available for this model.'
     except Exception as e:
         feature_importances = None
 
