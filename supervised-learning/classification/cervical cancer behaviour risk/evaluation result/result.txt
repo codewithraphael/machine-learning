@@ -1,0 +1,297 @@
+================================================================================================================================================================
+                                                            CERVICAL CANCER BEHAVIOURAL RISK PREDICTION
+================================================================================================================================================================
+   behavior_sexualRisk  behavior_eating  behavior_personalHygine  ...  empowerment_abilities  empowerment_desires  ca_cervix
+0                   10               13                       12  ...                     11                    8          1
+1                   10               11                       11  ...                      4                    4          1
+2                   10               15                        3  ...                      3                   15          1
+3                   10               11                       10  ...                      4                    4          1
+4                    8               11                        7  ...                      4                    7          1
+
+[5 rows x 20 columns]
+
+ ===== SHAPE OF THE DATASET =====
+ (72, 20)
+
+ ===== DATASET INFORMATION =====
+
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 72 entries, 0 to 71
+Data columns (total 20 columns):
+ #   Column                      Non-Null Count  Dtype
+---  ------                      --------------  -----
+ 0   behavior_sexualRisk         72 non-null     int64
+ 1   behavior_eating             72 non-null     int64
+ 2   behavior_personalHygine     72 non-null     int64
+ 3   intention_aggregation       72 non-null     int64
+ 4   intention_commitment        72 non-null     int64
+ 5   attitude_consistency        72 non-null     int64
+ 6   attitude_spontaneity        72 non-null     int64
+ 7   norm_significantPerson      72 non-null     int64
+ 8   norm_fulfillment            72 non-null     int64
+ 9   perception_vulnerability    72 non-null     int64
+ 10  perception_severity         72 non-null     int64
+ 11  motivation_strength         72 non-null     int64
+ 12  motivation_willingness      72 non-null     int64
+ 13  socialSupport_emotionality  72 non-null     int64
+ 14  socialSupport_appreciation  72 non-null     int64
+ 15  socialSupport_instrumental  72 non-null     int64
+ 16  empowerment_knowledge       72 non-null     int64
+ 17  empowerment_abilities       72 non-null     int64
+ 18  empowerment_desires         72 non-null     int64
+ 19  ca_cervix                   72 non-null     int64
+dtypes: int64(20)
+memory usage: 11.4 KB
+None
+
+ ===== MISSING VALUES =====
+behavior_sexualRisk           0
+behavior_eating               0
+behavior_personalHygine       0
+intention_aggregation         0
+intention_commitment          0
+attitude_consistency          0
+attitude_spontaneity          0
+norm_significantPerson        0
+norm_fulfillment              0
+perception_vulnerability      0
+perception_severity           0
+motivation_strength           0
+motivation_willingness        0
+socialSupport_emotionality    0
+socialSupport_appreciation    0
+socialSupport_instrumental    0
+empowerment_knowledge         0
+empowerment_abilities         0
+empowerment_desires           0
+ca_cervix                     0
+dtype: int64
+
+ ===== DUPLICATE COLUMNS =====
+ 0
+
+ ===== SUMMARY STATISTICS =====
+        behavior_sexualRisk  behavior_eating  behavior_personalHygine  ...  empowerment_abilities  empowerment_desires  ca_cervix
+count            72.000000        72.000000                72.000000  ...              72.000000            72.000000  72.000000
+mean              9.666667        12.791667                11.083333  ...               9.319444            10.277778   0.291667
+std               1.186782         2.361293                 3.033847  ...               4.181874             4.482273   0.457719
+min               2.000000         3.000000                 3.000000  ...               3.000000             3.000000   0.000000
+25%              10.000000        11.000000                 9.000000  ...               5.000000             6.750000   0.000000
+50%              10.000000        13.000000                11.000000  ...              10.000000            11.000000   0.000000
+75%              10.000000        15.000000                14.000000  ...              13.000000            15.000000   1.000000
+max              10.000000        15.000000                15.000000  ...              15.000000            15.000000   1.000000
+
+[8 rows x 20 columns]
+================================================================================
+
+LOGISTIC REGRESSION
+================================================================================
+
+ ===== TRAINING SCORE =====
+ 1.000
+
+ ===== TEST SCORE (ACCURACY) =====
+ 0.933
+
+ ===== PREDICTION PROBABILITIES =====
+ [9.88990920e-01 1.97432811e-01 9.20691667e-01 8.17339665e-01
+ 2.75235183e-02 1.30236527e-04 9.95608438e-01 1.67974302e-01
+ 8.82696006e-01 1.03620781e-03 6.08654485e-03 5.82118554e-01
+ 9.98683638e-01 1.32489496e-03 8.51552715e-01]
+
+ ===== RECEIVER OPERATING CHARACTERISTICS CURVE SCORE =====
+ 1.0
+
+ ===== DECISION SCORES =====
+ [ 4.49796476 -1.40241724  2.45178199  1.49842642 -3.56480504 -8.94602808
+  5.42366917 -1.60005232  2.01821206 -6.87115082 -5.09556956  0.33147636
+  6.63156619 -6.62509633  1.7468315 ]
+
+ ===== CROSS VALIDATION SCORE =====
+ [0.88888889 0.85185185 1.         0.95833333 1.        ]
+
+ ===== FEATURE IMPORTANCES =====
+                        Feature  Importance
+10         perception_severity    1.401268
+17       empowerment_abilities    0.911535
+1              behavior_eating    0.810291
+18         empowerment_desires    0.799836
+16       empowerment_knowledge    0.760129
+9     perception_vulnerability    0.721379
+8             norm_fulfillment    0.709635
+5         attitude_consistency    0.570254
+0          behavior_sexualrisk    0.549209
+11         motivation_strength    0.516411
+4         intention_commitment    0.513117
+3        intention_aggregation    0.511379
+2      behavior_personalhygine    0.454313
+15  socialsupport_instrumental    0.408386
+12      motivation_willingness    0.386660
+14  socialsupport_appreciation    0.082019
+6         attitude_spontaneity    0.056118
+13  socialsupport_emotionality    0.045595
+7       norm_significantperson    0.037416
+
+ ===== CONFUSION MATRIX =====
+ [[7 1]
+ [0 7]]
+
+ ===== CLASSIFICATION REPORT =====
+               precision    recall  f1-score   support
+
+           0       1.00      0.88      0.93         8
+           1       0.88      1.00      0.93         7
+
+    accuracy                           0.93        15
+   macro avg       0.94      0.94      0.93        15
+weighted avg       0.94      0.93      0.93        15
+
+================================================================================
+
+RANDOMFOREST CLASSIFIER
+================================================================================
+
+ ===== TRAINING SCORE =====
+ 1.000
+
+ ===== TEST SCORE (ACCURACY) =====
+ 0.800
+
+ ===== PREDICTION PROBABILITIES =====
+ [0.86 0.16 0.51 0.3  0.03 0.04 0.8  0.02 0.46 0.03 0.07 0.2  0.87 0.04
+ 0.36]
+
+ ===== RECEIVER OPERATING CHARACTERISTICS CURVE SCORE =====
+ 1.0
+
+ ===== CROSS VALIDATION SCORE =====
+ [0.92592593 0.81481481 1.         1.         1.        ]
+
+ ===== FEATURE IMPORTANCES =====
+                        Feature  Importance
+16       empowerment_knowledge    0.149101
+17       empowerment_abilities    0.121887
+10         perception_severity    0.107939
+8             norm_fulfillment    0.098053
+9     perception_vulnerability    0.093885
+18         empowerment_desires    0.067743
+3        intention_aggregation    0.047715
+11         motivation_strength    0.044213
+2      behavior_personalhygine    0.039623
+13  socialsupport_emotionality    0.037556
+1              behavior_eating    0.033451
+12      motivation_willingness    0.031111
+14  socialsupport_appreciation    0.030690
+15  socialsupport_instrumental    0.027846
+5         attitude_consistency    0.024716
+4         intention_commitment    0.019821
+6         attitude_spontaneity    0.010948
+7       norm_significantperson    0.009032
+0          behavior_sexualrisk    0.004671
+
+ ===== CONFUSION MATRIX =====
+ [[8 0]
+ [3 4]]
+
+ ===== CLASSIFICATION REPORT =====
+               precision    recall  f1-score   support
+
+           0       0.73      1.00      0.84         8
+           1       1.00      0.57      0.73         7
+
+    accuracy                           0.80        15
+   macro avg       0.86      0.79      0.78        15
+weighted avg       0.85      0.80      0.79        15
+
+================================================================================
+
+KNEIGHBORS CLASSIFIER
+================================================================================
+
+ ===== TRAINING SCORE =====
+ 0.877
+
+ ===== TEST SCORE (ACCURACY) =====
+ 0.800
+
+ ===== PREDICTION PROBABILITIES =====
+ [1.  0.  0.8 0.4 0.  0.  1.  0.  0.4 0.  0.  0.2 0.8 0.  0.2]
+
+ ===== RECEIVER OPERATING CHARACTERISTICS CURVE SCORE =====
+ 0.9910714285714286
+
+ ===== CROSS VALIDATION SCORE =====
+ [0.68518519 0.55555556 0.94444444 0.95833333 0.97916667]
+
+ ===== FEATURE IMPORTANCES =====
+ Feature importance not available for this model.
+
+ ===== CONFUSION MATRIX =====
+ [[8 0]
+ [3 4]]
+
+ ===== CLASSIFICATION REPORT =====
+               precision    recall  f1-score   support
+
+           0       0.73      1.00      0.84         8
+           1       1.00      0.57      0.73         7
+
+    accuracy                           0.80        15
+   macro avg       0.86      0.79      0.78        15
+weighted avg       0.85      0.80      0.79        15
+
+================================================================================
+
+DECSION TREE CLASSIFIER
+================================================================================
+
+ ===== TRAINING SCORE =====
+ 1.000
+
+ ===== TEST SCORE (ACCURACY) =====
+ 0.733
+
+ ===== PREDICTION PROBABILITIES =====
+ [1. 0. 0. 0. 0. 0. 1. 0. 1. 0. 0. 1. 1. 0. 0.]
+
+ ===== RECEIVER OPERATING CHARACTERISTICS CURVE SCORE =====
+ 0.7232142857142857
+
+ ===== CROSS VALIDATION SCORE =====
+ [0.77777778 0.61111111 0.69444444 0.9375     0.70833333]
+
+ ===== FEATURE IMPORTANCES =====
+                        Feature  Importance
+10         perception_severity    0.457627
+17       empowerment_abilities    0.294387
+15  socialsupport_instrumental    0.139033
+11         motivation_strength    0.108953
+2      behavior_personalhygine    0.000000
+0          behavior_sexualrisk    0.000000
+1              behavior_eating    0.000000
+6         attitude_spontaneity    0.000000
+3        intention_aggregation    0.000000
+5         attitude_consistency    0.000000
+4         intention_commitment    0.000000
+9     perception_vulnerability    0.000000
+8             norm_fulfillment    0.000000
+7       norm_significantperson    0.000000
+12      motivation_willingness    0.000000
+14  socialsupport_appreciation    0.000000
+13  socialsupport_emotionality    0.000000
+16       empowerment_knowledge    0.000000
+18         empowerment_desires    0.000000
+
+ ===== CONFUSION MATRIX =====
+ [[7 1]
+ [3 4]]
+
+ ===== CLASSIFICATION REPORT =====
+               precision    recall  f1-score   support
+
+           0       0.70      0.88      0.78         8
+           1       0.80      0.57      0.67         7
+
+    accuracy                           0.73        15
+   macro avg       0.75      0.72      0.72        15
+weighted avg       0.75      0.73      0.73        15
