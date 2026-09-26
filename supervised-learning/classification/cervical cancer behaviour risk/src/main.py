@@ -64,8 +64,6 @@ def visualize_data(data):
 
     plt.figure(figsize=(20, 20))
     sns.heatmap(data.corr(), annot=True, cmap='viridis', linewidths=0.5)
-    corr_matrix = data.corr()
-    sns.heatmap(corr_matrix, linewidth=0.5, cmap='viridis')
     plt.title('Heatmap Correlation Matrix')
     plt.savefig(PLOTS_PATH / 'correlation_matrix.png')
     plt.close()
