@@ -1,0 +1,313 @@
+======================================================================================================================================================
+                                                            FINANCIAL RISK ASSESSMENT
+======================================================================================================================================================
+
+    Age      Gender Education Level Marital Status   Income  Credit Score  Loan Amount  ... Number of Dependents             City  State       Country  Previous Defaults  Marital Status Change  Risk Rating
+0   49        Male             PhD       Divorced  72799.0         688.0      45713.0  ...                  0.0   Port Elizabeth     AS        Cyprus                2.0                      2          Low
+1   57      Female      Bachelor's        Widowed      NaN         690.0      33835.0  ...                  0.0  North Catherine     OH  Turkmenistan                3.0                      2       Medium
+2   21  Non-binary        Master's         Single  55687.0         600.0      36623.0  ...                  3.0      South Scott     OK    Luxembourg                3.0                      2       Medium
+3   59        Male      Bachelor's         Single  26508.0         622.0      26541.0  ...                  3.0       Robinhaven     PR        Uganda                4.0                      2       Medium
+4   25  Non-binary      Bachelor's        Widowed  49427.0         766.0      36528.0  ...                  NaN      New Heather     IL       Namibia                3.0                      1          Low
+
+[5 rows x 20 columns]
+
+ ===== SHAPE OF THE DATASET ===== 
+ (15000, 20)
+
+ ===== DATASET INFORMATION ===== 
+
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 15000 entries, 0 to 14999
+Data columns (total 20 columns):
+ #   Column                 Non-Null Count  Dtype  
+---  ------                 --------------  -----  
+ 0   Age                    15000 non-null  int64  
+ 1   Gender                 15000 non-null  object 
+ 2   Education Level        15000 non-null  object 
+ 3   Marital Status         15000 non-null  object 
+ 4   Income                 12750 non-null  float64
+ 5   Credit Score           12750 non-null  float64
+ 6   Loan Amount            12750 non-null  float64
+ 7   Loan Purpose           15000 non-null  object 
+ 8   Employment Status      15000 non-null  object 
+ 9   Years at Current Job   15000 non-null  int64  
+ 10  Payment History        15000 non-null  object 
+ 11  Debt-to-Income Ratio   15000 non-null  float64
+ 12  Assets Value           12750 non-null  float64
+ 13  Number of Dependents   12750 non-null  float64
+ 14  City                   15000 non-null  object 
+ 15  State                  15000 non-null  object 
+ 16  Country                15000 non-null  object 
+ 17  Previous Defaults      12750 non-null  float64
+ 18  Marital Status Change  15000 non-null  int64  
+ 19  Risk Rating            15000 non-null  object 
+dtypes: float64(7), int64(3), object(10)
+memory usage: 2.3+ MB
+None
+
+ ===== MISSING VALUES ===== 
+ Assets Value             2250
+Loan Amount              2250
+Credit Score             2250
+Income                   2250
+Number of Dependents     2250
+Previous Defaults        2250
+Gender                      0
+Age                         0
+Marital Status              0
+Education Level             0
+Employment Status           0
+Loan Purpose                0
+Debt-to-Income Ratio        0
+Payment History             0
+Years at Current Job        0
+City                        0
+State                       0
+Country                     0
+Marital Status Change       0
+Risk Rating                 0
+dtype: int64
+
+ ===== DUPLICATE COLUMNS ===== 
+ 0
+
+ ===== SUMMARY STATISTICS ==== 
+                 Age         Income  Credit Score   Loan Amount  Years at Current Job  Debt-to-Income Ratio   Assets Value  Number of Dependents  Previous Defaults  Marital Status Change
+count  15000.000000   12750.000000  12750.000000  12750.000000          15000.000000          15000.000000   12750.000000           12750.00000       12750.000000           15000.000000
+mean      43.452667   69933.398510    699.109098  27450.010902              9.476267              0.350438  159741.497176               2.02651           1.992471               0.998467
+std       14.910732   29163.626207     57.229465  12949.940135              5.769707              0.143919   80298.115832               1.41130           1.416909               0.813782
+min       18.000000   20005.000000    600.000000   5000.000000              0.000000              0.100004   20055.000000               0.00000           0.000000               0.000000
+25%       31.000000   44281.500000    650.000000  16352.500000              4.000000              0.227386   90635.250000               1.00000           1.000000               0.000000
+50%       43.000000   69773.000000    699.000000  27544.000000              9.000000              0.350754  159362.000000               2.00000           2.000000               1.000000
+75%       56.000000   95922.750000    748.000000  38547.500000             15.000000              0.476095  228707.000000               3.00000           3.000000               2.000000
+max       69.000000  119997.000000    799.000000  49998.000000             19.000000              0.599970  299999.000000               4.00000           4.000000               2.000000
+
+ ===== CLEANED COLUMN NAMES ===== 
+
+Index(['age', 'gender', 'education_level', 'marital_status', 'income',
+       'credit_score', 'loan_amount', 'loan_purpose', 'employment_status',
+       'years_at_current_job', 'payment_history', 'debt_to_income_ratio',
+       'assets_value', 'number_of_dependents', 'city', 'state', 'country',
+       'previous_defaults', 'marital_status_change', 'risk_rating'],
+      dtype='object')
+========================================================================================================================
+
+LOGISTIC REGRESSION
+========================================================================================================================
+
+ ===== Training Score ===== 
+ 0.869
+
+ ===== Test Score ===== 
+ 0.437
+
+ ===== Accuracy Score ===== 
+ 0.437
+
+ ===== Classification Report ===== 
+               precision    recall  f1-score   support
+
+           0       0.12      0.13      0.13       300
+           1       0.59      0.55      0.57      1800
+           2       0.29      0.32      0.30       900
+
+    accuracy                           0.44      3000
+   macro avg       0.33      0.33      0.33      3000
+weighted avg       0.45      0.44      0.44      3000
+
+
+ ===== Confusion Matrix ===== 
+ [[ 40 175  85]
+ [190 986 624]
+ [108 507 285]]
+
+ ===== Cross-Validation ROC-AUC (OvR) ===== 
+ 0.500
+
+ ===== Prediction Probabilities ===== 
+ [[0.18450512 0.48476132 0.33073356]
+ [0.31697411 0.29549181 0.38753408]
+ [0.23619825 0.37690846 0.3868933 ]
+ [0.18460572 0.53989856 0.27549572]
+ [0.48591179 0.1272918  0.38679641]]
+
+ ===== Decision Function Scores ===== 
+ [[-0.51653845  0.449441    0.06709745]
+ [-0.04360158 -0.11378056  0.15738213]
+ [-0.32026943  0.14706142  0.17320801]
+ [-0.49116958  0.58198937 -0.09081979]
+ [ 0.52255788 -0.81698714  0.29442926]]
+
+ ===== Receiver Operating Characteristics Curve Score ===== 
+ 0.504
+========================================================================================================================
+
+DECISION TREE
+========================================================================================================================
+
+ ===== Training Score ===== 
+ 1.000
+
+ ===== Test Score ===== 
+ 0.464
+
+ ===== Accuracy Score ===== 
+ 0.464
+
+ ===== Classification Report ===== 
+               precision    recall  f1-score   support
+
+           0       0.11      0.09      0.10       300
+           1       0.58      0.62      0.60      1800
+           2       0.29      0.28      0.29       900
+
+    accuracy                           0.46      3000
+   macro avg       0.33      0.33      0.33      3000
+weighted avg       0.45      0.46      0.46      3000
+
+
+ ===== Confusion Matrix ===== 
+ [[  27  205   68]
+ [ 149 1109  542]
+ [  61  584  255]]
+
+ ===== Cross-Validation ROC-AUC (OvR) ===== 
+ 0.504
+
+ ===== Prediction Probabilities ===== 
+ [[0. 1. 0.]
+ [0. 1. 0.]
+ [0. 0. 1.]
+ [0. 0. 1.]
+ [0. 1. 0.]]
+
+ ===== Receiver Operating Characteristics Curve Score ===== 
+ 0.487
+
+ ===== Feature Importances ===== 
+   feature  importance
+feature_5    0.073165
+feature_3    0.068130
+feature_1    0.067233
+feature_6    0.066759
+feature_2    0.057602
+feature_4    0.047697
+feature_0    0.045661
+feature_7    0.019702
+feature_8    0.018069
+feature_9    0.015607
+========================================================================================================================
+
+RANDOM FOREST
+========================================================================================================================
+
+ ===== Training Score ===== 
+ 1.000
+
+ ===== Test Score ===== 
+ 0.599
+
+ ===== Accuracy Score ===== 
+ 0.599
+
+ ===== Classification Report ===== 
+               precision    recall  f1-score   support
+
+           0       0.00      0.00      0.00       300
+           1       0.60      1.00      0.75      1800
+           2       0.00      0.00      0.00       900
+
+    accuracy                           0.60      3000
+   macro avg       0.20      0.33      0.25      3000
+weighted avg       0.36      0.60      0.45      3000
+
+
+ ===== Confusion Matrix ===== 
+ [[   0  300    0]
+ [   0 1797    3]
+ [   0  900    0]]
+
+ ===== Cross-Validation ROC-AUC (OvR) ===== 
+ 0.495
+
+ ===== Prediction Probabilities ===== 
+ [[0.04 0.76 0.2 ]
+ [0.15 0.5  0.35]
+ [0.1  0.5  0.4 ]
+ [0.1  0.67 0.23]
+ [0.09 0.52 0.39]]
+
+ ===== Receiver Operating Characteristics Curve Score ===== 
+ 0.507
+
+ ===== Feature Importances ===== 
+   feature  importance
+feature_5    0.036281
+feature_1    0.035262
+feature_6    0.035141
+feature_3    0.034527
+feature_2    0.034521
+feature_0    0.033187
+feature_4    0.030056
+feature_7    0.021551
+feature_8    0.021484
+feature_9    0.015364
+========================================================================================================================
+
+XGBOOST
+========================================================================================================================
+
+ ===== Training Score ===== 
+ 0.692
+
+ ===== Test Score ===== 
+ 0.584
+
+ ===== Accuracy Score ===== 
+ 0.584
+
+ ===== Classification Report ===== 
+               precision    recall  f1-score   support
+
+           0       0.15      0.01      0.01       300
+           1       0.60      0.95      0.74      1800
+           2       0.29      0.04      0.08       900
+
+    accuracy                           0.58      3000
+   macro avg       0.35      0.33      0.28      3000
+weighted avg       0.46      0.58      0.47      3000
+
+
+ ===== Confusion Matrix ===== 
+ [[   2  284   14]
+ [   5 1710   85]
+ [   6  854   40]]
+
+ ===== Cross-Validation ROC-AUC (OvR) ===== 
+ 0.508
+
+ ===== Prediction Probabilities ===== 
+ [[0.0828139  0.6830926  0.2340935 ]
+ [0.09708247 0.34188384 0.5610337 ]
+ [0.16162853 0.42719835 0.4111731 ]
+ [0.14951216 0.6165455  0.2339423 ]
+ [0.1507483  0.3327488  0.5165029 ]]
+
+ ===== Receiver Operating Characteristics Curve Score ===== 
+ 0.492
+
+ ===== Feature Importances ===== 
+      feature  importance
+feature_9050    0.009052
+feature_9081    0.006503
+feature_9163    0.006251
+feature_9158    0.006075
+feature_9151    0.006002
+feature_8949    0.005950
+feature_9021    0.005894
+feature_9152    0.005688
+feature_8951    0.005682
+feature_8982    0.005507
+
+Saved best multiclass model: LOGISTIC REGRESSION
+Macro F1: 0.332, Balanced Accuracy: 0.333, Accuracy: 0.437
