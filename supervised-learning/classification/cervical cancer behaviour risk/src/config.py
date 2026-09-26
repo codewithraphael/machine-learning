@@ -5,6 +5,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_PATH = BASE_DIR / "data" / "cervical_cancer_data.csv"
 MODEL_PATH = BASE_DIR / "models"
 PLOTS_PATH = BASE_DIR / "plots"
+EVALUATION_PATH = BASE_DIR / "evaluation result" / "model_comparison_performance.csv"
 
 TARGET_COLUMN = 'ca_cervix'
 
