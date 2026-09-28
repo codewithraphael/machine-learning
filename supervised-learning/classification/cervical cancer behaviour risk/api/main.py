@@ -10,10 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 MODEL_PATH = BASE_DIR /'models' /'logistic_regression.joblib'
 
 
-app = FastAPI(
-   title='Cervical Cancer Prediction',
-   openapi_url="/docs"
-)
+app = FastAPI()
 
 model = joblib.load(MODEL_PATH)
 
@@ -51,11 +48,12 @@ def predict(data: CervicalCancerPrediction):
    input_dict = data.model_dump()
    input_df = pd.DataFrame([input_dict])
 
-   prediction = model.predict(input_df)
-   probability = model.predict_proba(input_df)
+   prediction = model.predict(input_df)[0]
+   probabilities = model.predict_proba(input_df)[0]
+   positive_probability = float(probabilities[1]) if len(probabilities) > 1 else float(probabilities[0])
 
    return {
-      'prediction':int(prediction[0]),
-      'cervical cancer probability': round(float(probability), 4),
+      'prediction': int(prediction),
+      'cervical cancer probability': round(positive_probability, 4),
       'result': 'Cervical Cancer Likely Present' if prediction == 1 else 'Cervical Cancer Not Present'
    }
