@@ -23,6 +23,10 @@ The SQL script creates and populates six tables (130 rows in total):
 | `categories` | 8 | Product category names |
 | `suppliers` | 6 | Supplier names, contact email, and state |
 
+## Schema Overview
+
+![Garden Shop database schema](reports/plots/garden_shop_schema.png)
+
 The intended relationships are `customers` to `orders`, `orders` to `order_items`, `products` to `order_items`, `categories` to `products`, and `suppliers` to `products`. These relationships are represented by ID columns, but the script does not declare primary-key or foreign-key constraints.
 
 ## Load the Database
