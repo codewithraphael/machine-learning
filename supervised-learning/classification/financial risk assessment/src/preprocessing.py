@@ -11,7 +11,7 @@ from config import CAT_COLUMNS, NUM_COLUMNS
 
 def feature_selection(data):
 
-    X = data.drop(columns=['risk_rating'], axis=1)
+    X = data.drop(columns=['risk_rating'])
     y = data['risk_rating']
 
     X_train, X_test, y_train, y_test = train_test_split(
