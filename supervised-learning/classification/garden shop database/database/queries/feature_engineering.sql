@@ -12,3 +12,4 @@ LEFT JOIN orders AS o
 LEFT JOIN order_items AS oi
     ON o.order_id = oi.order_id
 GROUP BY c.customer_id;
+
