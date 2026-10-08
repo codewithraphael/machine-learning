@@ -29,7 +29,6 @@ GROUP BY
     c.city,
     c.state,
     c.is_active
-HAVING COUNT(DISTINCT o.order_id) > o
 
 '''
 
