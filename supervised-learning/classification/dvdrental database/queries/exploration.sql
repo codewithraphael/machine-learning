@@ -1,29 +1,70 @@
-select * 
-from actor limit(10);
+-- data validation --
+SELECT
+    *
+FROM
+    actor
+LIMIT
+    10;
 
-select * 
-from customer limit(10);
+SELECT
+    *
+FROM
+    customer
+LIMIT
+    10;
 
-select * 
-from film limit(10);
+SELECT
+    *
+FROM
+    film
+LIMIT
+    10;
 
-select * 
-from film_category limit(10);
+SELECT
+    *
+FROM
+    film_category
+LIMIT
+    10;
 
-select *
-from rental limit(10);
+SELECT
+    *
+FROM
+    rental
+LIMIT
+    10;
 
-select * 
-from inventory limit(10);
+SELECT
+    *
+FROM
+    inventory
+LIMIT
+    10;
 
-select * 
-from payment limit(10);
+SELECT
+    *
+FROM
+    payment
+LIMIT
+    10;
 
-select * 
-from store limit(10);
+SELECT
+    *
+FROM
+    store
+LIMIT
+    10;
 
-select * 
-from city limit(10);
+SELECT
+    *
+FROM
+    city
+LIMIT
+    10;
 
-select *
-from country limit(10);
+SELECT
+    *
+FROM
+    country
+LIMIT
+    10;
