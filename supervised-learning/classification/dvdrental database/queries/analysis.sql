@@ -151,14 +151,22 @@ ORDER BY
     avg_rental_duration DESC;
 
 -- categories with more than 60 films --
-
-select
+SELECT
     c.name,
     f.title
-from category c
-join film_category fc
-    on c.category_id = fc.category_id
-join film f
-    on fc.film_id = f.film_id
+FROM
+    category c
+    JOIN film_category fc ON c.category_id = fc.category_id
+    JOIN film f ON fc.film_id = f.film_id;
 
+-- show ratings where average rental is higher than 3.00 --
 
+SELECT
+    rating,
+    round(avg(rental_rate), 2) AS avg_rental_rate
+FROM
+    film
+GROUP BY
+    rating
+HAVING
+    avg(rental_rate) > 3.00
