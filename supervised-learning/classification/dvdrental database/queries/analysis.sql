@@ -160,7 +160,6 @@ FROM
     JOIN film f ON fc.film_id = f.film_id;
 
 -- show ratings where average rental is higher than 3.00 --
-
 SELECT
     rating,
     round(avg(rental_rate), 2) AS avg_rental_rate
@@ -169,4 +168,26 @@ FROM
 GROUP BY
     rating
 HAVING
-    avg(rental_rate) > 3.00
+    avg(rental_rate) > 3.00;
+
+-- matching rows from film and language tables --
+SELECT
+    f.title,
+    l.name
+FROM
+    film f
+    INNER JOIN LANGUAGE l ON f.language_id = l.language_id
+LIMIT
+    10;
+
+-- film title corresponding to each actor name --
+SELECT
+    a.first_name,
+    a.last_name,
+    f.title
+FROM
+    actor a
+    JOIN film_actor fa ON a.actor_id = fa.actor_id
+    JOIN film f ON f.film_id = fa.film_id;
+
+-- 
