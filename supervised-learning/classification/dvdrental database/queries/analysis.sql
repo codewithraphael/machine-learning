@@ -190,4 +190,53 @@ FROM
     JOIN film_actor fa ON a.actor_id = fa.actor_id
     JOIN film f ON f.film_id = fa.film_id;
 
--- 
+-- total amount paid by customers --
+SELECT
+    concat (c.first_name, ' ', c.last_name) AS full_name,
+    sum(p.amount) AS total_amount_paid
+FROM
+    customer c
+    JOIN payment p ON c.customer_id = p.customer_id
+GROUP BY
+    c.customer_id,
+    c.first_name,
+    c.last_name
+ORDER BY
+    total_amount_paid DESC
+LIMIT
+    10;
+
+-- store address with staff name --
+SELECT
+    concat (s.first_name, ' ', s.last_name) AS staff_name,
+    a.address,
+    a.district,
+    a.city_id,
+    a.postal_code
+FROM
+    staff s
+    JOIN address a ON s.address_id = a.address_id
+ORDER BY
+    staff_name;
+
+-- total number of films in each category --
+SELECT
+    c.name AS category_name,
+    count(f.film_id) AS total_films
+FROM
+    category c
+    JOIN film_category fc ON c.category_id = fc.category_id
+    LEFT JOIN film f ON f.film_id = fc.film_id
+GROUP BY
+    category_name;
+
+-- top l0 rented films --
+SELECT
+    title,
+    max(rental_rate)
+FROM
+    film
+GROUP BY
+    title
+LIMIT
+    10;
