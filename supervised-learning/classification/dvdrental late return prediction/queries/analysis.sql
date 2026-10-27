@@ -240,3 +240,11 @@ GROUP BY
     title
 LIMIT
     10;
+    
+--- rental events by month ---
+
+select DATE_TRUNC('month', rental_date)::date as rental_month,
+count(*) as rentals
+from rental
+GROUP BY 1
+ORDER BY 1;
