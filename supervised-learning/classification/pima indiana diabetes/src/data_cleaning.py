@@ -1,7 +1,7 @@
 def clean_data(data):
 
-    data = data.rename(
-        {
+    data.rename(
+        columns={
             'Pregnancies' : 'pregnancies',
             'Glucose' : 'glucose',
             'BloodPressure' : 'blood_pressure',
@@ -11,7 +11,8 @@ def clean_data(data):
             'DiabetesPedigreeFunction' : 'diabetes_pedigree_function',
             'Age' : 'age',
             'Outcome' : 'outcome' 
-        }, inplace = True
+        },
+        inplace=True
     )
 
     return data
