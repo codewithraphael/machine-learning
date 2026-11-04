@@ -13,7 +13,7 @@ def train_models(X_train, y_train):
         'LOGISTIC REGRESSION': LogisticRegression(class_weight='balanced', random_state=42),
         'RANDOMFOREST CLASSIFIER': RandomForestClassifier(class_weight='balanced', random_state=42),
         'DECISION TREE CLASSIFIER': DecisionTreeClassifier(random_state=42),
-        'K_NEIGHBORS CLASSIFIER': KNeighborsClassifier(random_stae=42),
+        'K_NEIGHBORS CLASSIFIER': KNeighborsClassifier(random_state=42),
         'XGBOOST CLASSIFIER': XGBClassifier(random_state=42)
     }
 
