@@ -6,6 +6,7 @@ from visualization import visualize_data
 from preprocessing import feature_selection, preprocess_data
 from train import train_models
 from evaluation import evaluate_model, plot_roc_curves
+from utils import save_model_comparison
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -23,13 +24,25 @@ def main():
     preprocessor, X_train, X_test = preprocess_data(X_train, X_test)
     trained_models = train_models(X_train, y_train)
 
-    model_probabilities = {}
+    model_results = []
     for name, model in trained_models.items():
-        model_probabilities[name] = evaluate_model(
-            X_train, X_test, y_train, y_test, model, FEARTURE_COLUMNS
+        result = evaluate_model(
+            X_train,
+            X_test,
+            y_train,
+            y_test,
+            model,
+            FEARTURE_COLUMNS,
+            return_metrics=True,
         )
+        result["model"] = name
+        model_results.append(result)
 
-    plot_roc_curves(y_test, model_probabilities)
+    plot_roc_curves(
+        y_test,
+        {result["model"]: result["y_proba"] for result in model_results},
+    )
+    save_model_comparison(model_results)
 
 
 if __name__ == '__main__':
