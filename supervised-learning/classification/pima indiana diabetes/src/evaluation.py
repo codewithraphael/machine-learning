@@ -1,5 +1,11 @@
+import matplotlib.pyplot as plt
+import seaborn as sns; sns.set_theme()
+
 from sklearn.model_selection import StratifiedKFold, cross_val_score
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, roc_curve, roc_auc_score
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, roc_curve, roc_auc_score, auc
+
+from config import PLOTS_DIR
+
 
 
 def evaluate_model(X_train, X_test, y_train, y_test, model, feature_names):
@@ -60,3 +66,30 @@ def evaluate_model(X_train, X_test, y_train, y_test, model, feature_names):
     if decision_function is not None:
         print(f"\n ==== Decision Function ==== \n")
         print(decision_function)
+
+    return y_proba
+
+
+def plot_roc_curves(y_test, model_probabilities):
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+
+    for model_name, y_proba in model_probabilities.items():
+        if y_proba is None:
+            continue
+
+        fpr, tpr, _ = roc_curve(y_test, y_proba)
+        roc_auc = auc(fpr, tpr)
+        ax.plot(fpr, tpr, lw=2, label=f'{model_name} (AUC = {roc_auc:.2f})')
+
+    ax.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
+    ax.set_xlim([0.0, 1.0])
+    ax.set_ylim([0.0, 1.05])
+    ax.set_xlabel('False Positive Rate')
+    ax.set_ylabel('True Positive Rate')
+    ax.set_title('Receiver Operating Characteristic (ROC) Curves')
+    ax.legend(loc="lower right")
+    fig.tight_layout()
+    PLOTS_DIR.mkdir(parents=True, exist_ok=True)
+    fig.savefig(PLOTS_DIR / "roc_curve.png")
+    plt.close(fig)
