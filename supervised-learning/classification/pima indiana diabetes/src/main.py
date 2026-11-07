@@ -43,7 +43,7 @@ def main():
         {result["model"]: result["y_proba"] for result in model_results},
     )
     save_model_comparison(model_results)
-    save_model()
+    save_model(trained_models['LOGISTIC REGRESSION'], 'logistic_regression_model')
 
 
 if __name__ == '__main__':
