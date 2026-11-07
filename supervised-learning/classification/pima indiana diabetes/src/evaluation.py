@@ -8,7 +8,9 @@ from config import PLOTS_DIR
 
 
 
-def evaluate_model(X_train, X_test, y_train, y_test, model, feature_names):
+def evaluate_model(
+    X_train, X_test, y_train, y_test, model, feature_names, return_metrics=False
+):
 
     y_pred = model.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
@@ -66,6 +68,16 @@ def evaluate_model(X_train, X_test, y_train, y_test, model, feature_names):
     if decision_function is not None:
         print(f"\n ==== Decision Function ==== \n")
         print(decision_function)
+
+    if return_metrics:
+        return {
+            "model": model.__class__.__name__,
+            "accuracy": accuracy,
+            "cv_accuracy_mean": cv.mean(),
+            "cv_accuracy_std": cv.std(),
+            "roc_auc": roc_score,
+            "y_proba": y_proba,
+        }
 
     return y_proba
 
