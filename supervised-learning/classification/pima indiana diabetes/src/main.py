@@ -6,7 +6,7 @@ from visualization import visualize_data
 from preprocessing import feature_selection, preprocess_data
 from train import train_models
 from evaluation import evaluate_model, plot_roc_curves
-from utils import save_model_comparison
+from utils import  save_model_comparison, save_model
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -43,6 +43,7 @@ def main():
         {result["model"]: result["y_proba"] for result in model_results},
     )
     save_model_comparison(model_results)
+    save_model()
 
 
 if __name__ == '__main__':
