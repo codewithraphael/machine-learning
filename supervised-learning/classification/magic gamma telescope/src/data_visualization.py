@@ -1,3 +1,4 @@
+import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -14,11 +15,12 @@ def visualize_data(data):
     classes = ((1, "gamma", "blue"), (0, "hadron", "red"))
     for feature in FEATURE_COLS:
         plt.figure()
+        bins = np.histogram_bin_edges(data[feature].dropna(), bins=30)
         for class_value, class_name, color in classes:
             values = data.loc[data[TARGET_COL] == class_value, feature]
             plt.hist(
                 values,
-                bins=30,
+                bins=bins,
                 label=class_name,
                 color=color,
                 alpha=0.7,
