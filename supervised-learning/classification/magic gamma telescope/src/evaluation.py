@@ -21,8 +21,8 @@ def evaluate_model(X_test, X_val, y_test, y_val, model, name, features_names=FEA
 
         try:
             if hasattr(model, 'predict_proba'):
-                y_proba = model.predict_proba(X_test)[:1]
-                roc_score = roc_auc_score(y_test, y_proba)
+                y_proba = model.predict_proba(X_test)
+                roc_score = roc_auc_score(y_test, y_proba[:, 1])
         except Exception as e:
             print(f'Error evaluating predicted probabilities & ROC AUC: {e}')
 
@@ -33,7 +33,7 @@ def evaluate_model(X_test, X_val, y_test, y_val, model, name, features_names=FEA
             print(f'Error evaluating Decision Function: {e}')
 
         try:
-            if hasattr(model, 'features_importances_'):
+            if hasattr(model, 'feature_importances_'):
                 feature_importances = zip(features_names, model.feature_importances_)
         except Exception as e:
             print(f'Error evaluating Feature Importances: {e}')
@@ -56,6 +56,8 @@ def evaluate_model(X_test, X_val, y_test, y_val, model, name, features_names=FEA
             print(f"\n ==== Feature Importances ==== \n")
             for feature_name, importance in feature_importances:
                 print(f"{feature_name}: {importance:.4f}")
+        else:
+            print("\n Feature Importances: Not available for this model.")
 
         if decision_func is not None:
             print(f"\n ==== Decision Function ==== \n")
