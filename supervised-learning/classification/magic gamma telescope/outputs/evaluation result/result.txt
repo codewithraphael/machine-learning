@@ -222,7 +222,7 @@ weighted avg       0.79      0.78      0.78      2853
  0.8388 ± 0.0097
 
  ==== ROC AUC Score ==== 
- 0.8362523241087549
+ 0.8362
 
  Feature Importances: Not available for this model.
 
@@ -256,7 +256,7 @@ weighted avg       0.88      0.88      0.88      2853
  0.9185 ± 0.0071
 
  ==== ROC AUC Score ==== 
- 0.9406911697340411
+ 0.9406
 
  ==== Feature Importances ==== 
 
@@ -296,7 +296,7 @@ weighted avg       0.84      0.84      0.83      2853
  0.8535 ± 0.0147
 
  ==== ROC AUC Score ==== 
- 0.8774228665355286
+ 0.8774
 
  Feature Importances: Not available for this model.
 ======================================================================================================================================================
@@ -325,7 +325,7 @@ weighted avg       0.82      0.82      0.82      2853
  0.7708 ± 0.0135
 
  ==== ROC AUC Score ==== 
- 0.8023828514456629
+ 0.8023
 
  ==== Feature Importances ==== 
 
@@ -365,7 +365,7 @@ weighted avg       0.89      0.89      0.89      2853
  0.9126 ± 0.0070
 
  ==== ROC AUC Score ==== 
- 0.941960604672469
+ 0.9419
 
  ==== Feature Importances ==== 
 
@@ -405,6 +405,6 @@ weighted avg       0.85      0.85      0.85      2853
  0.7509 ± 0.1258
 
  ==== ROC AUC Score ==== 
- 0.9118326102772762
+ 0.9118
 
  Feature Importances: Not available for this model.
