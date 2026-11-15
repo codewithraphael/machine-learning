@@ -2,6 +2,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
 from xgboost import XGBClassifier
 
@@ -44,8 +46,12 @@ def train_models(X_train, y_train):
     trained_models = {}
 
     for name, model in models.items():
-        model.fit(X_train, y_train)
+        pipeline = Pipeline([
+            ('scaler', StandardScaler()),
+            ('classifier', model),
+        ])
+        pipeline.fit(X_train, y_train)
 
-        trained_models[name] = model
+        trained_models[name] = pipeline
 
     return trained_models
