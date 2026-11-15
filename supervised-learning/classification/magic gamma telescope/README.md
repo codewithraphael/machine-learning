@@ -91,9 +91,22 @@ X = data.drop(columns="class")
 y = data["class"].map({"h": 0, "g": 1})
 ```
 
-### 3. Evaluate responsibly
+### 3. Split and evaluate responsibly
 
-Use a stratified train/test split and report metrics that reflect the cost of false positives and false negatives. Recommended metrics include:
+Use stratification to preserve the class proportions across training, validation, and test sets. For example, a 70/15/15 split lets you train on the training set, choose models and thresholds with the validation set, and reserve the test set for final evaluation. Do not use the test set to tune the model.
+
+```python
+from preprocessing import preprocess_data, split_data
+
+X_train, X_val, X_test, y_train, y_val, y_test = split_data(data)
+X_train, X_val, X_test, preprocessing_pipeline = preprocess_data(
+    X_train, X_val, X_test
+)
+```
+
+The scaler is fitted on `X_train` only, then reused for the validation and test sets to prevent data leakage. Keep `preprocessing_pipeline` to transform new observations with the same scaling parameters.
+
+Report metrics that reflect the cost of false positives and false negatives. Recommended metrics include:
 
 - ROC curve and ROC-AUC
 - Precision-recall curve and average precision
@@ -107,11 +120,11 @@ The original UCI documentation specifically recommends comparing classifiers wit
 1. Load the headerless data and assign the documented column names.
 2. Verify data types, class labels, duplicates, and missing values.
 3. Inspect feature distributions and potential outliers.
-4. Split the data with stratification to preserve class proportions.
-5. Scale features when required by the selected algorithm.
+4. Split the data into stratified training, validation, and test sets.
+5. Scale features when required by the selected algorithm, fitting the scaler on training data only.
 6. Train one or more binary classification models.
-7. Compare models using threshold-aware metrics and ROC analysis.
-8. Select an operating threshold based on the intended scientific or business objective.
+7. Use validation data to compare models and select an operating threshold based on the intended scientific or business objective.
+8. Evaluate the selected model once on the test set using threshold-aware metrics and ROC analysis.
 
 ## Data Provenance
 
