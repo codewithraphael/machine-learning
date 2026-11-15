@@ -37,4 +37,7 @@ FEATURE_COLS = [
 
 TARGET_COL = 'class'
 
-random_state = 42
+
+TEST_SIZE = 0.15
+VAL_SIZE = 0.15
+RANDOM_STATE = 42
