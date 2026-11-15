@@ -1,139 +1,109 @@
-# MAGIC Gamma Telescope Dataset
+# MAGIC Gamma Telescope Classification
 
-Binary classification project based on the [MAGIC Gamma Telescope dataset](https://archive.ics.uci.edu/dataset/159/magic+gamma+telescope) from the UCI Machine Learning Repository.
+This project uses machine-learning classifiers to distinguish gamma-ray events from hadronic background events in the MAGIC Gamma Telescope dataset.
 
-## Overview
+## Dataset
 
-The dataset contains simulated measurements of atmospheric Cherenkov shower images recorded by a ground-based gamma-ray telescope. The objective is to distinguish:
+The dataset contains 19,020 observations and 10 continuous input features. The file `data/magic04.data` is comma-separated and has no header row. The target column is `class`.
 
-- **Gamma (`g`)**: a gamma-ray event (signal)
-- **Hadron (`h`)**: a hadronic cosmic-ray event (background)
+| Label | Meaning | Encoded value |
+| --- | --- | ---: |
+| `g` | Gamma-ray event (signal) | `1` |
+| `h` | Hadron event (background) | `0` |
 
-The measurements are derived from the shape and intensity of shower images and include several Hillas parameters commonly used for event discrimination.
+The input features are `fLength`, `fWidth`, `fSize`, `fConc`, `fConc1`, `fAsym`, `fM3Long`, `fM3Trans`, `fAlpha`, and `fDist`. The original descriptions and scientific background are in [`data/magic04.names`](data/magic04.names).
 
-## Dataset Summary
+The data was developed by the MAGIC project and is available from the [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/159/magic+gamma+telescope).
 
-| Property | Value |
-| --- | --- |
-| Instances | 19,020 |
-| Predictors | 10 continuous features |
-| Target | `class` |
-| Classes | `g` (gamma), `h` (hadron) |
-| Missing values | None reported |
-| File format | Comma-separated values without a header |
-
-### Class Distribution
-
-| Class | Meaning | Instances | Proportion |
-| --- | --- | ---: | ---: |
-| `g` | Gamma signal | 12,332 | 64.8% |
-| `h` | Hadron background | 6,688 | 35.2% |
-
-The original documentation notes that the hadron class is underestimated for technical reasons. Consequently, accuracy alone is not a sufficient measure of model quality.
-
-## Features
-
-| Feature | Description | Unit or scale |
-| --- | --- | --- |
-| `fLength` | Major axis of the shower-image ellipse | millimetres |
-| `fWidth` | Minor axis of the shower-image ellipse | millimetres |
-| `fSize` | Base-10 logarithm of the total pixel content | log10 photons |
-| `fConc` | Ratio of the two highest pixel values to `fSize` | ratio |
-| `fConc1` | Ratio of the highest pixel value to `fSize` | ratio |
-| `fAsym` | Distance from the highest pixel to the image centre, projected onto the major axis | millimetres |
-| `fM3Long` | Cube root of the third moment along the major axis | millimetres |
-| `fM3Trans` | Cube root of the third moment along the minor axis | millimetres |
-| `fAlpha` | Angle between the major axis and the vector to the origin | degrees |
-| `fDist` | Distance from the origin to the ellipse centre | millimetres |
-| `class` | Event label: gamma or hadron | categorical |
-
-## Project Structure
+## Project structure
 
 ```text
 magic gamma telescope/
-├── api/                 # API entry point
 ├── data/
-│   ├── magic04.data     # Raw observations
-│   └── magic04.names    # Original dataset documentation
+│   ├── magic04.data
+│   └── magic04.names
+├── models/                  # Saved model pipelines
 ├── notebook/
-│   └── eda.ipynb        # Exploratory data analysis
-├── src/                 # Data preparation, evaluation, and visualization modules
-└── README.md
+│   └── eda.ipynb            # Exploratory data analysis
+├── outputs/
+│   └── plots/               # Evaluation plots
+└── src/
+    ├── config.py            # Data paths, features, and split settings
+    ├── data_loader.py       # Loads the headerless data
+    ├── data_cleaning.py     # Encodes the target
+    ├── data_validation.py   # Prints dataset diagnostics
+    ├── data_visualization.py
+    ├── preprocessing.py    # Stratified train/validation/test split
+    ├── train.py             # Builds and fits model pipelines
+    ├── evaluation.py        # Metrics and plots
+    ├── utils.py             # Model serialization
+    └── main.py              # Project entry point
 ```
 
-## Getting Started
+## Requirements
 
-### 1. Load the data
+Use Python and install the project dependencies:
 
-Because `magic04.data` has no header row, provide the column names explicitly:
+```powershell
+python -m pip install pandas numpy scikit-learn xgboost matplotlib seaborn joblib
+```
+
+## Run the project
+
+From the `magic gamma telescope` directory, run:
+
+```powershell
+python src/main.py
+```
+
+The default configuration is in [`src/config.py`](src/config.py). The script loads the dataset, prints validation diagnostics, creates visualizations, splits the data, trains the models, reports evaluation results, saves plots, and serializes the XGBoost pipeline.
+
+## Training workflow
+
+1. Load the raw data and assign its documented column names.
+2. Encode `g` as `1` and `h` as `0`.
+3. Split the rows into stratified training, validation, and test sets. The default split is 70% / 15% / 15%.
+4. Fit each classifier in a scikit-learn pipeline containing `StandardScaler`. The scaler is fitted on training data only and is applied automatically to validation and test inputs.
+5. Train and evaluate the following classifiers:
+   - Logistic regression
+   - Random forest
+   - K-nearest neighbors
+   - Decision tree
+   - XGBoost
+   - Multilayer perceptron
+6. Generate validation curves using five-fold stratified cross-validation on the training set. Each model's curve varies a model-specific hyperparameter and reports ROC-AUC.
+7. Report test-set metrics, including accuracy, a classification report, a confusion matrix, and ROC-AUC where supported.
+
+The test set is reserved for final evaluation and should not be used to select hyperparameters or decision thresholds.
+
+## Evaluation files
+
+The following plots are saved under `outputs/plots/`:
+
+- `confusion_matrices_plot.png`
+- `receiver_operating_characteristic_curves.png`
+- `validation_curves_plot.png`
+
+The trained XGBoost pipeline is saved to `models/xgb_model.joblib`. The saved pipeline includes its fitted scaler, so it can transform raw feature rows without a separate preprocessing artifact.
+
+## Use the saved model
+
+Load the saved pipeline and pass it a pandas DataFrame containing the ten input features in the order listed above:
 
 ```python
+import joblib
 import pandas as pd
 
-columns = [
-    "fLength", "fWidth", "fSize", "fConc", "fConc1",
-    "fAsym", "fM3Long", "fM3Trans", "fAlpha", "fDist", "class",
-]
+from src.config import FEATURE_COLS, MODELS_DIR
 
-data = pd.read_csv(
-    "data/magic04.data",
-    header=None,
-    names=columns,
-)
+model = joblib.load(MODELS_DIR / "xgb_model.joblib")
+new_events = pd.read_csv("new_events.csv")
+predictions = model.predict(new_events.loc[:, FEATURE_COLS])
 ```
 
-### 2. Prepare the target
-
-For scikit-learn models, encode the target as a binary value or use a classifier that accepts string labels:
-
-```python
-X = data.drop(columns="class")
-y = data["class"].map({"h": 0, "g": 1})
-```
-
-### 3. Split and evaluate responsibly
-
-Use stratification to preserve the class proportions across training, validation, and test sets. For example, a 70/15/15 split lets you train on the training set, choose models and thresholds with the validation set, and reserve the test set for final evaluation. Do not use the test set to tune the model.
-
-```python
-from preprocessing import preprocess_data, split_data
-
-X_train, X_val, X_test, y_train, y_val, y_test = split_data(data)
-X_train, X_val, X_test, preprocessing_pipeline = preprocess_data(
-    X_train, X_val, X_test
-)
-```
-
-The scaler is fitted on `X_train` only, then reused for the validation and test sets to prevent data leakage. Keep `preprocessing_pipeline` to transform new observations with the same scaling parameters.
-
-Report metrics that reflect the cost of false positives and false negatives. Recommended metrics include:
-
-- ROC curve and ROC-AUC
-- Precision-recall curve and average precision
-- Confusion matrix
-- Signal efficiency and background acceptance at an explicitly stated threshold
-
-The original UCI documentation specifically recommends comparing classifiers with ROC curves and examining low background-acceptance operating points, such as 0.01, 0.02, 0.05, 0.10, and 0.20.
-
-## Recommended Workflow
-
-1. Load the headerless data and assign the documented column names.
-2. Verify data types, class labels, duplicates, and missing values.
-3. Inspect feature distributions and potential outliers.
-4. Split the data into stratified training, validation, and test sets.
-5. Scale features when required by the selected algorithm, fitting the scaler on training data only.
-6. Train one or more binary classification models.
-7. Use validation data to compare models and select an operating threshold based on the intended scientific or business objective.
-8. Evaluate the selected model once on the test set using threshold-aware metrics and ROC analysis.
-
-## Data Provenance
-
-The dataset was developed by the [Major Atmospheric Gamma Imaging Cherenkov Telescope (MAGIC) project](http://wwwmagic.mppmu.mpg.de/) and donated to the UCI Machine Learning Repository by P. Savicky. The data were received by UCI in May 2007 and were generated with Monte Carlo simulations using CORSIKA.
-
-For the complete attribute definitions, scientific background, and original references, see [`data/magic04.names`](data/magic04.names).
+Predictions use the same encoding as the training target: `1` for gamma and `0` for hadron. The model also supports `predict_proba` for class probabilities.
 
 ## References
 
-1. Bock, R. K., et al. (2004). *Methods for multidimensional event classification: a case study using images from a Cherenkov gamma-ray telescope*. Nuclear Instruments and Methods in Physics Research Section A, 516, 511–528.
-2. UCI Machine Learning Repository. [MAGIC Gamma Telescope dataset](https://archive.ics.uci.edu/dataset/159/magic+gamma+telescope).
-3. Heck, D., et al. (1998). *CORSIKA: A Monte Carlo code to simulate extensive air showers*. Forschungszentrum Karlsruhe FZKA 6019.
+- [MAGIC Gamma Telescope dataset — UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/159/magic+gamma+telescope)
+- [`data/magic04.names`](data/magic04.names) for complete attribute definitions and dataset background
