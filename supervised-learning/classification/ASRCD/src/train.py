@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split, GridSearchCV
 
-from config import TEXT_COLUMN, TARGET_COLUMN, TEST_SIZE, RANDOM_STATE
+from config import TEXT_COLUMN, TEST_SIZE, RANDOM_STATE
 
 def split_features(data: pd.DataFrame, target):
 
