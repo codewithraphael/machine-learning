@@ -21,5 +21,5 @@ REQUIRED_COLUMNS = {
     'explanation'
 }
 
-TARGET_COLUMN = ['response_class', 'harm_category']
+TARGET_COLUMN = ['response_class', 'harm_category', 'risk_level']
 TEXT_COLUMN = 'query'
