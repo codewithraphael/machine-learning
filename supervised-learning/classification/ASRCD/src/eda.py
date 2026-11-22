@@ -29,8 +29,8 @@ def eda(data: pd.DataFrame) -> None:
     print(f'\n ==== DATASET INFORMATION ==== \n')
     print(data.info())
     print(f'\n ==== MISSING VALUES ==== \n {data.isnull().sum()}')
-    print(f'\n ==== DUPLICATE RECORDS ==== \n {data.duplicated.sum()}')
-    print(f'\n ==== DUPLICATE QUERIES ==== \n {data[TEXT_COLUMN].duplicated.sum()}')
+    print(f'\n ==== DUPLICATE RECORDS ==== \n {data.duplicated().sum()}')
+    print(f'\n ==== DUPLICATE QUERIES ==== \n {data[TEXT_COLUMN].duplicated().sum()}')
 
 
 def visualize_target_distribution(data: pd.DataFrame) -> None:
@@ -45,5 +45,4 @@ def visualize_target_distribution(data: pd.DataFrame) -> None:
         plot (PLOTS_DIR)
             plot and save target variable distibution to path
     '''
-
     
