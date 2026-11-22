@@ -3,9 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns; sns.set_theme()
 
-from config import PLOTS_DIR, TEXT_COLUMN
+from config import PLOTS_DIR, TEXT_COLUMN, TARGET_COLUMN
 
-def eda(data: pd.DataFrame) -> None:
+def eda(data: pd.DataFrame, queries = TEXT_COLUMN) -> None:
 
     '''
     exploratory data analysis and basic statistical exploration
@@ -30,10 +30,10 @@ def eda(data: pd.DataFrame) -> None:
     print(data.info())
     print(f'\n ==== MISSING VALUES ==== \n {data.isnull().sum()}')
     print(f'\n ==== DUPLICATE RECORDS ==== \n {data.duplicated().sum()}')
-    print(f'\n ==== DUPLICATE QUERIES ==== \n {data[TEXT_COLUMN].duplicated().sum()}')
+    print(f'\n ==== DUPLICATE QUERIES ==== \n {data[queries].duplicated().sum()}')
 
 
-def visualize_target_distribution(data: pd.DataFrame) -> None:
+def visualize_target_distribution(data: pd.DataFrame, target_col = TARGET_COLUMN, plot_dir = PLOTS_DIR) -> None:
 
     '''
     generate bar chart distribution showing the distribution of each target variable
@@ -45,4 +45,22 @@ def visualize_target_distribution(data: pd.DataFrame) -> None:
         plot (PLOTS_DIR)
             plot and save target variable distibution to path
     '''
+
+    for target in target_col:
+        counts = data[target].value_counts()
+
+        plt.figure(figsize=(11, 5))
+
+        sns.barplot(
+            x = counts.values,
+            y = counts.index 
+        )
+
+        plt.title(f'Distribution of {target}')
+        plt.xlabel('Number of records')
+        plt.ylabel(target)
+
+        plt.tight_layout()
+        plt.savefig(plot_dir / f'{target}_distribution.png', dpi=600)
+        plt.close()
     
