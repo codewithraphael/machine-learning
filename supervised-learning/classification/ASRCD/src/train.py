@@ -21,8 +21,9 @@ def train_model(x_train, y_train, pipe, tune=False):
     best_params = None
 
     if tune:
-
-        if y_train.value_counts().min() >= 5:
+        class_count = y_train.value_counts().min()
+        if class_count >= 2:
+            cv = min(5, int(class_count))
             search = GridSearchCV(
                 estimator= pipe,
                 param_grid={
@@ -34,14 +35,16 @@ def train_model(x_train, y_train, pipe, tune=False):
                     ]
                 },
                 scoring = 'f1_macro',
-                cv= 5,
-                n_jobs=2,
+                cv=cv,
+                n_jobs=1,
                 refit=True
             )
 
             search.fit(x_train, y_train)
             pipe = search.best_estimator_
             best_params = search.best_params_
+        else:
+            pipe.fit(x_train, y_train)
     else:
         pipe.fit(x_train, y_train)
 
