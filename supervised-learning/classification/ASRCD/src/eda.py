@@ -46,6 +46,8 @@ def visualize_target_distribution(data: pd.DataFrame, target_col = TARGET_COLUMN
             plot and save target variable distibution to path
     '''
 
+    plot_dir.mkdir(parents=True, exist_ok=True)
+
     for target in target_col:
         counts = data[target].value_counts()
 
