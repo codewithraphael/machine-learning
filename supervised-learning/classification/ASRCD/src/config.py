@@ -4,7 +4,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DATA_DIR = BASE_DIR / 'data' / 'ASRCD_dataset.csv'
 MODEL_DIR = BASE_DIR / 'models'
 PLOTS_DIR = BASE_DIR / 'reports' / 'plots'
-EVAL_RESULT_DIR = BASE_DIR / 'report' / 'results'
+EVAL_RESULT_DIR = BASE_DIR / 'reports' / 'results'
 
 RANDOM_STATE = 42
 TEST_SIZE = 0.20
