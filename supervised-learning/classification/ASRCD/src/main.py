@@ -25,7 +25,7 @@ from train import (
 )
 
 from evaluation import evaluate_model
-#from utils
+from utils import save_model
 
 import warnings; warnings.filterwarnings('ignore')
 
@@ -36,6 +36,8 @@ def main():
     eda(data, TEXT_COLUMN)
     visualize_target_distribution(data, TARGET_COLUMN, PLOTS_DIR)
 
+    trained_models = {}
+
     for target in TARGET_COLUMN:
         x_train, x_test, y_train, y_test = split_features(data, target)
         pipe = build_classifier()
@@ -44,7 +46,10 @@ def main():
         if best_params:
             print(f'{target}: best params {best_params}')
 
-    evaluate_model(pipe, x_train, x_test, y_train, y_test)
+        evaluate_model(pipe, x_train, x_test, y_train, y_test, target_name=target)
+        trained_models[target] = pipe
+
+    save_model(trained_models)
 
     
 
