@@ -13,7 +13,8 @@ model = joblib.load(MODEL_PATH / 'best_model.joblib')
 
 app = FastAPI()
 
-class PeddictionRequest(BaseModel):
+class BikeDemand(BaseModel):
+
     
 
 
@@ -34,5 +35,6 @@ def about():
 
 
 @app.post('/predict')
-async def predict():
+async def predict(data: BikeDemand):
     pass
+    
